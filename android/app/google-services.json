@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "231218713009",
+    "project_id": "e-masjid-61430",
+    "storage_bucket": "e-masjid-61430.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231218713009:android:44d9fc642e942979f02d90",
+        "android_client_info": {
+          "package_name": "com.example.e_masjid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8fxicQTXCZXH2keqzidtqHeQwEJbG0qU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
