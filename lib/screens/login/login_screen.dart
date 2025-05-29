@@ -3,7 +3,6 @@ import 'package:e_masjid/screens/screens.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/widgets/login_form.dart';
 import 'package:e_masjid/providers/user.provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

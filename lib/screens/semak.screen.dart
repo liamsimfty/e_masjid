@@ -179,13 +179,13 @@ class _SemakStatusScreenState extends State<SemakStatusScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                          Text(
-                                          mainList[index]["title"],
+                                          mainList[index]["title"] ?? "No Title",
                                           style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
                                         ),
 
-                                        mainList[index]["isApproved"]
+                                        mainList[index]["isApproved"] ?? false
                                             ?  const Padding(
                                               padding: EdgeInsets.only(right: 20.0),
                                               child: Icon(
@@ -209,7 +209,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen> {
                                       // const Icon(Icons.calendar_month_rounded),
                                       Flexible(
                                         child: Text(
-                                          mainList[index]["description"],
+                                          mainList[index]["description"] ?? "No Description",
                                           style: const TextStyle(
                                             fontSize: 15,
                                           ),
