@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class QuranRail extends StatelessWidget {
-  const QuranRail({Key? key}) : super(key: key);
+  const QuranRail({super.key});
 
   @override
   Widget build(BuildContext context) {

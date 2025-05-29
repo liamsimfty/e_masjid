@@ -7,7 +7,7 @@ import '../../providers/user.provider.dart';
 import '../../services/firestore_service.dart';
 
 class TanyaImamScreen extends StatefulWidget {
-  const TanyaImamScreen({Key? key}) : super(key: key);
+  const TanyaImamScreen({super.key});
   static const String routeName = '/tanya';
 
   static Route route() {

@@ -12,9 +12,9 @@ class EditProgram extends StatefulWidget {
   final String id;
 
   const EditProgram({
-    Key? key,
+    super.key,
     required this.id,
-  }) : super(key: key);
+  });
 
   @override
   State<EditProgram> createState() => _EditProgramState();
@@ -371,13 +371,13 @@ class _EditProgramState extends State<EditProgram> {
                                   children: [
                                     Expanded(
                                         child: ElevatedButton(
+                                      onPressed: pickDateRange,
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: kPrimaryColor),
                                       child: const Text(
                                         'Pilih Tarikh',
                                         style: TextStyle(color: Colors.white),
                                       ),
-                                      onPressed: pickDateRange,
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: kPrimaryColor),
                                     )),
                                   ],
                                 ),
@@ -412,15 +412,15 @@ class _EditProgramState extends State<EditProgram> {
                                   children: [
                                     Expanded(
                                       child: ElevatedButton(
-                                        child: Text(
-                                          getMasa(),
-                                          style: const TextStyle(color: Colors.white),
-                                        ),
                                         onPressed: () {
                                           pickTime(context);
                                         },
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: kPrimaryColor),
+                                        child: Text(
+                                          getMasa(),
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -453,15 +453,15 @@ class _EditProgramState extends State<EditProgram> {
                                   children: [
                                     Expanded(
                                       child: ElevatedButton(
-                                        child: Text(
-                                          getMasaTamat(),
-                                          style: const TextStyle(color: Colors.white),
-                                        ),
                                         onPressed: () {
                                           pickTimeEnd(context);
                                         },
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: kPrimaryColor),
+                                        child: Text(
+                                          getMasaTamat(),
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                   ],

@@ -6,7 +6,7 @@ class Animator extends StatefulWidget {
   final Widget? child;
   final Duration? time;
 
-  const Animator({Key? key, this.child, this.time}) : super(key: key);
+  const Animator({super.key, this.child, this.time});
 
   @override
   _AnimatorState createState() => _AnimatorState();
@@ -69,13 +69,13 @@ wait() {
 class WidgetAnimator extends StatelessWidget {
   final Widget? child;
 
-  const WidgetAnimator({Key? key, this.child}) : super(key: key);
+  const WidgetAnimator({super.key, this.child});
 
   @override
   Widget build(BuildContext context) {
     return Animator(
-      child: child,
       time: wait(),
+      child: child,
     );
   }
 }

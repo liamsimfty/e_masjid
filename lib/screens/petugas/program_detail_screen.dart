@@ -20,9 +20,9 @@ class ProgramDetail extends StatefulWidget {
   }
 
   const ProgramDetail({
-    Key? key,
+    super.key,
     required this.data,
-  }) : super(key: key);
+  });
 
   @override
   State<ProgramDetail> createState() => _ProgramDetailState();

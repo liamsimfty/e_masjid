@@ -3,7 +3,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class HadisScreen extends StatefulWidget {
   static const String routeName = '/hadis';
-  const HadisScreen({Key? key}) : super(key: key);
+  const HadisScreen({super.key});
   
   static Route route() {
     return MaterialPageRoute(

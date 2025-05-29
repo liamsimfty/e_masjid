@@ -3,7 +3,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class DoaScreen extends StatefulWidget {
   static const String routeName = '/doa';
-  const DoaScreen({Key? key}) : super(key: key);
+  const DoaScreen({super.key});
 
   static Route route() {
     return MaterialPageRoute(

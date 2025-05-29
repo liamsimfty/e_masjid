@@ -21,7 +21,7 @@ class PetugasHomeScreen extends StatefulWidget {
 
   final double maxSlide;
 
-  const PetugasHomeScreen({Key? key, required this.maxSlide}) : super(key: key);
+  const PetugasHomeScreen({super.key, required this.maxSlide});
 
   @override
   _PetugasHomeScreenState createState() => _PetugasHomeScreenState();
@@ -64,12 +64,12 @@ class _PetugasHomeScreenState extends State<PetugasHomeScreen>
   }
 
   void _onDragEnd(DragEndDetails details) {
-    double _kMinFlingVelocity = 365.0;
+    double kMinFlingVelocity = 365.0;
 
     if (animationController.isDismissed || animationController.isCompleted) {
       return;
     }
-    if (details.velocity.pixelsPerSecond.dx.abs() >= _kMinFlingVelocity) {
+    if (details.velocity.pixelsPerSecond.dx.abs() >= kMinFlingVelocity) {
       double visualVelocity = details.velocity.pixelsPerSecond.dx /
           MediaQuery.of(context).size.width;
 
@@ -181,7 +181,7 @@ class _PetugasHomeScreenState extends State<PetugasHomeScreen>
 }
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +218,7 @@ class MainScreen extends StatelessWidget {
 }
 
 class SahPermohonanBtn extends StatelessWidget {
-  const SahPermohonanBtn({Key? key}) : super(key: key);
+  const SahPermohonanBtn({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -233,6 +233,7 @@ class SahPermohonanBtn extends StatelessWidget {
         child: MaterialButton(
             shape: const StadiumBorder(),
             onPressed: () => Navigator.pushNamed(context, '/semak'),
+            color: kPrimaryColor,
             child: WidgetAnimator(
               child: Text(
                 "Pengesahan Permohonan",
@@ -241,15 +242,14 @@ class SahPermohonanBtn extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: Colors.white),
               ),
-            ),
-            color: kPrimaryColor),
+            )),
       ),
     );
   }
 }
 
 class ProgramPetugasBtn extends StatelessWidget {
-  const ProgramPetugasBtn({Key? key}) : super(key: key);
+  const ProgramPetugasBtn({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -267,6 +267,7 @@ class ProgramPetugasBtn extends StatelessWidget {
               // MaterialPageRoute(builder: (context) => ProgramPetugasScreen());
               Navigator.pushNamed(context, "/program");
             },
+            color: kPrimaryColor,
             child: WidgetAnimator(
               child: Text(
                 "Sunting Program",
@@ -275,15 +276,14 @@ class ProgramPetugasBtn extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: Colors.white),
               ),
-            ),
-            color: kPrimaryColor),
+            )),
       ),
     );
   }
 }
 
 class AyahBottom extends StatelessWidget {
-  const AyahBottom({Key? key}) : super(key: key);
+  const AyahBottom({super.key});
 
   @override
   Widget build(BuildContext context) {

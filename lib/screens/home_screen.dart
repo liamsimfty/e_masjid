@@ -12,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 
   static const String routeName = '/home';
 
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   static Route route() {
     return MaterialPageRoute(
@@ -293,7 +293,7 @@ class Choice {
 }
 
 class SelectCard extends StatelessWidget {
-  const SelectCard({Key? key, required this.choice}) : super(key: key);
+  const SelectCard({super.key, required this.choice});
   final Choice choice;
 
   @override

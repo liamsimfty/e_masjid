@@ -4,7 +4,7 @@ import 'package:e_masjid/widgets/widgets.dart';
 class SahPermohonanScreen extends StatefulWidget {
   static const String routeName = '/sah_permohonan';
 
-  const SahPermohonanScreen({Key? key}) : super(key: key);
+  const SahPermohonanScreen({super.key});
 
   static Route route(){
     return MaterialPageRoute(

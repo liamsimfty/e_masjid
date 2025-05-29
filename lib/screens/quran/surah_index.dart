@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class SurahIndex extends StatefulWidget {
-  const SurahIndex({Key? key}) : super(key: key);
+  const SurahIndex({super.key});
 
   static const String routeName = '/quran';
 
@@ -188,18 +188,18 @@ class _SurahIndexState extends State<SurahIndex> {
 
   // getting data
   Future<void> _getSurahData() async {
-    SurahsList? _cacheSurahList = await _hiveBox.get('surahList');
-    if (_cacheSurahList == null || _cacheSurahList.surahs!.isEmpty) {
-      SurahsList _newSurahsList = await QuranAPI.getSurahList();
+    SurahsList? cacheSurahList = await _hiveBox.get('surahList');
+    if (cacheSurahList == null || cacheSurahList.surahs!.isEmpty) {
+      SurahsList newSurahsList = await QuranAPI.getSurahList();
       if (mounted) {
         setState(() {
-          _surahs = _newSurahsList.surahs;
+          _surahs = newSurahsList.surahs;
         });
       }
     } else {
       if (mounted) {
         setState(() {
-          _surahs = _cacheSurahList.surahs;
+          _surahs = cacheSurahList.surahs;
         });
       }
     }
@@ -215,14 +215,13 @@ class SurahInformation extends StatefulWidget {
   final String? revelationType;
 
   const SurahInformation(
-      {Key? key,
+      {super.key,
         this.arabicName,
         this.surahNumber,
         this.ayahs,
         this.englishName,
         this.englishNameTranslation,
-        this.revelationType})
-      : super(key: key);
+        this.revelationType});
 
   @override
   _SurahInformationState createState() => _SurahInformationState();

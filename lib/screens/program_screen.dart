@@ -13,7 +13,7 @@ import '../widgets/custom_navbar.dart';
 class ProgramScreen extends StatefulWidget {
   static const String routeName = '/program';
 
-  const ProgramScreen({Key? key}) : super(key: key);
+  const ProgramScreen({super.key});
 
   static Route route() {
     return MaterialPageRoute(

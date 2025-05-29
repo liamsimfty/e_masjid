@@ -7,7 +7,7 @@ import '../../services/firestore_service.dart';
 import 'package:e_masjid/widgets/widgets.dart';
 
 class MohonNikahScreen extends StatefulWidget {
-  const MohonNikahScreen({Key? key}) : super(key: key);
+  const MohonNikahScreen({super.key});
   static const String routeName = '/nikah';
 
   static Route route() {
@@ -247,15 +247,15 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  child: Text(
-                                    getTarikh(),
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
                                   onPressed: () {
                                     pickDate(context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: kPrimaryColor),
+                                  child: Text(
+                                    getTarikh(),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ],
@@ -290,15 +290,15 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  child: Text(
-                                    getMasa(),
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
                                   onPressed: () {
                                     pickTime(context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: kPrimaryColor),
+                                  child: Text(
+                                    getMasa(),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ],

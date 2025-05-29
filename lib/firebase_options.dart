@@ -64,6 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '231218713009',
     projectId: 'e-masjid-61430',
     storageBucket: 'e-masjid-61430.firebasestorage.app',
+    androidClientId: '231218713009-7g35hrgrdpcs6b7vb69aiiqoegriocns.apps.googleusercontent.com',
+    iosClientId: '231218713009-eod1qs6da11cl3lst8ugs3qhrm4o415i.apps.googleusercontent.com',
     iosBundleId: 'com.example.eMasjid',
   );
 
@@ -73,6 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '231218713009',
     projectId: 'e-masjid-61430',
     storageBucket: 'e-masjid-61430.firebasestorage.app',
+    androidClientId: '231218713009-7g35hrgrdpcs6b7vb69aiiqoegriocns.apps.googleusercontent.com',
+    iosClientId: '231218713009-eod1qs6da11cl3lst8ugs3qhrm4o415i.apps.googleusercontent.com',
     iosBundleId: 'com.example.eMasjid',
   );
 
@@ -85,4 +89,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'e-masjid-61430.firebasestorage.app',
     measurementId: 'G-P5BWKB8WXD',
   );
+
 }

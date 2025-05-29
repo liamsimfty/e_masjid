@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../config/constants.dart';
 
 class AddProgramScreen extends StatefulWidget {
-  const AddProgramScreen({Key? key}) : super(key: key);
+  const AddProgramScreen({super.key});
 
   @override
   State<AddProgramScreen> createState() => _AddProgramScreenState();
@@ -14,8 +14,8 @@ class AddProgramScreen extends StatefulWidget {
 class _AddProgramScreenState extends State<AddProgramScreen> {
   FireStoreService fireStoreService = FireStoreService();
   DateTime date = DateTime.now();
-  TimeOfDay time = TimeOfDay.now();
-  TimeOfDay time2 = TimeOfDay.now();
+  TimeOfDay? time;
+  TimeOfDay? time2;
   String timeString = '';
   String timeString2 = '';
 
@@ -23,8 +23,10 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
   bool pickedTime = false;
   bool pickedTime2 = false;
 
-  DateTimeRange dateRange =
-  DateTimeRange(start: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day), end: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+  DateTimeRange dateRange = DateTimeRange(
+    start: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day), 
+    end: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+  );
 
   final titleController = TextEditingController();
   final descController = TextEditingController();
@@ -32,24 +34,21 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
   final lastDateController = TextEditingController();
 
   String getMasaMula() {
-    if (pickedTime != true) {
+    if (!pickedTime || time == null) {
       return 'Pilih Masa Mula';
     } else {
-
-      final hours = time.hour.toString().padLeft(2, '0');
-      final minutes = time.minute.toString().padLeft(2, '0');
+      final hours = time!.hour.toString().padLeft(2, '0');
+      final minutes = time!.minute.toString().padLeft(2, '0');
       return '$hours:$minutes';
-
-
     }
   }
 
   String getMasaTamat() {
-    if (pickedTime2 != true) {
+    if (!pickedTime2 || time2 == null) {
       return 'Pilih Masa Tamat';
     } else {
-      final hours2 = time2.hour.toString().padLeft(2, '0');
-      final minutes2 = time2.minute.toString().padLeft(2, '0');
+      final hours2 = time2!.hour.toString().padLeft(2, '0');
+      final minutes2 = time2!.minute.toString().padLeft(2, '0');
       return '$hours2:$minutes2';
     }
   }
@@ -89,7 +88,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
               'Tambah Program',
               style: TextStyle(
                 color: kPrimaryColor,
-                fontWeight: FontWeight.bold ,
+                fontWeight: FontWeight.bold,
                 fontSize: 20.0,
               ),
             ),
@@ -99,7 +98,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding: const EdgeInsets.only(right:10.0 , left: 10.0, bottom: 10.0),
+              padding: const EdgeInsets.only(right: 10.0, left: 10.0, bottom: 10.0),
               child: Container(
                 margin: EdgeInsets.all(20.w),
                 width: double.infinity,
@@ -110,7 +109,6 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
@@ -126,9 +124,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                   Icons.lightbulb_rounded,
                                   color: Colors.yellow,
                                 ),
-                                SizedBox(
-                                  width: 10.w,
-                                ),
+                                SizedBox(width: 10.w),
                                 Text(
                                   'Tajuk',
                                   style: TextStyle(
@@ -145,8 +141,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             autofocus: false,
                             cursorColor: kZambeziColor,
                             keyboardType: TextInputType.name,
-                            autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (value) {
                               RegExp regex = RegExp(r'^.{5,}$');
                               if (value!.isEmpty) {
@@ -162,8 +157,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             },
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
-                              contentPadding:
-                              const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                              contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                               labelText: 'Nama',
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
@@ -178,9 +172,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                 Icons.edit_note_outlined,
                                 color: Colors.teal,
                               ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
+                              SizedBox(width: 10.w),
                               Text(
                                 'Huraian',
                                 style: TextStyle(
@@ -188,7 +180,6 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black54),
                               ),
-
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -198,8 +189,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             autofocus: false,
                             cursorColor: Colors.white,
                             keyboardType: TextInputType.name,
-                            autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (value) {
                               RegExp regex = RegExp(r'^.{5,}$');
                               if (value!.isEmpty) {
@@ -215,8 +205,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             },
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
-                              contentPadding:
-                              const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                              contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                               labelText: 'Cth : Gotong Royong anjuran Masjid..',
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
@@ -231,9 +220,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                 Icons.calendar_month,
                                 color: Colors.orange,
                               ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
+                              SizedBox(width: 10.w),
                               Text(
                                 'Tarikh',
                                 style: TextStyle(
@@ -241,9 +228,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black54),
                               ),
-                              SizedBox(
-                                width: 5.w,
-                              ),
+                              SizedBox(width: 5.w),
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -259,26 +244,20 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                   autofocus: false,
                                   cursorColor: Colors.white,
                                   keyboardType: TextInputType.name,
-                                  autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
                                   onSaved: (value) {
                                     startDateController.text = value!;
                                   },
                                   textInputAction: TextInputAction.next,
                                   decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.fromLTRB(
-                                        20, 15, 20, 15),
-                                    labelText:
-                                    '${start.year}/${start.month}/${start.day}',
+                                    contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                    labelText: '${start.year}/${start.month}/${start.day}',
                                     border: OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(10)),
+                                        borderRadius: BorderRadius.circular(10)),
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 12,
-                              ),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: TextFormField(
                                   enabled: false,
@@ -286,44 +265,34 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                   autofocus: false,
                                   cursorColor: Colors.white,
                                   keyboardType: TextInputType.name,
-                                  autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
                                   onSaved: (value) {
                                     lastDateController.text = value!;
                                   },
                                   textInputAction: TextInputAction.next,
                                   decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.fromLTRB(
-                                        20, 15, 20, 15),
-                                    labelText:
-                                    '${end.year}/${end.month}/${end.day}',
+                                    contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                    labelText: '${end.year}/${end.month}/${end.day}',
                                     border: OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(10)),
+                                        borderRadius: BorderRadius.circular(10)),
                                   ),
                                 ),
                               )
                             ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                   child: ElevatedButton(
-                                    child: const Text('Pilih Tarikh', style: TextStyle(color: Colors.white),),
-                                    onPressed: pickDateRange,
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: kPrimaryColor),
-                                  )),
-
+                                onPressed: pickDateRange,
+                                style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
+                                child: const Text('Pilih Tarikh', style: TextStyle(color: Colors.white)),
+                              )),
                             ],
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
+                          const SizedBox(height: 15),
 
                           // Masa mula
                           Row(
@@ -332,9 +301,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                 Icons.query_builder_rounded,
                                 color: Colors.pink,
                               ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
+                              SizedBox(width: 10.w),
                               Text(
                                 'Masa Mula',
                                 style: TextStyle(
@@ -342,15 +309,11 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black54),
                               ),
-                              SizedBox(
-                                width: 5.w,
-                              ),
+                              SizedBox(width: 5.w),
                             ],
                           ),
 
-                          const SizedBox(
-                            height: 5,
-                          ),
+                          const SizedBox(height: 5),
 
                           //button masa mula
                           Row(
@@ -358,22 +321,19 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
+                                  onPressed: () {
+                                    pickTimeMula(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
                                   child: Text(
                                     getMasaMula(),
                                     style: const TextStyle(color: Colors.white),
                                   ),
-                                  onPressed: () {
-                                    pickTimeMula(context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: kPrimaryColor),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
+                          const SizedBox(height: 15),
 
                           // Masa Tamat
                           Row(
@@ -382,9 +342,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                 Icons.query_builder_rounded,
                                 color: Colors.lightGreen,
                               ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
+                              SizedBox(width: 10.w),
                               Text(
                                 'Masa Tamat',
                                 style: TextStyle(
@@ -392,15 +350,11 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black54),
                               ),
-                              SizedBox(
-                                width: 5.w,
-                              ),
+                              SizedBox(width: 5.w),
                             ],
                           ),
 
-                          const SizedBox(
-                            height: 5,
-                          ),
+                          const SizedBox(height: 5),
 
                           //button masa tamat
                           Row(
@@ -408,27 +362,23 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
+                                  onPressed: () {
+                                    pickTimeTamat(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
                                   child: Text(
                                     getMasaTamat(),
                                     style: const TextStyle(color: Colors.white),
                                   ),
-                                  onPressed: () {
-                                    pickTimeTamat(context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: kPrimaryColor),
                                 ),
                               ),
                             ],
                           ),
 
-                          const SizedBox(
-                            height: 15,
-                          ),
+                          const SizedBox(height: 15),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-
                               Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -443,14 +393,11 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                         "Tambah",
                                         style: TextStyle(color: Colors.white),
                                       )
-
                                     ],
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
+                              SizedBox(width: 10.w),
                               Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -465,14 +412,10 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                         "Batal",
                                         style: TextStyle(color: Colors.white),
                                       )
-
-
-
                                     ],
                                   ),
                                 ),
                               ),
-
                             ],
                           )
                         ],
@@ -485,20 +428,68 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
           ),
         )
       ]),
-      // bottomNavigationBar: CustomNavBar(),
     );
   }
 
   void AddProgram() async {
-    EasyLoading.show(status: 'sedang diproses...');
+    // Validate required fields first
+    if (titleController.text.trim().isEmpty) {
+      EasyLoading.showError('Sila isi tajuk program');
+      return;
+    }
 
-    await fireStoreService.uploadProgramData(titleController.text,
-        descController.text, dateRange.start, dateRange.end, timeString, timeString2);
+    if (descController.text.trim().isEmpty) {
+      EasyLoading.showError('Sila isi huraian program');
+      return;
+    }
 
-    EasyLoading.showSuccess('Program berjaya ditambah');
-    Navigator.of(context).popAndPushNamed('/program');
+    if (!pickedTime || time == null) {
+      EasyLoading.showError('Sila pilih masa mula');
+      return;
+    }
 
-    setState(() {});
+    if (!pickedTime2 || time2 == null) {
+      EasyLoading.showError('Sila pilih masa tamat');
+      return;
+    }
+
+    try {
+      EasyLoading.show(status: 'sedang diproses...');
+
+      // Get proper time strings
+      final masaMula = getMasaMula();
+      final masaTamat = getMasaTamat();
+
+      print("Adding program with data:");
+      print("Title: ${titleController.text}");
+      print("Description: ${descController.text}");
+      print("Start Date: ${dateRange.start}");
+      print("End Date: ${dateRange.end}");
+      print("Start Time: $masaMula");
+      print("End Time: $masaTamat");
+
+      await fireStoreService.uploadProgramData(
+        titleController.text.trim(),
+        descController.text.trim(),
+        dateRange.start,
+        dateRange.end,
+        masaMula,
+        masaTamat
+      );
+
+      EasyLoading.dismiss();
+      EasyLoading.showSuccess('Program berjaya ditambah');
+      
+      // Navigate back or to program list
+      Navigator.of(context).pop();
+      // If you want to navigate to program list instead:
+      // Navigator.of(context).pushReplacementNamed('/program');
+
+    } catch (e) {
+      EasyLoading.dismiss();
+      EasyLoading.showError('Ralat: ${e.toString()}');
+      print("Error adding program: $e");
+    }
   }
 
   Future pickDateRange() async {
@@ -509,7 +500,6 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
       lastDate: DateTime(2100),
     );
 
-    //press cancel x
     if (newDateRange == null) return;
 
     setState(() => dateRange = newDateRange);
@@ -522,22 +512,30 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
 
     if (newTime == null) return;
 
-    pickedTime = true;
-
-    setState(() => time = newTime);
-    timeString = time.format(context);
+    setState(() {
+      time = newTime;
+      pickedTime = true;
+      // Update timeString for consistency
+      final hours = time!.hour.toString().padLeft(2, '0');
+      final minutes = time!.minute.toString().padLeft(2, '0');
+      timeString = '$hours:$minutes';
+    });
   }
 
   Future pickTimeTamat(BuildContext context) async {
-    const initialTime = TimeOfDay(hour: 9, minute: 0);
+    const initialTime = TimeOfDay(hour: 17, minute: 0);
     final newTime2 = await showTimePicker(
         context: context, initialTime: time2 ?? initialTime);
 
     if (newTime2 == null) return;
 
-    pickedTime2 = true;
-
-    setState(() => time2 = newTime2);
-    timeString2 = time2.format(context);
+    setState(() {
+      time2 = newTime2;
+      pickedTime2 = true;
+      // Update timeString2 for consistency
+      final hours2 = time2!.hour.toString().padLeft(2, '0');
+      final minutes2 = time2!.minute.toString().padLeft(2, '0');
+      timeString2 = '$hours2:$minutes2';
+    });
   }
 }

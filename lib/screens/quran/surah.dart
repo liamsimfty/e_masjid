@@ -9,12 +9,11 @@ class SurahAyats extends StatelessWidget {
   final String? englishMeaning;
 
   const SurahAyats(
-      {Key? key,
+      {super.key,
       this.ayatsList,
       this.englishMeaning,
       this.surahEnglishName,
-      this.surahName})
-      : super(key: key);
+      this.surahName});
 
   @override
   Widget build(BuildContext context) {

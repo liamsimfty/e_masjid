@@ -11,9 +11,9 @@ class SemakBalas extends StatefulWidget {
   final String id;
 
   const SemakBalas({
-    Key? key,
+    super.key,
     required this.id,
-  }) : super(key: key);
+  });
 
   @override
   State<SemakBalas> createState() => _SemakBalasState();

@@ -1,13 +1,66 @@
-
 import 'package:flutter/material.dart';
 import 'package:e_masjid/screens/screens.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/widgets/login_form.dart';
 import 'package:e_masjid/providers/user.provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _isLoading = false;
+
+  Future<void> _handleLogin() async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sila masukkan emel dan kata laluan'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await AppUser.instance.signIn(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      if (mounted) {
+        // Navigate to home screen and remove all previous routes
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,16 +111,17 @@ class LoginScreen extends StatelessWidget {
               ),
               const LogInForm(),
 
-
               const SizedBox(
                 height: 10,
               ),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ForgotPassword()));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ForgotPassword(),
+                    ),
+                  );
                 },
                 child: const Center(
                   child: Text(
@@ -78,39 +132,34 @@ class LoginScreen extends StatelessWidget {
                       decorationThickness: 1,
                     ),
                   ),
-
                 ),
               ),
               const SizedBox(
                 height: 20,
               ),
 
-
               GestureDetector(
-                onTap: () async {
-                    AppUser.instance.signIn(
-                        email: emailController.text,
-                        password: passwordController.text);
-
-                },
+                onTap: _isLoading ? null : _handleLogin,
                 child: Container(
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.height * 0.08,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: kPrimaryColor),
-                  child: Text(
-                    'Log Masuk',
-                    style: textButton.copyWith(color: kWhiteColor),
+                    borderRadius: BorderRadius.circular(16),
+                    color: _isLoading ? Colors.grey : kPrimaryColor,
                   ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          'Log Masuk',
+                          style: textButton.copyWith(color: kWhiteColor),
+                        ),
                 ),
               ),
 
               const SizedBox(
                 height: 20,
               ),
-
             ],
           ),
         ),

@@ -23,9 +23,9 @@ class SemakDetail extends StatefulWidget {
   }
 
   const SemakDetail({
-    Key? key,
+    super.key,
     required this.data,
-  }) : super(key: key);
+  });
 
   @override
   State<SemakDetail> createState() => _SemakDetailState();

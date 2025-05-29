@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AppVersion extends StatefulWidget {
-  const AppVersion({Key? key}) : super(key: key);
+  const AppVersion({super.key});
 
   @override
   State<AppVersion> createState() => _AppVersionState();
@@ -12,10 +12,10 @@ class _AppVersionState extends State<AppVersion> {
   String _version = "";
 
   void _getAppVersion() async {
-    PackageInfo _packageInfo = await PackageInfo.fromPlatform();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
     if (mounted) {
       setState(() {
-        _version = _packageInfo.version;
+        _version = packageInfo.version;
       });
     }
   }

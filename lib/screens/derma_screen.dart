@@ -4,7 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class DermaScreen extends StatefulWidget {
   static const String routeName = '/derma';
-  const DermaScreen({Key? key}) : super(key: key);
+  const DermaScreen({super.key});
 
   static Route route() {
     return MaterialPageRoute(

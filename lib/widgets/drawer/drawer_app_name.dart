@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/user.provider.dart';
 
 class DrawerAppName extends StatelessWidget {
-  const DrawerAppName({Key? key}) : super(key: key);
+  const DrawerAppName({super.key});
 
   @override
   Widget build(BuildContext context) {

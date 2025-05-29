@@ -7,7 +7,7 @@ import '../../providers/user.provider.dart';
 import '../../services/firestore_service.dart';
 
 class TempahQurbanScreen extends StatefulWidget {
-  const TempahQurbanScreen({Key? key}) : super(key: key);
+  const TempahQurbanScreen({super.key});
   static const String routeName = '/qurban';
 
   static Route route() {

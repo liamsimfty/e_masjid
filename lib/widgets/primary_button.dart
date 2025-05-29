@@ -4,7 +4,7 @@ import 'package:e_masjid/config/constants.dart';
 class PrimaryButton extends StatelessWidget {
   final String buttonText;
 
-  const PrimaryButton({Key? key, required this.buttonText}) : super(key: key);
+  const PrimaryButton({super.key, required this.buttonText});
 
   @override
   Widget build(BuildContext context) {

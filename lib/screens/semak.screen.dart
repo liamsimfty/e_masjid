@@ -9,7 +9,7 @@ import '../widgets/custom_navbar.dart';
 class SemakStatusScreen extends StatefulWidget {
   static const String routeName = '/semak';
 
-  const SemakStatusScreen({Key? key}) : super(key: key);
+  const SemakStatusScreen({super.key});
 
   static Route route() {
     return MaterialPageRoute(

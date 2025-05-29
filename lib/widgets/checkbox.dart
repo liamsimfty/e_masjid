@@ -3,7 +3,7 @@ import 'package:e_masjid/config/constants.dart';
 
 class CheckBox extends StatefulWidget {
   final String text;
-  const CheckBox(this.text, {Key? key}) : super(key: key);
+  const CheckBox(this.text, {super.key});
   @override
   _CheckBoxState createState() => _CheckBoxState();
 }

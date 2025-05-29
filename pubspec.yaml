@@ -15,9 +15,9 @@ dependencies:
   cupertino_icons: ^1.0.6
 
   # Firebase (gunakan versi stabil dan terbaru)
-  firebase_auth: ^4.16.0
-  firebase_core: ^2.25.4
-  cloud_firestore: ^4.15.0
+  firebase_auth: ^5.5.4
+  firebase_core: ^3.13.1
+  cloud_firestore: ^5.6.8
   google_sign_in: ^6.1.6
 
   # State Management
@@ -28,22 +28,22 @@ dependencies:
   bubble_bottom_bar: ^2.0.0
 
   webview_flutter: ^4.2.3
-  flutter_widget_from_html: ^0.14.7
+  flutter_widget_from_html: ^0.16.0
   html: ^0.15.4
   http_auth: ^1.0.4
   get: ^4.6.6
-  email_validator: ^2.1.17
+  email_validator: ^3.0.0
   flutter_easyloading: ^3.0.5
   shimmer: ^3.0.0
-  intl: ^0.18.1
+  intl: ^0.20.2
   flutter_datetime_picker: ^1.5.1
 
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   shared_preferences: ^2.2.2
 
-  http: ^0.13.6
-  package_info_plus: ^4.2.0
+  http: ^1.4.0
+  package_info_plus: ^8.3.0
 
 dependency_overrides:
   file: ^7.0.0
@@ -57,7 +57,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

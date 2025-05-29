@@ -7,7 +7,7 @@ final TextEditingController passwordController = TextEditingController();
 final TextEditingController nameController = TextEditingController();
 
 class SignUpForm extends StatefulWidget {
-  const SignUpForm({Key? key}) : super(key: key);
+  const SignUpForm({super.key});
 
   @override
   _SignUpFormState createState() => _SignUpFormState();

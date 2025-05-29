@@ -3,8 +3,8 @@ import 'package:e_masjid/config/constants.dart';
 
 class CustomNavBar extends StatefulWidget {
   const CustomNavBar({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CustomNavBar> createState() => _CustomNavBarState();

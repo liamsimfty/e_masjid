@@ -13,7 +13,7 @@ class Flare extends StatelessWidget {
   final Duration? flareDuration;
 
   const Flare(
-      {Key? key,
+      {super.key,
       this.bottom,
       this.height,
       this.width,
@@ -22,8 +22,7 @@ class Flare extends StatelessWidget {
       this.color,
       this.left,
       this.right,
-      this.offset})
-      : super(key: key);
+      this.offset});
   @override
   Widget build(BuildContext context) {
     return Positioned(
