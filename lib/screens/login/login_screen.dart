@@ -434,11 +434,3 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 }
 
-// Add this to your constants.dart or define it where kPrimaryColor is
-// const Color kInputTextColor = Color(0xFF333333); // Example dark grey for input text
-// const Color kPrimaryColor = Color(0xFF00796B); // Example: Teal
-// const Color kZambeziColor = Color(0xFF585858); // Example
-// const Color kWhiteColor = Colors.white;
-// final TextStyle subTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kZambeziColor);
-// final TextStyle textButton = TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: kPrimaryColor);
-// const EdgeInsets kDefaultPadding = EdgeInsets.all(20.0);

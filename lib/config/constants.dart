@@ -7,15 +7,23 @@ ThemeData theme(){
     textTheme: textTheme(),
   );
 }
-const kPrimaryColor = Color(0xFF3871c1);
+// const kPrimaryColor = Color(0xFF3871c1);
 const kSecondaryColor = Color(0xFF59706F);
 const kDarkGreyColor = Color(0xFFEEEEEE);
-const kWhiteColor = Color(0xFFFFFFFF);
-const kZambeziColor = Color(0xFF5B5B5B);
+// const kWhiteColor = Color(0xFFFFFFFF);
+// const kZambeziColor = Color(0xFF5B5B5B);
 const kBlackColor = Color(0xFF272726);
 const kTextFieldColor = Color(0xFF979797);
+const kDrawerBackgroundColor = Color(0xFFF5F5F5); // A light grey for drawer
+// const Color kInputTextColor = Color(0xFF333333); // Example dark grey for input text
+const Color kPrimaryColor = Color(0xFF00796B); // Example: Teal
+const Color kZambeziColor = Color(0xFF585858); // Example
+const Color kWhiteColor = Colors.white;
+final TextStyle subTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kZambeziColor);
+final TextStyle textButton = TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: kPrimaryColor);
+const EdgeInsets kDefaultPadding = EdgeInsets.all(20.0);
 
-const kDefaultPadding = EdgeInsets.symmetric(horizontal: 30);
+// const kDefaultPadding = EdgeInsets.symmetric(horizontal: 30);
 
 TextStyle titleText = const TextStyle(
   color: Colors.white,
@@ -26,14 +34,14 @@ TextStyle titleText = const TextStyle(
 );
 // fontWeight: FontWeight.w200);
 
-TextStyle subTitle = const TextStyle(
-    color: kSecondaryColor, fontSize: 18, fontWeight: FontWeight.w500);
+// TextStyle subTitle = const TextStyle(
+//     color: kSecondaryColor, fontSize: 18, fontWeight: FontWeight.w500);
 
-TextStyle textButton = const TextStyle(
-  color: kPrimaryColor,
-  fontSize: 18,
-  fontWeight: FontWeight.w700,
-);
+// TextStyle textButton = const TextStyle(
+//   color: kPrimaryColor,
+//   fontSize: 18,
+//   fontWeight: FontWeight.w700,
+// );
 
 
 
