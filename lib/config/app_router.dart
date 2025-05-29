@@ -9,11 +9,17 @@ class AppRouter {
 
     switch (settings.name) {
       //user
-      case HomeScreen.routeName:
-        return HomeScreen.route();
-      case DermaScreen.routeName:
-        return DermaScreen.route();
-      case TanyaImamScreen.routeName:
+      case '/home':
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const HomeScreen(),
+        );
+      case '/derma':
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const DermaScreen(),
+        );
+      case '/tanya-imam':
         return TanyaImamScreen.route();
       case MohonNikahScreen.routeName:
         return MohonNikahScreen.route();

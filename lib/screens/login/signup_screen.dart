@@ -3,177 +3,472 @@ import 'package:flutter/material.dart';
 import 'package:e_masjid/screens/screens.dart';
 import 'package:e_masjid/providers/user.provider.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:provider/provider.dart';
-import 'package:e_masjid/widgets/signup_form.dart';
+// import 'package:provider/provider.dart'; // Not explicitly used in this version's logic beyond AppUser.instance
+// import 'package:e_masjid/widgets/signup_form.dart'; // We'll create a placeholder
 import 'package:e_masjid/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../widgets/loading-indicator.dart'; // Assuming this is your custom loading dialog
 
-import '../../widgets/loading-indicator.dart';
+// --- Placeholder for SignUpFormWidget ---
+// Replace this with your actual SignUpForm and pass the controllers
+class SignUpFormWidget extends StatelessWidget {
+  final TextEditingController nameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
 
-class SignUpScreen extends StatelessWidget {
-  String role = "kariah";
-
-  AppUser appUser = AppUser();
-  FireStoreService fireStoreService = FireStoreService();
-
-  SignUpScreen({super.key});
+  const SignUpFormWidget({
+    super.key,
+    required this.nameController,
+    required this.emailController,
+    required this.passwordController,
+    required this.confirmPasswordController,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final appUser = Provider.of<AppUser>(context);
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 70),
-            Padding(
-              padding: kDefaultPadding,
-              child: Text('Cipta Akaun', style: titleText),
-            ),
-            const SizedBox(height: 5),
-            Padding(
-              padding: kDefaultPadding,
-              child: Row(
-                children: [
-                  Text('Sudah menjadi ahli?', style: subTitle),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()));
-                    },
-                    child: Text(
-                      'Log Masuk',
-                      style: textButton.copyWith(
-                        decoration: TextDecoration.underline,
-                        decorationThickness: 1,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Padding(
-              padding: kDefaultPadding,
-              child: SignUpForm(),
-            ),
-            const SizedBox(height: 40),
-            Padding(
-              padding: kDefaultPadding,
-              child: GestureDetector(
-                onTap: () async {
-                  print("Signup button pressed"); // Debug log
-                  
-                  try {
-                    // Validate input fields
-                    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-                      EasyLoading.showInfo("Sila isi maklumat pendaftaran pengguna");
-                      return;
-                    }
+    return Column(
+      children: <Widget>[
+        // Name Field
+        TextFormField(
+          controller: nameController,
+          keyboardType: TextInputType.name,
+          style: const TextStyle(color: kInputTextColor),
+          decoration: _inputDecoration(
+            hintText: 'Nama Penuh',
+            icon: Icons.person_outline,
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Sila masukkan nama anda';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 20),
+        // Email Field
+        TextFormField(
+          controller: emailController,
+          keyboardType: TextInputType.emailAddress,
+          style: const TextStyle(color: kInputTextColor),
+          decoration: _inputDecoration(
+            hintText: 'Emel',
+            icon: Icons.email_outlined,
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Sila masukkan emel anda';
+            }
+            if (!value.contains('@') || !value.contains('.')) {
+              return 'Format emel tidak sah';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 20),
+        // Password Field
+        TextFormField(
+          controller: passwordController,
+          obscureText: true,
+          style: const TextStyle(color: kInputTextColor),
+          decoration: _inputDecoration(
+            hintText: 'Kata Laluan',
+            icon: Icons.lock_outline,
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Sila masukkan kata laluan';
+            }
+            if (value.length < 6) {
+              return 'Kata laluan mesti sekurang-kurangnya 6 aksara';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 20),
+        // Confirm Password Field
+        TextFormField(
+          controller: confirmPasswordController,
+          obscureText: true,
+          style: const TextStyle(color: kInputTextColor),
+          decoration: _inputDecoration(
+            hintText: 'Sahkan Kata Laluan',
+            icon: Icons.lock_outline,
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Sila sahkan kata laluan';
+            }
+            if (value != passwordController.text) {
+              return 'Kata laluan tidak sepadan';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
 
-                    if (nameController.text.isEmpty) {
-                      EasyLoading.showInfo("Sila isi nama pengguna");
-                      return;
-                    }
+  InputDecoration _inputDecoration(
+      {required String hintText, required IconData icon}) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: TextStyle(color: Colors.grey.shade500),
+      prefixIcon: Icon(icon, color: kPrimaryColor.withOpacity(0.7)),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.9), // Slightly transparent white
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        borderSide: BorderSide(color: kPrimaryColor, width: 1.5),
+      ),
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 13),
+    );
+  }
+}
+// --- End of Placeholder SignUpFormWidget ---
 
-                    print("Input validation passed"); // Debug log
-                    print("Email: ${emailController.text}"); // Debug log
-                    print("Name: ${nameController.text}"); // Debug log
-                    
-                    LoadingIndicator.showLoadingDialog(context);
+class SignUpScreen extends StatefulWidget {
+  static const String routeName = '/signup';
+  const SignUpScreen({super.key});
 
-                    // Step 1: Create Firebase Auth user
-                    print("Creating Firebase Auth user..."); // Debug log
-                    await AppUser.instance.signUp(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    print("Firebase Auth user created successfully"); // Debug log
-                    print("User UID: ${AppUser.instance.user!.uid}"); // Debug log
+  static Route route() {
+    return PageRouteBuilder(
+      settings: const RouteSettings(name: routeName),
+      pageBuilder: (context, animation, secondaryAnimation) => const SignUpScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  }
 
-                    // Step 2: Create Firestore user data with proper error handling
-                    try {
-                      print("Creating Firestore user data..."); // Debug log
-                      await fireStoreService.createUserData(
-                        nameController.text,
-                        AppUser.instance.user!.uid,
-                        emailController.text,
-                        role,
-                      );
-                      print("Firestore user data created successfully"); // Debug log
-                      
-                      // Both operations succeeded
-                      Navigator.pop(context); // loading dialog
-                      Navigator.pop(context); // back to previous screen
-                      EasyLoading.showSuccess('Pengguna berjaya dicipta');
-                      
-                    } catch (firestoreError) {
-                      print("Firestore error occurred: ${firestoreError.toString()}"); // Debug log
-                      
-                      // Firestore failed but Auth succeeded - clean up the Auth user
-                      try {
-                        print("Cleaning up Firebase Auth user..."); // Debug log
-                        await AppUser.instance.user?.delete();
-                        await FirebaseAuth.instance.signOut();
-                        print("Firebase Auth user cleaned up"); // Debug log
-                      } catch (deleteError) {
-                        print("Error cleaning up auth user: $deleteError");
-                      }
-                      
-                      Navigator.pop(context); // dismiss loading dialog
-                      EasyLoading.showError("Gagal menyimpan data pengguna: ${firestoreError.toString()}");
-                    }
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
 
-                  } on FirebaseAuthException catch (e) {
-                    print("FirebaseAuthException: ${e.code} - ${e.message}"); // Debug log
-                    Navigator.pop(context); // dismiss loading dialog
-                    
-                    String message;
-                    switch (e.code) {
-                      case 'email-already-in-use':
-                        message = "Emel telah digunakan. Sila guna emel lain.";
-                        break;
-                      case 'invalid-email':
-                        message = "Format emel tidak sah.";
-                        break;
-                      case 'weak-password':
-                        message = "Katalaluan terlalu lemah.";
-                        break;
-                      default:
-                        message = "Ralat: ${e.message}";
-                    }
-                    EasyLoading.showError(message);
-                    
-                  } catch (e) {
-                    print("General error: ${e.toString()}"); // Debug log
-                    Navigator.pop(context); // dismiss loading dialog
-                    EasyLoading.showError("Ralat tidak dijangka: ${e.toString()}");
-                  }
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: kPrimaryColor),
-                  child: Text(
-                    'Daftar',
-                    style: textButton.copyWith(color: kWhiteColor),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Padding(padding: kDefaultPadding),
-            const SizedBox(height: 20),
+class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderStateMixin {
+  final String _role = "kariah"; // Default role
+
+  final FireStoreService _fireStoreService = FireStoreService();
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSignUp() async {
+    if (!_formKey.currentState!.validate()) {
+      EasyLoading.showInfo("Sila perbetulkan ralat pada borang.");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+    LoadingIndicator.showLoadingDialog(context); // Show custom full-screen loading
+
+    try {
+      // Step 1: Create Firebase Auth user
+      await AppUser.instance.signUp(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Step 2: Create Firestore user data
+      try {
+        await _fireStoreService.createUserData(
+          nameController.text.trim(),
+          AppUser.instance.user!.uid,
+          emailController.text.trim(),
+          _role,
+        );
+
+        // Both operations succeeded
+        if (mounted) Navigator.pop(context); // Dismiss loading dialog
+        EasyLoading.showSuccess('Pengguna berjaya dicipta!');
+        if (mounted) {
+          // Navigate to login or home, and clear controllers
+          nameController.clear();
+          emailController.clear();
+          passwordController.clear();
+          confirmPasswordController.clear();
+          Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+        }
+      } catch (firestoreError) {
+        // Firestore failed, roll back Auth user
+        try {
+          await AppUser.instance.user?.delete();
+          await FirebaseAuth.instance.signOut(); // Sign out any lingering session
+        } catch (deleteError) {
+          print("Error cleaning up auth user: $deleteError");
+          // Log this, but the primary error is Firestore
+        }
+        if (mounted) Navigator.pop(context); // Dismiss loading dialog
+        EasyLoading.showError(
+            "Gagal menyimpan data pengguna: ${firestoreError.toString().substring(0, (firestoreError.toString().length > 100 ? 100 : firestoreError.toString().length))}"); // Truncate long errors
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) Navigator.pop(context); // Dismiss loading dialog
+      String message;
+      switch (e.code) {
+        case 'email-already-in-use':
+          message = "Emel telah digunakan. Sila guna emel lain.";
+          break;
+        case 'invalid-email':
+          message = "Format emel tidak sah.";
+          break;
+        case 'weak-password':
+          message = "Kata laluan terlalu lemah.";
+          break;
+        default:
+          message = "Ralat Pendaftaran: ${e.message ?? e.code}";
+      }
+      EasyLoading.showError(message);
+    } catch (e) {
+      if (mounted) Navigator.pop(context); // Dismiss loading dialog
+      EasyLoading.showError("Ralat tidak dijangka: ${e.toString().substring(0, (e.toString().length > 100 ? 100 : e.toString().length))}");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildGradientBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            kPrimaryColor.withOpacity(0.8),
+            kPrimaryColor,
+            kPrimaryColor.withOpacity(0.7),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildDecorativeCircles() {
+    return Stack(
+      children: [
+        Positioned(
+          top: -MediaQuery.of(context).size.height * 0.05,
+          left: -MediaQuery.of(context).size.width * 0.15,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.4,
+            height: MediaQuery.of(context).size.width * 0.4,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: -MediaQuery.of(context).size.height * 0.1,
+          right: -MediaQuery.of(context).size.width * 0.2,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.55,
+            height: MediaQuery.of(context).size.width * 0.55,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.06),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      extendBodyBehindAppBar: true, // Allows gradient to go behind app bar
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white), // Back button color
+      ),
+      body: Stack(
+        children: [
+          _buildGradientBackground(),
+          _buildDecorativeCircles(),
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: screenHeight * 0.03),
+                      Text(
+                        'Cipta Akaun Baharu',
+                        textAlign: TextAlign.center,
+                        style: titleText.copyWith( // Use styles from constants
+                            color: Colors.white,
+                            fontSize: 28, // Adjusted size
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: screenHeight * 0.015),
+                       Text(
+                        'Sila isi maklumat di bawah.',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.85),
+                          fontSize: 16,
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.04),
+                      Container(
+                        padding: const EdgeInsets.all(25.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(20),
+                           boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 15,
+                              offset: const Offset(0,5),
+                            )
+                           ]
+                        ),
+                        child: Form(
+                          key: _formKey,
+                          child: SignUpFormWidget(
+                            nameController: nameController,
+                            emailController: emailController,
+                            passwordController: passwordController,
+                            confirmPasswordController: confirmPasswordController,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.04),
+                      GestureDetector(
+                        onTap: _isLoading ? null : _handleSignUp,
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: screenHeight * 0.07,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            gradient: _isLoading
+                                ? null
+                                : LinearGradient(
+                                    colors: [
+                                      Colors.white.withOpacity(0.95),
+                                      Colors.white.withOpacity(0.85),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                            color: _isLoading ? Colors.grey.shade400 : null,
+                            boxShadow: _isLoading ? [] : [
+                              BoxShadow(
+                                color: kPrimaryColor.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              )
+                            ]
+                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                                )
+                              : Text(
+                                  'Daftar Akaun',
+                                  style: textButton.copyWith(
+                                      color: kPrimaryColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Sudah menjadi ahli? ',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              'Log Masuk',
+                              style: textButton.copyWith(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                // decoration: TextDecoration.underline,
+                                // decorationColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.05),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+// Ensure these are defined in your config/constants.dart
+// const Color kPrimaryColor = Color(0xFF00796B); // Example
+// const Color kInputTextColor = Color(0xFF333333); // Example for text in fields
+// final TextStyle titleText = TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black87); // Example
+// final TextStyle subTitle = TextStyle(fontSize: 16, color: Colors.black54); // Example
+// final TextStyle textButton = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kPrimaryColor); // Example
+// const Color kWhiteColor = Colors.white;
+// const EdgeInsets kDefaultPadding = EdgeInsets.all(20.0);

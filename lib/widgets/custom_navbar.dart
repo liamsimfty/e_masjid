@@ -11,10 +11,6 @@ class CustomNavBar extends StatefulWidget {
 }
 
 class _CustomNavBarState extends State<CustomNavBar> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,19 +28,27 @@ class _CustomNavBarState extends State<CustomNavBar> {
         color: kWhiteColor,
         elevation: 1,
         child: SizedBox(
-          height: 80,
+          height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               //icon for home
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
+              SizedBox(
+                height: 50,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32, // Reduced from 40 to 32
+                        minHeight: 32, // Reduced from 40 to 32
+                      ),
                       icon: const Icon(
                         Icons.home,
-                        color:  Colors.teal,
+                        color: Colors.teal,
+                        size: 20, // Reduced from 22 to 20
                       ),
                       onPressed: () {
                         if (ModalRoute.of(context)?.settings.name == '/home') {
@@ -54,23 +58,35 @@ class _CustomNavBarState extends State<CustomNavBar> {
                               (_) => false);
                         }
                       }),
-                  const Text('Home',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 13.0,
-                          color: Colors.black45)),
-                ],
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2), // Small padding to prevent overflow
+                      child: Text('Home',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 10.0, // Reduced from 11.0 to 10.0
+                              color: Colors.black45)),
+                    ),
+                  ],
+                ),
               ),
 
               //icon for program
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
+              SizedBox(
+                height: 50,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32, // Reduced from 40 to 32
+                        minHeight: 32, // Reduced from 40 to 32
+                      ),
                       icon: const Icon(
                         Icons.calendar_today,
-                        color:  Colors.lightBlueAccent,
+                        color: Colors.lightBlueAccent,
+                        size: 20, // Reduced from 22 to 20
                       ),
                       onPressed: () {
                         if (ModalRoute.of(context)?.settings.name == '/program') {
@@ -79,23 +95,35 @@ class _CustomNavBarState extends State<CustomNavBar> {
                           Navigator.pushNamed(context, '/program');
                         }
                       }),
-                  const Text('Program',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 13.0,
-                          color: Colors.black45)),
-                ],
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2), // Small padding to prevent overflow
+                      child: Text('Program',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 10.0, // Reduced from 11.0 to 10.0
+                              color: Colors.black45)),
+                    ),
+                  ],
+                ),
               ),
 
               //icon for derma
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
+              SizedBox(
+                height: 50,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32, // Reduced from 40 to 32
+                        minHeight: 32, // Reduced from 40 to 32
+                      ),
                       icon: const Icon(
                         Icons.monetization_on,
-                        color:  Colors.yellow,
+                        color: Colors.yellow,
+                        size: 20, // Reduced from 22 to 20
                       ),
                       onPressed: () {
                         if (ModalRoute.of(context)?.settings.name == '/derma') {
@@ -104,18 +132,21 @@ class _CustomNavBarState extends State<CustomNavBar> {
                           Navigator.pushNamed(context, '/derma');
                         }
                       }),
-                  const Text('Derma',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 13.0,
-                          color: Colors.black45)),
-                ],
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2), // Small padding to prevent overflow
+                      child: Text('Derma',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 10.0, // Reduced from 11.0 to 10.0
+                              color: Colors.black45)),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
       ),
     );
-
   }
 }
