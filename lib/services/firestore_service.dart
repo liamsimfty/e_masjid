@@ -121,18 +121,38 @@ class FireStoreService {
   }
 
   Future<void> uploadMohonNikah(
-      String pemohon, String pasangan, DateTime date, String time, String authorId) async {
+      String pemohon,
+      String pasangan,
+      DateTime date,
+      String startTime,
+      String endTime,
+      String authorId) async {
     try {
+      // Calculate duration in hours
+      final startTime24 = DateFormat('HH:mm').parse(startTime);
+      final endTime24 = DateFormat('HH:mm').parse(endTime);
+      
+      int duration = endTime24.hour - startTime24.hour;
+      if (endTime24.minute > startTime24.minute) {
+        duration += 1;
+      }
+      
+      // Calculate price (example: RM100 per hour)
+      double price = duration * 100.0;
+
       await _firebaseFirestore.collection("nikah").doc().set({
         "pemohon": pemohon,
         "pasangan": pasangan,
         "tarikh": Timestamp.fromDate(date),
-        "masa": time,
+        "masaMula": startTime,
+        "masaTamat": endTime,
+        "tempohJam": duration,
+        "harga": price,
         "JenisTemuJanji": "Nikah",
         "isApproved": false,
         "title": "$pemohon & $pasangan",
         "description":
-            "Permohonan Nikah $pemohon & $pasangan pada tarikh : ${date.day}/${date.month}/${date.year}, jam : $time",
+            "Permohonan Nikah $pemohon & $pasangan pada tarikh : ${date.day}/${date.month}/${date.year}, dari jam : $startTime hingga $endTime",
         "balasan": "Tidak perlu balasan",
         "authorId": authorId,
         "createdAt": FieldValue.serverTimestamp(),

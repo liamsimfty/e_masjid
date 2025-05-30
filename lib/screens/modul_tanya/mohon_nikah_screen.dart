@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../providers/user.provider.dart';
 import '../../services/firestore_service.dart';
 import 'package:e_masjid/widgets/widgets.dart';
+import 'package:intl/intl.dart';
 
 class MohonNikahScreen extends StatefulWidget {
   const MohonNikahScreen({super.key});
@@ -23,32 +24,79 @@ class MohonNikahScreen extends StatefulWidget {
 
 class _MohonNikahScreenState extends State<MohonNikahScreen> {
   FireStoreService fireStoreService = FireStoreService();
-  DateTime date = DateTime.now();
-  TimeOfDay time = TimeOfDay.now();
-  String timeString = '';
+  DateTimeRange dateRange = DateTimeRange(
+    start: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+    end: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+  );
+  TimeOfDay startTime = TimeOfDay.now();
+  TimeOfDay endTime = TimeOfDay.now();
+  String startTimeString = '';
+  String endTimeString = '';
 
-  bool pickedDate = false;
-  bool pickedTime = false;
+  bool pickedDateRange = false;
+  bool pickedStartTime = false;
+  bool pickedEndTime = false;
 
   final pemohonController = TextEditingController();
   final pasanganController = TextEditingController();
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
 
-  String getTarikh() {
-    if (pickedDate != true) {
-      return 'Pilih Tarikh';
+  String formatDate = '';
+  String formatDate2 = '';
+
+  String getStartDate() {
+    if (!pickedDateRange) {
+      return 'Pilih Tarikh Mula';
     } else {
-      return '${date.month}/${date.day}/${date.year}';
+      return formatDate;
     }
   }
 
-  String getMasa() {
-    if (pickedTime != true) {
-      return 'Pilih Masa';
+  String getEndDate() {
+    if (!pickedDateRange) {
+      return 'Pilih Tarikh Tamat';
     } else {
-      final hours = time.hour.toString().padLeft(2, '0');
-      final minutes = time.minute.toString().padLeft(2, '0');
-      return '$hours:$minutes';
+      return formatDate2;
     }
+  }
+
+  String getStartTime() {
+    if (pickedStartTime != true) {
+      return 'Pilih Masa Mula';
+    } else {
+      return startTimeString;
+    }
+  }
+
+  String getEndTime() {
+    if (pickedEndTime != true) {
+      return 'Pilih Masa Tamat';
+    } else {
+      return endTimeString;
+    }
+  }
+
+  double calculatePrice() {
+    if (!pickedDateRange || !pickedStartTime || !pickedEndTime) return 0.0;
+    
+    // Calculate number of days
+    int days = dateRange.end.difference(dateRange.start).inDays + 1;
+    
+    // Calculate hours per day
+    final startTime24 = DateFormat('HH:mm').parse(startTimeString);
+    final endTime24 = DateFormat('HH:mm').parse(endTimeString);
+    
+    int hoursPerDay = endTime24.hour - startTime24.hour;
+    if (endTime24.minute > startTime24.minute) {
+      hoursPerDay += 1;
+    }
+    
+    // Calculate total hours
+    int totalHours = days * hoursPerDay;
+    
+    // RM100 per hour
+    return totalHours * 100.0;
   }
 
   @override
@@ -84,7 +132,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
               'Mohon Nikah',
               style: TextStyle(
                 color: kPrimaryColor,
-                fontWeight: FontWeight.bold ,
+                fontWeight: FontWeight.bold,
                 fontSize: 20.0,
               ),
             ),
@@ -94,7 +142,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding: const EdgeInsets.only(right:10.0 , left: 10.0, bottom: 10.0),
+              padding: const EdgeInsets.only(right: 10.0, left: 10.0, bottom: 10.0),
               child: Container(
                 margin: EdgeInsets.all(20.w),
                 width: double.infinity,
@@ -224,9 +272,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                                 Icons.calendar_month,
                                 color: Colors.teal,
                               ),
-                              SizedBox(
-                                width: 9.w,
-                              ),
+                              SizedBox(width: 9.w),
                               Text(
                                 'Tarikh',
                                 style: TextStyle(
@@ -234,12 +280,42 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black54),
                               ),
-                              SizedBox(
-                                width: 5.w,
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+
+                          // TextField Tarikh
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  enabled: false,
+                                  controller: startDateController,
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextFormField(
+                                  enabled: false,
+                                  controller: endDateController,
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 10),
 
                           //button Tarikh
                           Row(
@@ -247,13 +323,51 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
+                                  onPressed: pickDateRange,
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: kPrimaryColor),
+                                  child: const Text(
+                                    'Pilih Tarikh',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+
+                          // Masa Mula
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.timelapse,
+                                color: Colors.black,
+                              ),
+                              SizedBox(width: 9.w),
+                              Text(
+                                'Masa Mula',
+                                style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+
+                          //button masa mula
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
                                   onPressed: () {
-                                    pickDate(context);
+                                    pickStartTime(context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: kPrimaryColor),
                                   child: Text(
-                                    getTarikh(),
+                                    getStartTime(),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -261,51 +375,104 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                             ],
                           ),
                           const SizedBox(height: 15),
-                          // Masa
+
+                          // Masa Tamat
                           Row(
                             children: [
                               const Icon(
                                 Icons.timelapse,
                                 color: Colors.black,
                               ),
-                              SizedBox(
-                                width: 9.w,
-                              ),
+                              SizedBox(width: 9.w),
                               Text(
-                                'Masa',
+                                'Masa Tamat',
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black54),
                               ),
-                              SizedBox(
-                                width: 5.w,
-                              ),
                             ],
                           ),
+                          const SizedBox(height: 5),
 
-                          //button masa
+                          //button masa tamat
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    pickTime(context);
+                                    pickEndTime(context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: kPrimaryColor),
                                   child: Text(
-                                    getMasa(),
+                                    getEndTime(),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          const SizedBox(height: 15),
+
+                          // Harga
+                          if (pickedDateRange && pickedStartTime && pickedEndTime)
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Jumlah Hari:',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${dateRange.end.difference(dateRange.start).inDays + 1} hari',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Jumlah Bayaran:',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        'RM ${calculatePrice().toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -327,9 +494,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
+                              SizedBox(width: 10.w),
                               Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -368,53 +533,84 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
     try {
       EasyLoading.show(status: 'sedang diproses...');
       if (pemohonController.text.isNotEmpty &&
-          pasanganController.text.isNotEmpty) {
+          pasanganController.text.isNotEmpty &&
+          pickedDateRange &&
+          pickedStartTime &&
+          pickedEndTime) {
         await fireStoreService.uploadMohonNikah(
           pemohonController.text,
           pasanganController.text,
-          date,
-          timeString,
+          dateRange.start,
+          startTimeString,
+          endTimeString,
           AppUser().user!.uid,
         );
         EasyLoading.showSuccess('Permohonan berjaya ditambah');
         Navigator.of(context).popAndPushNamed('/semak');
         setState(() {});
       } else {
-        EasyLoading.showInfo("Sila isi maklumat nikah");
+        EasyLoading.showInfo("Sila isi semua maklumat nikah");
       }
     } catch (e) {
       EasyLoading.showError(e.toString());
     }
   }
 
-  Future pickDate(BuildContext context) async {
-    // final initialDate = DateTime.now();
-    final newDate = await showDatePicker(
-        context: context,
-        initialDate: date,
-        firstDate: DateTime(DateTime.now().year - 5),
-        lastDate: DateTime(DateTime.now().year + 5));
+  Future pickDateRange() async {
+    DateTimeRange? newDateRange = await showDateRangePicker(
+      context: context,
+      initialDateRange: dateRange,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
 
-    if (newDate == null) {
-      return;
-    } else {
-      pickedDate = true;
-    }
+    if (newDateRange == null) return;
 
-    setState(() => date = newDate);
+    setState(() {
+      dateRange = newDateRange;
+      pickedDateRange = true;
+
+      // Format start date
+      String a = dateRange.start.toString();
+      DateTime parsedDateTime1 = DateTime.parse(a);
+      formatDate = DateFormat("dd-MM-yyyy").format(parsedDateTime1);
+      startDateController.text = formatDate;
+
+      // Format end date
+      String b = dateRange.end.toString();
+      DateTime parsedDateTime2 = DateTime.parse(b);
+      formatDate2 = DateFormat("dd-MM-yyyy").format(parsedDateTime2);
+      endDateController.text = formatDate2;
+    });
   }
 
-  Future pickTime(BuildContext context) async {
-    // final initialTime = TimeOfDay(hour: 9, minute: 0);
-    final newTime = await showTimePicker(context: context, initialTime: time);
+  Future pickStartTime(BuildContext context) async {
+    final newTime = await showTimePicker(context: context, initialTime: startTime);
 
     if (newTime == null) {
       return;
     } else {
-      pickedTime = true;
+      pickedStartTime = true;
     }
 
-    setState(() => time = newTime);
-    timeString = time.format(context);
+    setState(() {
+      startTime = newTime;
+      startTimeString = startTime.format(context);
+    });
+  }
+
+  Future pickEndTime(BuildContext context) async {
+    final newTime = await showTimePicker(context: context, initialTime: endTime);
+
+    if (newTime == null) {
+      return;
+    } else {
+      pickedEndTime = true;
+    }
+
+    setState(() {
+      endTime = newTime;
+      endTimeString = endTime.format(context);
+    });
   }
 }

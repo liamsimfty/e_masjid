@@ -48,11 +48,11 @@ class LoginOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         BuildButton(
-          iconImage: Image(
+          iconImage: const Image(
             height: 20,
             width: 20,
             image: AssetImage('assets/masjid.png'),
@@ -65,7 +65,7 @@ class LoginOption extends StatelessWidget {
           },
         ),
         BuildButton(
-          iconImage: Image(
+          iconImage: const Image(
             height: 20,
             width: 20,
             image: AssetImage('assets/google.png'),

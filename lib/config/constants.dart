@@ -22,6 +22,7 @@ const Color kWhiteColor = Colors.white;
 final TextStyle subTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kZambeziColor);
 final TextStyle textButton = TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: kPrimaryColor);
 const EdgeInsets kDefaultPadding = EdgeInsets.all(20.0);
+const Color kPrimaryColorDark = Color(0xFF00796B);
 
 // const kDefaultPadding = EdgeInsets.symmetric(horizontal: 30);
 

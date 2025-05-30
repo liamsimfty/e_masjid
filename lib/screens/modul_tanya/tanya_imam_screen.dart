@@ -261,20 +261,38 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
   void addTanyaImam() async {
     try {
       EasyLoading.show(status: 'sedang diproses...');
-      if (titleController.text.isNotEmpty && descController.text.isNotEmpty) {
-        await fireStoreService.uploadTanyaData(
-            titleController.text, descController.text,AppUser().user!.uid);
-        EasyLoading.showSuccess('Pertanyaan berjaya ditambah');
-
-        Navigator.of(context).popAndPushNamed('/semak');
-
-        setState(() {});
-      }else{
+      
+      // Validate input
+      if (titleController.text.isEmpty || descController.text.isEmpty) {
         EasyLoading.showInfo("Sila isi maklumat pertanyaan");
+        return;
       }
+
+      // Validate minimum length
+      if (titleController.text.length < 5) {
+        EasyLoading.showInfo("Tajuk mesti sekurang-kurangnya 5 aksara");
+        return;
+      }
+
+      if (descController.text.length < 5) {
+        EasyLoading.showInfo("Huraian mesti sekurang-kurangnya 5 aksara");
+        return;
+      }
+
+      // Upload data
+      await fireStoreService.uploadTanyaData(
+        titleController.text, 
+        descController.text,
+        AppUser().user!.uid
+      );
+
+      EasyLoading.showSuccess('Pertanyaan berjaya ditambah');
+      Navigator.of(context).popAndPushNamed('/semak');
 
     } catch (e) {
       EasyLoading.dismiss();
+      EasyLoading.showError('Ralat: ${e.toString()}');
+      print('Error in addTanyaImam: $e');
     }
   }
 }

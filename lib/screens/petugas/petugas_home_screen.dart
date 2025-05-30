@@ -148,18 +148,6 @@ class _PetugasHomeScreenState extends State<PetugasHomeScreen>
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: 4.0,
-                      left: width * 0.01 +
-                          animationController.value * widget.maxSlide +
-                          5,
-                      child: IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: toggle,
-                        color: Colors.white,
-                        iconSize: 28,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -299,14 +287,44 @@ class MainScreen extends StatelessWidget {
 
             // Logout Button
             Positioned(
-              top: 4.0, // Align with menu icon's vertical position from parent
-              right: 10.0,
-              child: IconButton(
-                icon: const Icon(Icons.logout_outlined),
-                onPressed: () => _handleLogout(context),
-                color: Colors.white,
-                iconSize: 28,
-                tooltip: 'Log Keluar',
+              top: 24.0,
+              right: 20.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.white.withOpacity(0.3),
+                      Colors.white.withOpacity(0.1)
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5)
+                    )
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(25),
+                    onTap: () => _handleLogout(context),
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle
+                      ),
+                      child: const Icon(
+                        Icons.logout_rounded,
+                        color: Colors.white,
+                        size: 24
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
 

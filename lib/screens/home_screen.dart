@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final List<Map<String, dynamic>> _prayerUIData = []; // To store UI data for prayers
 
   // Define fixed card width and margin for scroll calculation
-  static const double _prayerCardWidth = 90.0;
+  static const double _prayerCardWidth = 100.0;
   static const double _prayerCardMarginHorizontal = 6.0;
   static const double _totalCardWidthWithMargins =
       _prayerCardWidth + (_prayerCardMarginHorizontal * 2);
@@ -328,7 +328,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               children: [
                 AnimatedBuilder(
                   animation: _headerAnimation,
-                  builder: (context, child) => Transform.translate(offset: Offset(0, -50 * (1 - _headerAnimation.value.clamp(0.0, 1.0))), child: Opacity(opacity: _headerAnimation.value.clamp(0.0, 1.0), child: _buildHeader(appUser))),
+                  builder: (context, child) => Transform.translate(
+                    offset: Offset(0, -20 * (1 - _headerAnimation.value.clamp(0.0, 1.0))), 
+                    child: Opacity(
+                      opacity: _headerAnimation.value.clamp(0.0, 1.0), 
+                      child: _buildHeader(appUser)
+                    )
+                  ),
                 ),
                 AnimatedBuilder(
                   animation: _prayerTimesFadeAnimation,
@@ -359,9 +365,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildHeader(AppUser appUser) {
-    // ... (header build logic remains the same)
     return Container(
-      padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 12.0),
+      padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -686,13 +691,13 @@ class _SelectCardState extends State<SelectCard> with SingleTickerProviderStateM
                   Container(
                     width: 45, height: 45,
                     decoration: BoxDecoration(color: widget.choice.iconColor.withOpacity(0.1), shape: BoxShape.circle),
-                    child: Icon(widget.choice.icon, color: widget.choice.iconColor, size: 24),
+                    child: Icon(widget.choice.icon, color: widget.choice.iconColor, size: 44),
                   ),
                   const SizedBox(height: 8),
                   Flexible(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Text(widget.choice.title, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: Color(0xFF2D3748), height: 1.2)),
+                      child: Text(widget.choice.title, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Color.fromARGB(255, 0, 0, 0), height: 1.2)),
                     ),
                   ),
                 ],
@@ -715,13 +720,13 @@ class Choice {
 }
 
 const List<Choice> choices = <Choice>[ // Your choices list remains the same
-  Choice(title: 'Tanya Imam', icon: Icons.edit_note_outlined, cardColor: Colors.yellow, iconColor: Color(0xFF6366F1), route: '/tanya'),
+  Choice(title: 'Tanya Imam', icon: Icons.edit_note_outlined, cardColor: Colors.yellow, iconColor: Color(0xFF6366F1), route: '/tanya-imam'),
   Choice(title: 'Mohon Nikah', icon: Icons.favorite, cardColor: Colors.yellow, iconColor: Color(0xFFEF4444), route: '/nikah'),
   Choice(title: 'Tempah Qurban', icon: Icons.payment_outlined, cardColor: Colors.yellow, iconColor: Color(0xFFF59E0B), route: '/qurban'),
   Choice(title: 'Jadual Program', icon: Icons.calendar_today, cardColor: Colors.yellow, iconColor: Color(0xFF06B6D4), route: '/program'),
   Choice(title: 'Sumbangan', icon: Icons.volunteer_activism, cardColor: Colors.yellow, iconColor: Color(0xFFFBBF24), route: '/derma'),
   Choice(title: 'Semak Status', icon: Icons.check_circle_outline, cardColor: Colors.yellow, iconColor: Color(0xFF10B981), route: '/semak'),
-  Choice(title: 'Al-Quran', icon: Icons.menu_book_outlined, cardColor: Colors.yellow, iconColor: Color(0xFF8B5CF6), route: '/quran'), // Corrected route
+  Choice(title: 'Al-Quran', icon: Icons.menu_book_outlined, cardColor: Colors.yellow, iconColor: Color(0xFF8B5CF6), route: '/quran'),
   Choice(title: 'Hadis 40', icon: Icons.note_outlined, cardColor: Colors.yellow, iconColor: Color(0xFF14B8A6), route: '/hadis'),
   Choice(title: 'Doa Harian', icon: Icons.description_outlined, cardColor: Colors.yellow, iconColor: Color(0xFFEC4899), route: '/doa'),
 ];

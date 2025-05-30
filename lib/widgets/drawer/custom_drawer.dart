@@ -101,7 +101,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
                                 // set up the AlertDialog
                                 AlertDialog alert = AlertDialog(
-                                  title: const Text("Log Keluar"),
+                                  title: const Text("Log Hehe"),
                                   content: const Text("Anda pasti mahu log keluar?"),
                                   actions: [
                                     continueButton,
