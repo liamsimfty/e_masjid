@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(248,251,250,255),
+      backgroundColor: const Color(0xD1CDC2),
       body: Center(
         child: FadeTransition(
           opacity: _animation,
@@ -52,17 +52,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               // Replace 'assets/logo.png' with your actual image path
               Image.asset(
                 'assets/images/logo.png',
-                width: 200,
-                height: 200,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'E-Masjid',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                width: 300,
+                height: 300,
               ),
             ],
           ),
