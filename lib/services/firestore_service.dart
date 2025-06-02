@@ -249,6 +249,73 @@ class FireStoreService {
     }
   }
 
+  Future<void> uploadSewaAula(
+      String pemohon,
+      String jenisKegiatan,
+      DateTime date,
+      String startTime,
+      String endTime,
+      String authorId) async {
+    try {
+      // Calculate duration in hours
+      final startTime24 = DateFormat('HH:mm').parse(startTime);
+      final endTime24 = DateFormat('HH:mm').parse(endTime);
+      
+      int duration = endTime24.hour - startTime24.hour;
+      if (endTime24.minute > startTime24.minute) {
+        duration += 1;
+      }
+      
+      // Calculate price (example: RM100 per hour)
+      double price = duration * 100.0;
+
+      await _firebaseFirestore.collection("sewa_aula").doc().set({
+        "pemohon": pemohon,
+        "jenisKegiatan": jenisKegiatan,
+        "tarikh": Timestamp.fromDate(date),
+        "masaMula": startTime,
+        "masaTamat": endTime,
+        "tempohJam": duration,
+        "harga": price,
+        "JenisTemuJanji": "Sewa Aula",
+        "isApproved": false,
+        "title": "$pemohon - $jenisKegiatan",
+        "description":
+            "Permohonan Sewa Aula oleh $pemohon untuk $jenisKegiatan pada tarikh : ${date.day}/${date.month}/${date.year}, dari jam : $startTime hingga $endTime",
+        "balasan": "Tidak perlu balasan",
+        "authorId": authorId,
+        "createdAt": FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log("Error uploading sewa aula application: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<void> updateApprovalSewaAula(String id) async {
+    try {
+      await _firebaseFirestore.collection("sewa_aula").doc(id).update({
+        "isApproved": true,
+        "approvedAt": FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log("Error approving sewa aula: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<void> updateApprovalSumbangan(String id) async {
+    try {
+      await _firebaseFirestore.collection("sumbangan").doc(id).update({
+        "isApproved": true,
+        "approvedAt": FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log("Error approving sumbangan: ${e.toString()}");
+      rethrow;
+    }
+  }
+
   // Additional helper methods
   Future<List<DocumentSnapshot>> getPendingApprovals() async {
     try {

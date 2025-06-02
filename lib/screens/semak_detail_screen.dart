@@ -1,29 +1,31 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/screens/semak_balas_screen.dart';
 import 'package:e_masjid/services/firestore_service.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Needed for SystemUiOverlayStyle
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../config/constants.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart'; // For list animations
 import 'package:intl/intl.dart';
 
 class SemakDetail extends StatefulWidget {
   static const String routeName = '/semak_detail';
   final Map<String, dynamic> data;
 
-  static Route route() {
-    return MaterialPageRoute(
-      settings: const RouteSettings(name: routeName),
-      builder: (_) => const SemakDetail(
-        data: {},
-      ),
-    );
+  static Route route({required Map<String, dynamic> data}) {
+    // Pass data to the route for proper instantiation
+    return PageRouteBuilder(
+        settings: const RouteSettings(name: routeName),
+        pageBuilder: (_, __, ___) => SemakDetail(data: data),
+        transitionsBuilder: (_, animation, __, child) {
+          return FadeTransition(opacity: animation, child: child);
+        });
   }
 
   const SemakDetail({
-    super.key,
+    super.key, // Use super.key for modern Flutter
     required this.data,
   });
 
@@ -31,274 +33,596 @@ class SemakDetail extends StatefulWidget {
   State<SemakDetail> createState() => _SemakDetailState();
 }
 
-class _SemakDetailState extends State<SemakDetail> {
-  bool floating_visible = false;
-  bool sahkan_visible = false;
-  bool diSahkan = false;
+class _SemakDetailState extends State<SemakDetail>
+    with SingleTickerProviderStateMixin { // Added for animations
+  bool _isPetugas = false; // Combined visibility logic
+  bool _isLoadingConfirmation = false; // For the Sahkan button
+  bool _isLoading = true; // Add loading state
 
-  String category = "";
-  String formatDate = "";
-  String formatDate2 = "";
+  // Date strings derived in initState or build
+  String _formattedFirstDate = "";
+  String _formattedLastDate = ""; // For date ranges
+  String _formattedSingleDate = ""; // For single date entries like 'tarikh'
+
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500), // Animation duration
+    );
+    _fadeAnimation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
 
-    checkUserRole();
-    checkCategory();
-    convertTimestampToString();
+    _initializeDetails();
+  }
+
+  Future<void> _initializeDetails() async {
+    await _checkUserRole();
+    _prepareDateStrings(); // Prepare dates after checking role and data availability
+    if(mounted){
+      setState(() {
+        _isLoading = false;
+      });
+      _animationController.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkUserRole() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print("Debug: User is not logged in");
+      if (mounted) setState(() => _isPetugas = false);
+      return;
+    }
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .get();
+      if (mounted) {
+        setState(() {
+          _isPetugas = (doc.exists && doc.data()?["role"] == "petugas");
+          print("Debug: User role check - exists: ${doc.exists}, role: ${doc.data()?["role"]}, isPetugas: $_isPetugas");
+        });
+      }
+    } catch (e) {
+      print("Error checking user role: $e");
+      if (mounted) setState(() => _isPetugas = false);
+    }
+  }
+
+  void _prepareDateStrings() {
+    // Use a consistent formatter for display
+    final DateFormat displayFormatter = DateFormat("dd MMMM yyyy", "ms_MY"); // e.g., 02 Jun 2025
+    try {
+      // Handle 'tarikh' field (common for Nikah, Pertanyaan)
+      if (widget.data['tarikh'] is Timestamp) {
+        _formattedSingleDate = displayFormatter
+            .format((widget.data['tarikh'] as Timestamp).toDate());
+      }
+      // Handle 'date' field (common for Sumbangan)
+      else if (widget.data['date'] is Timestamp) {
+         _formattedSingleDate = displayFormatter
+            .format((widget.data['date'] as Timestamp).toDate());
+      }
+
+
+      // Handle 'firstDate' and 'lastDate' (common for Qurban, Sewa Aula, some Programs)
+      if (widget.data['firstDate'] is Timestamp) {
+        _formattedFirstDate = displayFormatter
+            .format((widget.data['firstDate'] as Timestamp).toDate());
+      } else if (widget.data['firstDate'] is DateTime) {
+         _formattedFirstDate = displayFormatter.format(widget.data['firstDate']);
+      }
+
+
+      if (widget.data['lastDate'] is Timestamp) {
+        _formattedLastDate = displayFormatter
+            .format((widget.data['lastDate'] as Timestamp).toDate());
+      } else if (widget.data['lastDate'] is DateTime) {
+         _formattedLastDate = displayFormatter.format(widget.data['lastDate']);
+      }
+
+      // If it's a single day event based on firstDate/lastDate, clear lastDate for display
+      if (_formattedFirstDate.isNotEmpty && _formattedFirstDate == _formattedLastDate) {
+        _formattedLastDate = ""; // No need to show end date if same as start
+      }
+
+
+    } catch (e) {
+      print("Error formatting dates in SemakDetail: $e");
+      // Assign default empty strings or error messages if formatting fails
+      _formattedFirstDate = "Ralat Tarikh";
+      _formattedLastDate = "";
+      _formattedSingleDate = "Ralat Tarikh";
+    }
+    if(mounted) setState(() {}); // Update UI with formatted dates
+  }
+
+
+  Widget _buildGradientBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            kPrimaryColor.withOpacity(0.85),
+            kPrimaryColor,
+            kPrimaryColor.withOpacity(0.8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDecorativeCircles(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Stack(
+      children: [
+        Positioned(
+          top: screenHeight * -0.05,
+          left: screenWidth * -0.15,
+          child: Container(
+            width: screenWidth * 0.45,
+            height: screenWidth * 0.45,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.07),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: screenHeight * -0.1,
+          right: screenWidth * -0.2,
+          child: Container(
+            width: screenWidth * 0.6,
+            height: screenWidth * 0.6,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: kPrimaryColor,
+          ),
+        ),
+      );
+    }
+
+    bool isApproved = widget.data["isApproved"] ?? false;
+    String jenisTemuJanji =
+        widget.data["JenisTemuJanji"]?.toString() ?? "N/A";
+
+    // Determine title based on available fields, specific to application type
+    String title = widget.data["title"] ??
+        widget.data["nama_penuh"] ?? // For Nikah
+        widget.data["namaPeserta"] ?? // For Qurban
+        widget.data["pemohon"] ?? // For Sewa Aula
+        widget.data["nama_program"] ?? // For Sumbangan
+        "Tiada Tajuk";
+
+    String description = widget.data["description"] ??
+        widget.data["mesej_pertanyaan"] ?? // For Tanya Imam
+        "Tiada deskripsi.";
+    String balasan = widget.data["balasan"] ?? "";
+
+    // Visibility for "Balas" FAB (Petugas only, and for "Pertanyaan" if no reply yet)
+    bool showBalasFab = _isPetugas && jenisTemuJanji == "Tanya Imam" && (balasan.isEmpty || balasan == "tiada");
+    print("Debug: Balas button conditions - isPetugas: $_isPetugas, jenisTemuJanji: $jenisTemuJanji, balasan: $balasan, showBalasFab: $showBalasFab");
+    // Visibility for "Sahkan" button (Petugas only, and not already approved)
+    bool showSahkanButton = _isPetugas && !isApproved;
+
+    // Prepare list of widgets for animation
+    List<Widget> contentCards = [
+      _buildInfoCard(
+        title: title,
+        jenisTemuJanji: jenisTemuJanji,
+        description: description,
+      ),
+      SizedBox(height: 16.h),
+      _buildDetailsCard(
+        jenisTemuJanji: jenisTemuJanji,
+        data: widget.data,
+        isApproved: isApproved,
+      ),
+      SizedBox(height: 16.h),
+      // Only show reply card if balasan exists and is not empty
+      if (balasan.isNotEmpty)
+        _buildReplyCard(reply: balasan),
+      if (showSahkanButton) ...[
+        SizedBox(height: 25.h),
+        Center(
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: kPrimaryColor,
+              padding:
+                  EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r)),
+              elevation: 4.0,
+            ),
+            icon: _isLoadingConfirmation
+                ? SizedBox(
+                    width: 18.w,
+                    height: 18.h,
+                    child: const CircularProgressIndicator(
+                        strokeWidth: 2.0, color: kPrimaryColor))
+                : const Icon(Icons.check_circle_outline_rounded),
+            label: Text(
+              'Sahkan Permohonan',
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+            ),
+            onPressed: _isLoadingConfirmation
+                ? null
+                : () => _showConfirmationDialog(jenisTemuJanji),
+          ),
+        ),
+      ],
+      SizedBox(height: _isPetugas ? 80.h : 20.h), // Space for FAB or general padding
+    ];
+
+
     return Scaffold(
+      extendBodyBehindAppBar: true, // Make AppBar transparent over gradient
       floatingActionButton: Visibility(
-        visible: floating_visible,
+        visible: showBalasFab,
         child: FloatingActionButton.extended(
-          heroTag: 'sunting_hero',
-          onPressed: () {
-            setState(() {});
-            Navigator.pushReplacement(
+          heroTag: 'balas_hero_semak_detail_v4', // Ensure unique heroTag
+          onPressed: () async {
+             final result = await Navigator.push( // Use push to come back
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SemakBalas(id: widget.data["id"]),
-                ));
+                    builder: (context) => SemakBalas(id: widget.data["id"])));
+            if (result == true && mounted) {
+                // Potentially refresh this screen's data if SemakBalas indicates a change
+                // For now, this requires a more complex state update or parent callback
+            }
           },
-          label: const Text("Balas"),
-          icon: const Icon(Icons.edit),
-          backgroundColor: kPrimaryColor,
+          label: const Text("Balas",
+              style: TextStyle(fontWeight: FontWeight.w600)),
+          icon: const Icon(Icons.reply_all_outlined), // Changed icon
+          backgroundColor: Colors.white,
+          foregroundColor: kPrimaryColor,
+          elevation: 6.0,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         ),
       ),
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(right: 50.0, top: 15),
-          child: Center(
-              child: Image.asset(
-                'assets/images/e_masjid.png',
-                height: 50,
-              )),
-        ),
-        backgroundColor: Colors.white,
+        title: const Text('Butiran Permohonan'),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black87,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        titleTextStyle: TextStyle(
+            color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w600),
+        systemOverlayStyle: SystemUiOverlayStyle.light, // For light status bar icons
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+      body: Stack(
+        children: [
+          _buildGradientBackground(),
+          _buildDecorativeCircles(context),
+          SafeArea(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 18.w, vertical: 15.h),
+                child: AnimationLimiter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate( // Generates animated list items
+                      contentCards.length,
+                      (index) => AnimationConfiguration.staggeredList(
+                        position: index,
+                        duration: const Duration(milliseconds: 400),
+                        delay: Duration(milliseconds: (index * 70)), // Stagger delay
+                        child: SlideAnimation(
+                          verticalOffset: 50.0,
+                          child: FadeInAnimation(
+                            child: contentCards[index],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(
+      {required String title,
+      required String jenisTemuJanji,
+      required String description}) {
+    IconData typeIcon = Icons.article_outlined; // Default
+    switch (jenisTemuJanji) {
+      case "Tanya Imam": typeIcon = Icons.contact_support_outlined; break;
+      case "Nikah": typeIcon = Icons.church_outlined; break; // Or Icons.favorite
+      case "Qurban": typeIcon = Icons.savings_outlined; break;
+      case "Sewa Aula": typeIcon = Icons.meeting_room_outlined; break;
+      case "Sumbangan": typeIcon = Icons.volunteer_activism_outlined; break;
+    }
+
+    return Card(
+      elevation: 3.0,
+      shadowColor: Colors.black.withOpacity(0.15),
+      color: Colors.white.withOpacity(0.95),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24.0, top: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      "Tajuk : ",
-                      style: TextStyle(fontSize: 20.sp),
-                    ),
-                  ),
-                  Container(
-                    child: Text(
-                      widget.data["title"],
-                      style: TextStyle(
-                          fontSize: 25.sp, fontWeight: FontWeight.bold, color: kPrimaryColor),
-                    ),
-                  ),
-                ],
-              ),
+            Text(
+              title,
+              style: TextStyle(
+                  fontSize: 19.sp,
+                  fontWeight: FontWeight.bold,
+                  color: kPrimaryColorDark),
             ),
+            SizedBox(height: 8.h),
+            Chip(
+              avatar: Icon(typeIcon, color: kPrimaryColor, size: 16.sp),
+              label: Text(jenisTemuJanji,
+                  style: TextStyle(
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp)),
+              backgroundColor: kPrimaryColor.withOpacity(0.15),
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              visualDensity: VisualDensity.compact,
+            ),
+            SizedBox(height: 12.h),
+            if (description.isNotEmpty && description != "Tiada deskripsi.")
+              Text(
+                description,
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.black87.withOpacity(0.8),
+                    height: 1.45), // Line height
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
-            SizedBox(
-              height: 5.h,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(25, 0, 1, 0),
-              child: Text(
-                "Jenis Temujanji : " + widget.data["JenisTemuJanji"],
-                style: TextStyle(fontSize: 17.sp, fontStyle: FontStyle.italic),
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(25, 15, 12, 0),
-              child: Text(
-                widget.data["description"],
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(25, 40, 1, 0),
-              child: Row(children: [
+  Widget _buildDetailsCard(
+      {required String jenisTemuJanji,
+      required Map<String, dynamic> data,
+      required bool isApproved}) {
+    List<Widget> details = [];
+    String? statusText = data['status']?.toString();
+
+    // General Approval Status
+    details.add(_buildDetailRow(
+      icon: isApproved
+          ? Icons.check_circle_rounded
+          : (statusText == 'Ditolak'
+              ? Icons.cancel_rounded
+              : Icons.hourglass_empty_rounded), // Changed to hourglass for pending
+      label: 'Status:',
+      value: statusText ?? (isApproved ? 'Diluluskan' : 'Dalam Proses'),
+      valueColor: isApproved
+          ? Colors.green.shade700
+          : (statusText == 'Ditolak'
+              ? Colors.red.shade700
+              : Colors.orange.shade700),
+      iconColor: isApproved
+          ? Colors.green.shade600
+          : (statusText == 'Ditolak'
+              ? Colors.red.shade600
+              : Colors.orange.shade600),
+    ));
+    details.add(SizedBox(height: 10.h));
+
+    // Category Specific Details
+    if (jenisTemuJanji == "Pertanyaan" || jenisTemuJanji == "Nikah") {
+      if (_formattedSingleDate.isNotEmpty && _formattedSingleDate != "Ralat") {
+        details.add(_buildDetailRow(
+            icon: Icons.calendar_today_outlined,
+            label: jenisTemuJanji == "Nikah"
+                ? 'Tarikh Nikah Dicadang:'
+                : 'Tarikh Hantar:', // Changed for "Pertanyaan"
+            value: _formattedSingleDate));
+      }
+    } else if (jenisTemuJanji == "Qurban") {
+      details.add(_buildDetailRow(
+          icon: Icons.confirmation_number_outlined, // More relevant icon
+          label: 'Bilangan Bahagian:',
+          value: data["bilangan"]?.toString() ?? 'N/A'));
+      if (_formattedFirstDate.isNotEmpty && _formattedFirstDate != "Ralat") {
+        details.add(SizedBox(height: 8.h));
+        details.add(_buildDetailRow(
+            icon: Icons.event_available_outlined,
+            label: "Tarikh Korban:",
+            value: _formattedFirstDate));
+      }
+    } else if (jenisTemuJanji == "Sewa Aula") {
+      if (_formattedFirstDate.isNotEmpty && _formattedFirstDate != "Ralat") {
+        String dateRangeDisplay = _formattedFirstDate;
+        if (_formattedLastDate.isNotEmpty && _formattedFirstDate != _formattedLastDate) {
+          dateRangeDisplay += " - $_formattedLastDate";
+        }
+        details.add(_buildDetailRow(
+            icon: Icons.date_range_outlined,
+            label: 'Tempoh Sewaan:',
+            value: dateRangeDisplay));
+        details.add(SizedBox(height: 8.h));
+      }
+      if (data["masaMula"] != null && data["masaTamat"] != null) {
+        details.add(_buildDetailRow(
+            icon: Icons.access_time_rounded,
+            label: 'Masa:',
+            value: "${data['masaMula']} - ${data['masaTamat']}"));
+      }
+      if (data["price"] != null) {
+        details.add(SizedBox(height: 8.h));
+        details.add(_buildDetailRow(
+            icon: Icons.payments_outlined,
+            label: 'Anggaran Bayaran:',
+            value: "RM ${(data['price'] as num).toStringAsFixed(2)}"));
+      }
+    } else if (jenisTemuJanji == "Sumbangan") {
+      if (data["namaProgram"] != null &&
+          (data["namaProgram"] as String).isNotEmpty) {
+        details.add(_buildDetailRow(
+            icon: Icons.event_note_outlined,
+            label: 'Program Disumbang Kepada:',
+            value: data["namaProgram"]));
+        details.add(SizedBox(height: 8.h));
+      }
+      if (data["jumlah"] != null) {
+        details.add(_buildDetailRow(
+            icon: Icons.attach_money_rounded,
+            label: 'Jumlah Sumbangan:',
+            value: "RM ${(data['jumlah'] as num).toStringAsFixed(2)}"));
+        details.add(SizedBox(height: 8.h));
+      }
+      if (_formattedSingleDate.isNotEmpty && _formattedSingleDate != "Ralat") {
+        details.add(_buildDetailRow(
+            icon: Icons.calendar_today_outlined,
+            label: 'Tarikh Transaksi:',
+            value: _formattedSingleDate));
+      }
+    }
+
+    return Card(
+      elevation: 3.0,
+      shadowColor: Colors.black.withOpacity(0.15),
+      color: Colors.white.withOpacity(0.93),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.info_outline_rounded, // Changed icon
+                    color: kPrimaryColorDark,
+                    size: 20.sp),
+                SizedBox(width: 10.w),
                 Text(
-                  'Maklumat Temujanji',
-                  style:
-                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-                )
-              ]),
-            ),
-
-            //content
-            Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25, top: 15),
-              child: Container(
-                height: 150.h,
-                decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: const BorderRadius.all(Radius.circular(15))),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          // const Icon(Icons.calendar_month_rounded),
-
-                          widget.data["JenisTemuJanji"] == "Qurban"
-                              ? const Text(
-                                  ' Bilangan Bahagian :',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.italic),
-                                )
-                              : const Text(
-                                  "Tarikh :",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                ),
-
-                          SizedBox(width: 11.w),
-                          Row(
-                            children: [
-                              //pertanyaan
-                              if (widget.data["JenisTemuJanji"] == "Pertanyaan")
-                                displayTarikh()
-
-                              //nikah
-                              else if (widget.data["JenisTemuJanji"] == "Nikah")
-                                displayTarikh()
-                              else
-                                Text(
-                                  widget.data["bilangan"].toString(),
-                                  style: TextStyle(fontSize: 15.sp),
-                                )
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      Row(
-                        children: [
-                          // const Icon(Icons.calendar_month_rounded),
-                          const Text(
-                            ' Pengesahan :  ',
-                            style: TextStyle(
-                                fontSize: 15, fontStyle: FontStyle.italic),
-                          ),
-
-                          displayIconPengesahan()
-                        ],
-                      ),
-                    ],
-                  ),
+                  'Maklumat Lanjut',
+                  style: TextStyle(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.bold,
+                      color: kPrimaryColorDark),
                 ),
-              ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(25, 25, 1, 3),
-              child: Row(children: [
+            Divider(height: 22.h, thickness: 0.8, color: Colors.grey.shade200),
+            ...details,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(
+      {required IconData icon,
+      required String label,
+      required String value,
+      Color? valueColor,
+      Color? iconColor}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon,
+              size: 18.sp, color: iconColor ?? kPrimaryColor.withOpacity(0.9)),
+          SizedBox(width: 12.w),
+          Text(
+            '$label ',
+            style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.black87.withOpacity(0.75),
+                fontWeight: FontWeight.w500),
+          ),
+          Expanded(
+            child: Text(
+              value.isEmpty ? "N/A" : value,
+              style: TextStyle(
+                  fontSize: 14.sp,
+                  color: valueColor ?? Colors.black87,
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReplyCard({required String reply}) {
+    return Card(
+      elevation: 3.0,
+      shadowColor: Colors.black.withOpacity(0.15),
+      color: Colors.white.withOpacity(0.93),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.rate_review_outlined,
+                    color: kPrimaryColorDark, size: 20.sp),
+                SizedBox(width: 10.w),
                 Text(
-                  'Balasan',
-                  style:
-                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-                )
-              ]),
-            ),
-            Padding(
-                padding: const EdgeInsets.only(
-                    left: 25, right: 25, bottom: 10, top: 10),
-                child: Text(
-                  widget.data["balasan"],
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                )),
-            Visibility(
-              visible: sahkan_visible,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 25, right: 25, bottom: 25, top: 0),
-                child: Center(
-                  child: ElevatedButton(
-                      onPressed:  () {
-                        if (widget.data["isApproved"]) {
-                          EasyLoading.showToast("Permohonan sudah disahkan");
-                        } else {
-                          // set up the buttons
-                          Widget cancelButton = TextButton(
-                            child: const Text("Tidak"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          );
-                          Widget continueButton = TextButton(
-                            child: const Text("Ya"),
-                            onPressed: () {
-                              if (category == "Qurban") {
-                                sahkanPermohonanQurban();
-                              } else if (category == "Nikah") {
-                                sahkanPermohonanNikah();
-                              } else {
-                                sahkanPertanyaan();
-                              }
-
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              // Navigator.of(context).pop();
-                              Navigator.of(context).popAndPushNamed('/semak');
-
-                              // Navigator.pushNamed(context, "/semak");
-                            },
-                          );
-                          // set up the AlertDialog
-                          AlertDialog alert = AlertDialog(
-                            title: const Text("Sahkan Permohonan"),
-                            content: const Text(
-                                "Anda pasti mahu mengesahkan permohonan?"),
-                            actions: [
-                              continueButton,
-                              cancelButton,
-                            ],
-                          );
-
-                          // show the dialog
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return alert;
-                            },
-                          );
-                        }
-                        setState(() {});
-                      },
-                      child: const Text('Sahkan')),
+                  'Balasan Petugas',
+                  style: TextStyle(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.bold,
+                      color: kPrimaryColorDark),
                 ),
-              ),
+              ],
+            ),
+            Divider(height: 22.h, thickness: 0.8, color: Colors.grey.shade200),
+            Text(
+              reply.isEmpty ? "Tiada balasan lagi." : reply,
+              style: TextStyle(
+                  fontSize: 14.sp,
+                  color: reply.isEmpty
+                      ? Colors.grey.shade600
+                      : Colors.black87.withOpacity(0.8),
+                  fontStyle:
+                      reply.isEmpty ? FontStyle.italic : FontStyle.normal,
+                  height: 1.45),
             ),
           ],
         ),
@@ -306,147 +630,97 @@ class _SemakDetailState extends State<SemakDetail> {
     );
   }
 
-  checkUserRole() {
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) {
-      if (value.data()!["role"].toString() == "petugas") {
-        sahkan_visible = true;
-        if (category == "Pertanyaan") {
-          floating_visible = true;
+  void _showConfirmationDialog(String jenisTemuJanji) {
+    // The category for Firestore update is derived from jenisTemuJanji
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+          title: const Text("Sahkan Permohonan?",
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          content:
+              const Text("Tindakan ini tidak boleh dibatalkan. Anda pasti?"),
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
+          actions: <Widget>[
+            TextButton(
+              child: Text("Batal",
+                  style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w600)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r))),
+              child: const Text("Ya, Sahkan",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                _processApproval(jenisTemuJanji); // Pass jenisTemuJanji directly
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _processApproval(String category) async { // category is jenisTemuJanji
+    setState(() => _isLoadingConfirmation = true);
+    EasyLoading.show(status: 'Mengemaskini...');
+    try {
+      FireStoreService firestoreService = FireStoreService();
+      String id = widget.data["id"];
+      bool success = false;
+
+      // Ensure these methods exist in your FireStoreService and handle updates correctly
+      // The `category` variable here IS `jenisTemuJanji`
+      if (category == "Qurban") {
+        await firestoreService.updateApprovalQurban(id); success = true;
+      } else if (category == "Nikah") {
+        await firestoreService.updateApprovalNikah(id); success = true;
+      } else if (category == "Pertanyaan") {
+        await firestoreService.updateApprovalPertanyaan(id); success = true;
+      } else if (category == "Sewa Aula") {
+        // Ensure updateApprovalSewaAula method exists in FireStoreService
+        await firestoreService.updateApprovalSewaAula(id); success = true;
+      } else if (category == "Sumbangan") {
+        // Ensure updateApprovalSumbangan method exists in FireStoreService
+        await firestoreService.updateApprovalSumbangan(id); success = true;
+      }
+
+      if (success) {
+        EasyLoading.showSuccess('Permohonan telah disahkan!');
+        if (mounted) {
+          setState(() {
+            // This mutates widget.data, which is generally okay for immediate UI feedback here.
+            // For a more robust pattern, especially if this data is shared/cached,
+            // consider a proper state management solution or callback to refresh from source.
+            widget.data["isApproved"] = true;
+            widget.data["status"] = (category == "Sumbangan" || category == "Qurban") ? "Diterima" : "Diluluskan";
+          });
         }
       } else {
-        floating_visible = false;
-      }
-      setState(() {});
-    });
-  }
-
-  isButtonDisabled() {
-    if (diSahkan = true) {
-      return null;
-    }
-  }
-
-  checkCategory() {
-    if (widget.data["JenisTemuJanji"] == "Nikah") {
-      category = "Nikah";
-    }
-    // FireStoreService.updateApprovalNikah();
-    else if (widget.data["JenisTemuJanji"] == "Qurban") {
-      category = "Qurban";
-    } else
-      category = "Pertanyaan";
-  }
-
-  sahkanPermohonanQurban() {
-    try {
-      setState(() {
-        FireStoreService().updateApprovalQurban(widget.data["id"]);
-        diSahkan = true;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  sahkanPermohonanNikah() {
-    try {
-      setState(() {
-        FireStoreService().updateApprovalNikah(widget.data["id"]);
-        diSahkan = true;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  sahkanPertanyaan() {
-    try {
-      setState(() {
-        FireStoreService().updateApprovalPertanyaan(widget.data["id"]);
-        diSahkan = true;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  convertTimestampToString() {
-    //first date
-    try {
-      if (widget.data['firstDate'] is Timestamp) {
-        Timestamp t = widget.data["firstDate"];
-        String d = t.toDate().toString();
-        DateTime parsedDateTime = DateTime.parse(d);
-        formatDate = DateFormat("dd-MM-yyyy").format(parsedDateTime);
-
-        //second date
-        Timestamp t1 = widget.data["lastDate"];
-        String d1 = t1.toDate().toString();
-        DateTime parsedDateTime1 = DateTime.parse(d1);
-        formatDate2 = DateFormat("dd-MM-yyyy").format(parsedDateTime1);
-      } else {
-        DateTime t = widget.data["firstDate"];
-        String d = t.toString();
-        DateTime parsedDateTime = DateTime.parse(d);
-        formatDate = DateFormat("dd-MM-yyyy").format(parsedDateTime);
-
-        //second date
-        DateTime t1 = widget.data["lastDate"];
-        String d1 = t1.toString();
-        DateTime parsedDateTime1 = DateTime.parse(d1);
-        formatDate2 = DateFormat("dd-MM-yyyy").format(parsedDateTime1);
+        EasyLoading.showInfo(
+            'Jenis permohonan "$category" tidak dikenali atau gagal disahkan.');
       }
     } catch (e) {
-      print(e);
+      print("Error in _processApproval: $e");
+      EasyLoading.showError(
+          "Gagal mengesahkan: ${e.toString().substring(0, (e.toString().length > 100 ? 100 : e.toString().length))}");
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingConfirmation = false);
+        EasyLoading.dismiss();
+      }
     }
-    setState(() {});
-  }
-
-  isApprovedIcon() {
-    if (widget.data["isApproved"]) {
-      return const Icon(
-        Icons.check,
-        color: Colors.green,
-      );
-    } else {
-      return const Icon(
-        Icons.close,
-        color: Colors.red,
-      );
-    }
-  }
-
-  Widget displayIconPengesahan() {
-    if (widget.data["isApproved"]) {
-      return const Icon(
-        Icons.check,
-        color: Colors.green,
-      );
-    } else {
-      return const Icon(
-        Icons.close,
-        color: Colors.red,
-      );
-    }
-  }
-
-  Widget displayTarikh() {
-    //first date
-
-    Timestamp t = widget.data["tarikh"];
-    print(t);
-    String d = t.toDate().toString();
-    DateTime parsedDateTime = DateTime.parse(d);
-    formatDate = DateFormat("dd-MM-yyyy").format(parsedDateTime);
-    return Text(
-      formatDate,
-      style: TextStyle(fontSize: 15.sp),
-    );
-
-    // setState(() {});
   }
 }

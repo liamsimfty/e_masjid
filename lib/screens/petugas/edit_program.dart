@@ -10,10 +10,12 @@ import '../../config/constants.dart';
 
 class EditProgram extends StatefulWidget {
   final String id;
+  final Map<String, dynamic> programData;
 
   const EditProgram({
     super.key,
     required this.id,
+    required this.programData,
   });
 
   @override

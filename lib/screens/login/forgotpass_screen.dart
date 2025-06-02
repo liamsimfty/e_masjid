@@ -230,7 +230,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
                         child: TextFormField(
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(color: kInputTextColor, fontSize: 16), // Text color inside field
+                          style: const TextStyle(color:kInputTextColor, fontSize: 16), // Text color inside field
                           cursorColor: kPrimaryColor, // Cursor color matching theme
                           textInputAction: TextInputAction.done,
                           decoration: _inputDecoration(

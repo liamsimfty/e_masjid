@@ -360,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
         ],
       ),
-      bottomNavigationBar: const CustomNavBar(),
+      //bottomNavigationBar: const CustomNavBar(),
     );
   }
 
@@ -376,14 +376,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text("Assalamu'alaikum,", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.w400)),
+                Text("Assalamu'alaikum", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 32, fontWeight: FontWeight.w900)),
                 const SizedBox(height: 4),
                 Text(username, style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
-                  child: const Text("e-Masjid Halim Shah", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+                  child: const Text("e-Masjid Halim Shah", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500)),
                 ),
               ],
             ),
@@ -721,7 +721,7 @@ class Choice {
 
 const List<Choice> choices = <Choice>[ // Your choices list remains the same
   Choice(title: 'Tanya Imam', icon: Icons.edit_note_outlined, cardColor: Colors.yellow, iconColor: Color(0xFF6366F1), route: '/tanya-imam'),
-  Choice(title: 'Mohon Nikah', icon: Icons.favorite, cardColor: Colors.yellow, iconColor: Color(0xFFEF4444), route: '/nikah'),
+  Choice(title: 'Sewa Aula', icon: Icons.assessment_outlined, cardColor: Colors.yellow, iconColor: Color(0xFFEF4444), route: '/sewa-aula'),
   Choice(title: 'Tempah Qurban', icon: Icons.payment_outlined, cardColor: Colors.yellow, iconColor: Color(0xFFF59E0B), route: '/qurban'),
   Choice(title: 'Jadual Program', icon: Icons.calendar_today, cardColor: Colors.yellow, iconColor: Color(0xFF06B6D4), route: '/program'),
   Choice(title: 'Sumbangan', icon: Icons.volunteer_activism, cardColor: Colors.yellow, iconColor: Color(0xFFFBBF24), route: '/derma'),

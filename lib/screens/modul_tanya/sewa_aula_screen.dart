@@ -7,22 +7,22 @@ import '../../services/firestore_service.dart';
 import 'package:e_masjid/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 
-class MohonNikahScreen extends StatefulWidget {
-  const MohonNikahScreen({super.key});
-  static const String routeName = '/nikah';
+class SewaAulaScreen extends StatefulWidget {
+  const SewaAulaScreen({super.key});
+  static const String routeName = '/sewa-aula';
 
   static Route route() {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (_) => const MohonNikahScreen(),
+      builder: (_) => const SewaAulaScreen(),
     );
   }
 
   @override
-  _MohonNikahScreenState createState() => _MohonNikahScreenState();
+  _SewaAulaScreenState createState() => _SewaAulaScreenState();
 }
 
-class _MohonNikahScreenState extends State<MohonNikahScreen> {
+class _SewaAulaScreenState extends State<SewaAulaScreen> {
   FireStoreService fireStoreService = FireStoreService();
   DateTimeRange dateRange = DateTimeRange(
     start: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
@@ -38,7 +38,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
   bool pickedEndTime = false;
 
   final pemohonController = TextEditingController();
-  final pasanganController = TextEditingController();
+  final jenisKegiatanController = TextEditingController();
   final startDateController = TextEditingController();
   final endDateController = TextEditingController();
 
@@ -129,7 +129,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
           padding: EdgeInsets.only(top: 25.0),
           child: Center(
             child: Text(
-              'Mohon Nikah',
+              'Sewa Aula',
               style: TextStyle(
                 color: kPrimaryColor,
                 fontWeight: FontWeight.bold,
@@ -213,18 +213,18 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Description
+                          // Jenis Kegiatan
                           Row(
                             children: [
                               const Icon(
-                                Icons.favorite,
-                                color: Colors.red,
+                                Icons.event,
+                                color: Colors.orange,
                               ),
                               SizedBox(
                                 width: 9.w,
                               ),
                               Text(
-                                'Pasangan',
+                                'Jenis Kegiatan',
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
@@ -235,16 +235,16 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                           const SizedBox(height: 10),
 
                           TextFormField(
-                            controller: pasanganController,
+                            controller: jenisKegiatanController,
                             autofocus: false,
                             cursorColor: Colors.white,
-                            keyboardType: TextInputType.name,
+                            keyboardType: TextInputType.text,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             validator: (value) {
                               RegExp regex = RegExp(r'^.{2,}$');
                               if (value!.isEmpty) {
-                                return ("Sila isi nama pasangan");
+                                return ("Sila isi jenis kegiatan");
                               }
                               if (!regex.hasMatch(value)) {
                                 return ("masukkan minimum 2 Aksara");
@@ -252,13 +252,13 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              pasanganController.text = value!;
+                              jenisKegiatanController.text = value!;
                             },
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               contentPadding:
                                   const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                              labelText: 'Nama penuh pasangan',
+                              labelText: 'Jenis Kegiatan',
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
@@ -481,7 +481,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF43afce)),
                                   onPressed: () {
-                                    addMohonNikah();
+                                    addSewaAula();
                                   },
                                   child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -525,21 +525,21 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
           ),
         )
       ]),
-      bottomNavigationBar: const CustomNavBar(),
+      //bottomNavigationBar: const CustomNavBar(),
     );
   }
 
-  void addMohonNikah() async {
+  void addSewaAula() async {
     try {
       EasyLoading.show(status: 'sedang diproses...');
       if (pemohonController.text.isNotEmpty &&
-          pasanganController.text.isNotEmpty &&
+          jenisKegiatanController.text.isNotEmpty &&
           pickedDateRange &&
           pickedStartTime &&
           pickedEndTime) {
-        await fireStoreService.uploadMohonNikah(
+        await fireStoreService.uploadSewaAula(
           pemohonController.text,
-          pasanganController.text,
+          jenisKegiatanController.text,
           dateRange.start,
           startTimeString,
           endTimeString,
@@ -549,7 +549,7 @@ class _MohonNikahScreenState extends State<MohonNikahScreen> {
         Navigator.of(context).popAndPushNamed('/semak');
         setState(() {});
       } else {
-        EasyLoading.showInfo("Sila isi semua maklumat nikah");
+        EasyLoading.showInfo("Sila isi semua maklumat sewa aula");
       }
     } catch (e) {
       EasyLoading.showError(e.toString());

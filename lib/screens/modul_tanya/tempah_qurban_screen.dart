@@ -246,7 +246,7 @@ class _TempahQurbanScreenState extends State<TempahQurbanScreen> {
           ),
         )
       ]),
-      bottomNavigationBar: const CustomNavBar(),
+      //bottomNavigationBar: const CustomNavBar(),
     );
   }
 

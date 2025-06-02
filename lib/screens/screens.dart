@@ -4,7 +4,7 @@ export 'derma_screen.dart';
 export 'login/login_screen.dart';
 export 'login/signup_screen.dart';
 export 'modul_tanya/tanya_imam_screen.dart';
-export 'modul_tanya/mohon_nikah_screen.dart';
+export 'modul_tanya/sewa_aula_screen.dart';
 export 'modul_tanya/tempah_qurban_screen.dart';
 export 'semak.screen.dart';
 export 'modul_produktiviti/hadis_screen.dart';

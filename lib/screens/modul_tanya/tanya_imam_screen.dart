@@ -254,7 +254,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
           ),
         )
       ]),
-      bottomNavigationBar: const CustomNavBar(),
+      //bottomNavigationBar: const CustomNavBar(),
     );
   }
 

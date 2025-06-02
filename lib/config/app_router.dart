@@ -21,8 +21,8 @@ class AppRouter {
         );
       case '/tanya-imam':
         return TanyaImamScreen.route();
-      case MohonNikahScreen.routeName:
-        return MohonNikahScreen.route();
+      case SewaAulaScreen.routeName:
+        return SewaAulaScreen.route();
       case TempahQurbanScreen.routeName:
         return TempahQurbanScreen.route();
       case SemakStatusScreen.routeName:
@@ -38,7 +38,7 @@ class AppRouter {
       case ProgramScreen.routeName:
         return ProgramScreen.route();
       case ProgramDetail.routeName:
-        return ProgramDetail.route();
+        return ProgramDetail.route(data: settings.arguments as Map<String, dynamic>);
         //admin
       case SahPermohonanScreen.routeName:
         return SahPermohonanScreen.route();

@@ -23,6 +23,7 @@ final TextStyle subTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, 
 final TextStyle textButton = TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: kPrimaryColor);
 const EdgeInsets kDefaultPadding = EdgeInsets.all(20.0);
 const Color kPrimaryColorDark = Color(0xFF00796B);
+const kInputTextColor1 = Color(0xFF3A3A3A);
 
 // const kDefaultPadding = EdgeInsets.symmetric(horizontal: 30);
 
