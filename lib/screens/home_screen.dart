@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:e_masjid/providers/user.provider.dart';
 import '../services/firestore_service.dart';
 import 'dart:math' as math;
+import 'package:e_masjid/screens/screens.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -560,7 +561,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _showLogoutDialog(AppUser appUser) {
-    // ... (logout dialog logic remains the same)
     showDialog(
       context: context, barrierDismissible: false,
       builder: (context) => AlertDialog(
@@ -572,7 +572,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ElevatedButton(
             onPressed: () async {
               await appUser.signOut();
-              if (mounted) Navigator.pop(context);
+              if (mounted) {
+                Navigator.pop(context); // Close dialog
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
             child: const Text("Ya", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),

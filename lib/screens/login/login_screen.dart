@@ -4,6 +4,7 @@ import 'package:e_masjid/config/constants.dart';
 // import 'package:e_masjid/widgets/login_form.dart'; // Assuming LogInForm is here
 import 'package:e_masjid/providers/user.provider.dart';
 import 'dart:math' as math; // For animations if needed
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Define constants if not in constants.dart
 const Color kInputTextColor = Color(0xFF333333);
@@ -236,11 +237,41 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       );
 
       if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-          (route) => false,
-        );
+        // Get user role from Firestore
+        final userDoc = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(AppUser.instance.user!.uid)
+            .get();
+
+        if (userDoc.exists && userDoc.data() != null) {
+          final userData = userDoc.data() as Map<String, dynamic>;
+          final role = userData['role'] as String?;
+
+          if (role == 'petugas') {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PetugasHomeScreen(
+                  maxSlide: MediaQuery.of(context).size.width * 0.835,
+                ),
+              ),
+              (route) => false,
+            );
+          } else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (route) => false,
+            );
+          }
+        } else {
+          // If no role found, default to HomeScreen
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false,
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
