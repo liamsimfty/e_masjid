@@ -55,9 +55,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
         parent: _animationController,
         curve: Curves.easeInOut,
       );
-      _animationController.forward();
-      _checkUserRole();
-      _fetchDataForFilter();
+      _initializeDetails();
     });
   }
 
@@ -67,25 +65,79 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
     super.dispose();
   }
 
-  Future<void> _checkUserRole() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      if (mounted) setState(() => _isPetugas = false);
-      return;
-    }
+  Future<void> _initializeDetails() async {
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(user.uid)
-          .get();
+      // Check user role
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .get();
+        if (mounted) {
+          setState(() {
+            _isPetugas = (doc.exists && doc.data()?["role"] == "petugas");
+          });
+        }
+      }
+
+      // Fetch items based on selected filter
+      await _fetchItems();
+
       if (mounted) {
         setState(() {
-          _isPetugas = (doc.exists && doc.data()?["role"] == "petugas");
+          _isLoading = false;
+        });
+        _animationController.forward();
+      }
+    } catch (e) {
+      print("Error initializing details: $e");
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchItems() async {
+    try {
+      List<Map<String, dynamic>> items = [];
+      
+      // Fetch based on selected filter
+      if (_selectedFilter == "Tanya Imam") {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection("tanya")
+            .orderBy("createdAt", descending: true)
+            .get();
+        items.addAll(querySnapshot.docs.map((doc) => doc.data()));
+      } else if (_selectedFilter == "Qurban") {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection("qurban")
+            .orderBy("createdAt", descending: true)
+            .get();
+        items.addAll(querySnapshot.docs.map((doc) => doc.data()));
+      } else if (_selectedFilter == "Sewa Aula") {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection("sewa_aula")
+            .orderBy("createdAt", descending: true)
+            .get();
+        items.addAll(querySnapshot.docs.map((doc) => doc.data()));
+      } else if (_selectedFilter == "Sumbangan") {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection("sumbangan")
+            .orderBy("createdAt", descending: true)
+            .get();
+        items.addAll(querySnapshot.docs.map((doc) => doc.data()));
+      }
+
+      if (mounted) {
+        setState(() {
+          _displayedItems = items;
         });
       }
     } catch (e) {
-      print("Error checking user role: $e");
-      if (mounted) setState(() => _isPetugas = false);
+      print("Error fetching items: $e");
     }
   }
 
@@ -106,49 +158,11 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
     }
   }
 
-  Future<void> _fetchDataForFilter() async {
-    if (mounted) setState(() => _isLoading = true);
-    _displayedItems.clear(); // Clear previous items
-
-    String collectionName = _getCollectionNameForFilter();
-    Query query = FirebaseFirestore.instance.collection(collectionName);
-
-    // If not petugas, filter by authorId. Petugas sees all.
-    final currentUser = AppUser().user; // Use your AppUser instance
-    if (!_isPetugas && currentUser != null) {
-      query = query.where("authorId", isEqualTo: currentUser.uid);
-    }
-
-    // Add ordering, e.g., by a submission timestamp if available
-    // query = query.orderBy("timestampField", descending: true); // Replace "timestampField"
-
-    try {
-      final querySnapshot = await query.get();
-      final items = querySnapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        data['JenisTemuJanji'] = _selectedFilter; // Add type for detail screen
-        return data;
-      }).toList();
-
-      if (mounted) {
-        setState(() {
-          _displayedItems = items;
-        });
-      }
-    } catch (e) {
-      print("Error fetching items for $_selectedFilter: $e");
-      // Show error to user
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
   void _onFilterChanged(String? newValue) {
     if (newValue == null || _selectedFilter == newValue) return;
     setState(() {
       _selectedFilter = newValue;
-      _fetchDataForFilter(); // Fetch data for the new filter
+      _fetchItems(); // Fetch data for the new filter
     });
   }
 
@@ -234,22 +248,41 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Semak',
-                          style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w400),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Semak',
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            Text(
+                              'Status Permohonan',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                        Text(
-                          'Status Permohonan',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28.sp,
-                              fontWeight: FontWeight.bold),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            _initializeDetails();
+                          },
+                          icon: Icon(
+                            Icons.refresh_rounded,
+                            color: Colors.white,
+                            size: 28.sp,
+                          ),
+                          tooltip: 'Segarkan',
                         ),
                       ],
                     ),

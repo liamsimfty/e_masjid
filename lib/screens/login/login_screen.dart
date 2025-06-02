@@ -10,7 +10,7 @@ const Color kInputTextColor = Color(0xFF333333);
 
 // --- Placeholder for LogInForm if you don't provide it ---
 // If you have your own LogInForm, ensure it accepts these controllers.
-class LogInForm extends StatelessWidget {
+class LogInForm extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
 
@@ -21,44 +21,99 @@ class LogInForm extends StatelessWidget {
   });
 
   @override
+  State<LogInForm> createState() => _LogInFormState();
+}
+
+class _LogInFormState extends State<LogInForm> {
+  String _selectedProvider = '@gmail.com';
+  final List<String> _emailProviders = [
+    '@gmail.com',
+    '@yahoo.com',
+    '@hotmail.com',
+    '@outlook.com',
+    '@icloud.com',
+  ];
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        // Email Field
-        TextFormField(
-          controller: emailController,
-          keyboardType: TextInputType.emailAddress,
-          style: const TextStyle(color: kInputTextColor),
-          decoration: InputDecoration(
-            hintText: 'Emel',
-            hintStyle: TextStyle(color: Colors.grey.shade500),
-            prefixIcon: Icon(Icons.email_outlined, color: kPrimaryColor.withOpacity(0.7)),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.9),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              borderSide: BorderSide.none,
+        // Email Field with Provider Dropdown
+        Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: TextFormField(
+                controller: widget.emailController,
+                keyboardType: TextInputType.emailAddress,
+                style: const TextStyle(color: kInputTextColor),
+                decoration: InputDecoration(
+                  hintText: 'Emel',
+                  hintStyle: TextStyle(color: Colors.grey.shade500),
+                  prefixIcon: Icon(Icons.email_outlined, color: kPrimaryColor.withOpacity(0.7)),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.9),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide(color: kPrimaryColor, width: 1.5),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Sila masukkan emel anda';
+                  }
+                  if (value.contains('@') || value.contains(' ')) {
+                    return 'Format emel tidak sah';
+                  }
+                  return null;
+                },
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              borderSide: BorderSide(color: kPrimaryColor, width: 1.5),
+            const SizedBox(width: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedProvider,
+                  items: _emailProviders.map((String provider) {
+                    return DropdownMenuItem<String>(
+                      value: provider,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          provider,
+                          style: const TextStyle(color: kInputTextColor),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        _selectedProvider = newValue;
+                      });
+                    }
+                  },
+                  icon: Icon(Icons.arrow_drop_down, color: kPrimaryColor.withOpacity(0.7)),
+                  dropdownColor: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Sila masukkan emel anda';
-            }
-            if (!value.contains('@')) {
-              return 'Format emel tidak sah';
-            }
-            return null;
-          },
+          ],
         ),
         const SizedBox(height: 20),
         // Password Field
         TextFormField(
-          controller: passwordController,
+          controller: widget.passwordController,
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
           decoration: InputDecoration(
@@ -163,10 +218,20 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     });
 
     try {
+      // Get the LogInForm state to access the selected provider
+      final formState = _formKey.currentState as FormState;
+      final form = formState.context.findAncestorStateOfType<_LogInFormState>();
+      
+      // Format email with selected provider
+      String email = emailController.text.trim();
+      if (!email.contains('@')) {
+        email = '$email${form?._selectedProvider ?? '@gmail.com'}';
+      }
+
       // Ensure AppUser.instance is correctly initialized if it's a singleton
       // or use Provider to access it if it's part of your state management.
       await AppUser.instance.signIn(
-        email: emailController.text.trim(),
+        email: email,
         password: passwordController.text.trim(),
       );
 
