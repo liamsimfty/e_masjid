@@ -36,7 +36,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
   bool _isPetugas = false;
 
   String _selectedFilter = "Tanya Imam"; // Default filter
-  final List<String> _filters = ['Tanya Imam', 'Qurban', 'Sewa Aula', 'Sumbangan']; // Added more options
+  final List<String> _filters = ['Tanya Imam', 'Sewa Aula', 'Sumbangan']; // Added more options
 
   List<Map<String, dynamic>> _displayedItems = [];
 
@@ -111,12 +111,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
             .orderBy("createdAt", descending: true)
             .get();
         items.addAll(querySnapshot.docs.map((doc) => doc.data()));
-      } else if (_selectedFilter == "Qurban") {
-        final querySnapshot = await FirebaseFirestore.instance
-            .collection("qurban")
-            .orderBy("createdAt", descending: true)
-            .get();
-        items.addAll(querySnapshot.docs.map((doc) => doc.data()));
       } else if (_selectedFilter == "Sewa Aula") {
         final querySnapshot = await FirebaseFirestore.instance
             .collection("sewa_aula")
@@ -147,8 +141,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
         return "tanya";
       case "Nikah":
         return "nikah";
-      case "Qurban":
-        return "qurban";
       case "Sewa Aula":
         return "sewa_aula"; // Assuming this collection name
       case "Sumbangan":
@@ -553,7 +545,6 @@ class _StatusItemCard extends StatelessWidget {
               Icon(
                 itemData['JenisTemuJanji'] == "Tanya Imam" ? Icons.help_outline_rounded :
                 itemData['JenisTemuJanji'] == "Nikah" ? Icons.favorite_border_rounded :
-                itemData['JenisTemuJanji'] == "Qurban" ? Icons.savings_outlined :
                 itemData['JenisTemuJanji'] == "Sewa Aula" ? Icons.meeting_room_outlined :
                 itemData['JenisTemuJanji'] == "Sumbangan" ? Icons.volunteer_activism_outlined :
                 Icons.article_outlined,

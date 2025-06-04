@@ -316,6 +316,30 @@ class FireStoreService {
     }
   }
 
+  Future<void> uploadDonationData(
+    String amount,
+    String name,
+    String description,
+    String authorId,
+  ) async {
+    try {
+      await _firebaseFirestore.collection("sumbangan").doc().set({
+        "amount": amount,
+        "name": name,
+        "description": description,
+        "JenisTemuJanji": "Sumbangan",
+        "isApproved": false,
+        "title": "Sumbangan dari $name",
+        "balasan": "Tidak perlu balasan",
+        "authorId": authorId,
+        "createdAt": FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log("Error uploading donation: ${e.toString()}");
+      rethrow;
+    }
+  }
+
   // Additional helper methods
   Future<List<DocumentSnapshot>> getPendingApprovals() async {
     try {

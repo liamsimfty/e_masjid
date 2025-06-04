@@ -198,50 +198,58 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
     setState(() {
       _isLoading = true;
     });
-    LoadingIndicator.showLoadingDialog(context); // Show custom full-screen loading
 
     try {
+      // Show loading indicator
+      if (mounted) {
+        LoadingIndicator.showLoadingDialog(context);
+      }
+
       // Step 1: Create Firebase Auth user
-      await AppUser.instance.signUp(
+      final success = await AppUser.instance.signUp(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // Step 2: Create Firestore user data
-      try {
-        await _fireStoreService.createUserData(
-          nameController.text.trim(),
-          AppUser.instance.user!.uid,
-          emailController.text.trim(),
-          _role,
-        );
-
-        // Both operations succeeded
-        if (mounted) Navigator.pop(context); // Dismiss loading dialog
-        EasyLoading.showSuccess('Pengguna berjaya dicipta!');
-        if (mounted) {
-          // Navigate to login or home, and clear controllers
-          nameController.clear();
-          emailController.clear();
-          passwordController.clear();
-          confirmPasswordController.clear();
-          Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-        }
-      } catch (firestoreError) {
-        // Firestore failed, roll back Auth user
-        try {
-          await AppUser.instance.user?.delete();
-          await FirebaseAuth.instance.signOut(); // Sign out any lingering session
-        } catch (deleteError) {
-          print("Error cleaning up auth user: $deleteError");
-          // Log this, but the primary error is Firestore
-        }
-        if (mounted) Navigator.pop(context); // Dismiss loading dialog
-        EasyLoading.showError(
-            "Gagal menyimpan data pengguna: ${firestoreError.toString().substring(0, (firestoreError.toString().length > 100 ? 100 : firestoreError.toString().length))}"); // Truncate long errors
+      if (!success) {
+        throw Exception("Failed to create user account");
       }
+
+      // Get the current user after successful signup
+      final currentUser = AppUser.instance.user;
+      if (currentUser == null) {
+        throw Exception("User not found after signup");
+      }
+
+      // Step 2: Create Firestore user data
+      await _fireStoreService.createUserData(
+        nameController.text.trim(),
+        currentUser.uid,
+        emailController.text.trim(),
+        _role,
+      );
+
+      // Clear form data
+      nameController.clear();
+      emailController.clear();
+      passwordController.clear();
+      confirmPasswordController.clear();
+
+      // Dismiss loading dialog
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading dialog
+      }
+
+      // Show success message
+      EasyLoading.showSuccess('Pengguna berjaya dicipta!');
+
+      // Navigate to login screen
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+      }
+
     } on FirebaseAuthException catch (e) {
-      if (mounted) Navigator.pop(context); // Dismiss loading dialog
+      // Handle Firebase Auth specific errors
       String message;
       switch (e.code) {
         case 'email-already-in-use':
@@ -253,13 +261,41 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
         case 'weak-password':
           message = "Kata laluan terlalu lemah.";
           break;
+        case 'operation-not-allowed':
+          message = "Operasi tidak dibenarkan.";
+          break;
         default:
           message = "Ralat Pendaftaran: ${e.message ?? e.code}";
       }
-      EasyLoading.showError(message);
+      
+      // Clean up if needed
+      try {
+        await AppUser.instance.user?.delete();
+        await FirebaseAuth.instance.signOut();
+      } catch (cleanupError) {
+        print("Error during cleanup: $cleanupError");
+      }
+
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading dialog
+        EasyLoading.showError(message);
+      }
     } catch (e) {
-      if (mounted) Navigator.pop(context); // Dismiss loading dialog
-      EasyLoading.showError("Ralat tidak dijangka: ${e.toString().substring(0, (e.toString().length > 100 ? 100 : e.toString().length))}");
+      // Handle other errors
+      print("Signup error: $e");
+      
+      // Clean up if needed
+      try {
+        await AppUser.instance.user?.delete();
+        await FirebaseAuth.instance.signOut();
+      } catch (cleanupError) {
+        print("Error during cleanup: $cleanupError");
+      }
+
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading dialog
+        EasyLoading.showError("Ralat tidak dijangka: ${e.toString()}");
+      }
     } finally {
       if (mounted) {
         setState(() {
