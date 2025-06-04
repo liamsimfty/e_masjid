@@ -30,8 +30,7 @@ class SemakStatusScreen extends StatefulWidget {
   State<SemakStatusScreen> createState() => _SemakStatusScreenState();
 }
 
-class _SemakStatusScreenState extends State<SemakStatusScreen>
-    with SingleTickerProviderStateMixin {
+class _SemakStatusScreenState extends State<SemakStatusScreen> {
   bool _isLoading = true;
   bool _isPetugas = false;
 
@@ -40,29 +39,12 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
 
   List<Map<String, dynamic>> _displayedItems = [];
 
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('ms_MY', null).then((_) {
-      _animationController = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 500),
-      );
-      _fadeAnimation = CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      );
       _initializeDetails();
     });
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 
   Future<void> _initializeDetails() async {
@@ -88,7 +70,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
         setState(() {
           _isLoading = false;
         });
-        _animationController.forward();
       }
     } catch (e) {
       print("Error initializing details: $e");
@@ -232,8 +213,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
           _buildGradientBackground(),
           _buildDecorativeCircles(context),
           SafeArea(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -358,34 +337,19 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
                                   ),
                                 ),
                               )
-                            : AnimationLimiter(
-                                child: ListView.builder(
+                          : ListView.builder(
                                   key: ValueKey(_selectedFilter),
                                   physics: const BouncingScrollPhysics(),
                                   padding:
                                       EdgeInsets.only(bottom: 80.h, top: 5.h),
                                   itemCount: _displayedItems.length,
                                   itemBuilder: ((context, index) {
-                                    return AnimationConfiguration
-                                        .staggeredList(
-                                      position: index,
-                                      duration:
-                                          const Duration(milliseconds: 400),
-                                      child: SlideAnimation(
-                                        verticalOffset: 60.0,
-                                        child: FadeInAnimation(
-                                          child: _StatusItemCard(
-                                              itemData:
-                                                  _displayedItems[index]),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
+                                return _StatusItemCard(
+                                    itemData: _displayedItems[index]);
+                              }),
                               ),
                   ),
                 ],
-              ),
             ),
           ),
         ],
@@ -525,7 +489,8 @@ class _StatusItemCard extends StatelessWidget {
     String title = _getDisplayTitle();
     String date = _getDisplayDate();
     bool isApproved = itemData['isApproved'] ?? false;
-    String? status = itemData['status']?.toString(); // Optional status field
+    String? status = itemData['status']?.toString();
+    String? imageUrl = itemData['imageUrl'];
 
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 7.h),
@@ -536,12 +501,30 @@ class _StatusItemCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         onTap: () {
           Navigator.push(
-              context, SemakDetail.route(data: itemData)); // Use static route method
+              context, SemakDetail.route(data: itemData));
         },
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
           child: Row(
             children: [
+              if (imageUrl != null && itemData['JenisTemuJanji'] == "Sumbangan")
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Image.network(
+                    imageUrl,
+                    width: 50.w,
+                    height: 50.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.volunteer_activism_outlined,
+                        color: kPrimaryColor,
+                        size: 28.sp,
+                      );
+                    },
+                  ),
+                )
+              else
               Icon(
                 itemData['JenisTemuJanji'] == "Tanya Imam" ? Icons.help_outline_rounded :
                 itemData['JenisTemuJanji'] == "Nikah" ? Icons.favorite_border_rounded :
@@ -567,7 +550,7 @@ class _StatusItemCard extends StatelessWidget {
                     ),
                     SizedBox(height: 3.h),
                     Text(
-                      itemData['JenisTemuJanji'] ?? 'Permohonan', // Display application type
+                      itemData['JenisTemuJanji'] ?? 'Permohonan',
                       style: TextStyle(
                           fontSize: 11.5.sp,
                           color: Colors.black54,

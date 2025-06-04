@@ -14,6 +14,7 @@ dependencies:
   flutter_screenutil: ^5.9.1
   table_calendar: ^3.0.9
   cupertino_icons: ^1.0.6
+  permission_handler: ^11.3.0
 
   # Firebase (gunakan versi stabil dan terbaru)
   firebase_auth: ^5.5.4
@@ -45,6 +46,10 @@ dependencies:
 
   http: ^1.4.0
   package_info_plus: ^8.3.0
+
+  cloudinary_public: ^0.23.1
+  image_picker: ^1.0.7
+  dio: ^5.8.0+1
 
 dependency_overrides:
   file: ^7.0.0

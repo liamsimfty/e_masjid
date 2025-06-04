@@ -6,6 +6,8 @@ import '../../providers/user.provider.dart';
 import '../../services/firestore_service.dart';
 import 'package:e_masjid/widgets/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:e_masjid/services/cloudinary_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SewaAulaScreen extends StatefulWidget {
   const SewaAulaScreen({super.key});
@@ -24,6 +26,9 @@ class SewaAulaScreen extends StatefulWidget {
 
 class _SewaAulaScreenState extends State<SewaAulaScreen> {
   FireStoreService fireStoreService = FireStoreService();
+  CloudinaryService cloudinaryService = CloudinaryService();
+  String? _imageUrl;
+  bool _isUploadingImage = false;
   DateTimeRange dateRange = DateTimeRange(
     start: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
     end: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
@@ -97,6 +102,24 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
     
     // RM100 per hour
     return totalHours * 100.0;
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    try {
+      setState(() => _isUploadingImage = true);
+      final imageFile = await cloudinaryService.pickImage(ImageSource.gallery);
+      
+      if (imageFile != null) {
+        final imageUrl = await cloudinaryService.uploadImage(imageFile);
+        if (imageUrl != null) {
+          setState(() => _imageUrl = imageUrl);
+        }
+      }
+    } catch (e) {
+      print('Error picking/uploading image: $e');
+    } finally {
+      setState(() => _isUploadingImage = false);
+    }
   }
 
   @override
@@ -472,6 +495,86 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
                               ),
                             ),
 
+                          // Add Image Upload Section
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.image,
+                                color: Colors.purple,
+                              ),
+                              SizedBox(width: 9.w),
+                              Text(
+                                'Dokumen Sokongan',
+                                style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            width: double.infinity,
+                            height: 200.h,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: _imageUrl != null
+                                ? Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                          _imageUrl!,
+                                          width: double.infinity,
+                                          height: 200.h,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Center(
+                                              child: Icon(Icons.error_outline,
+                                                  size: 40.sp, color: Colors.red),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.close,
+                                              color: Colors.white),
+                                          onPressed: () {
+                                            setState(() => _imageUrl = null);
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Center(
+                                    child: ElevatedButton.icon(
+                                      onPressed: _isUploadingImage
+                                          ? null
+                                          : _pickAndUploadImage,
+                                      icon: _isUploadingImage
+                                          ? SizedBox(
+                                              width: 20.w,
+                                              height: 20.h,
+                                              child: const CircularProgressIndicator(
+                                                  strokeWidth: 2.0),
+                                            )
+                                          : const Icon(Icons.add_photo_alternate),
+                                      label: Text(_isUploadingImage
+                                          ? 'Memuat naik...'
+                                          : 'Tambah Imej'),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: kPrimaryColor),
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(height: 20),
+
                           const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -544,6 +647,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
           startTimeString,
           endTimeString,
           AppUser().user!.uid,
+          _imageUrl,
         );
         EasyLoading.showSuccess('Permohonan berjaya ditambah');
         Navigator.of(context).popAndPushNamed('/semak');

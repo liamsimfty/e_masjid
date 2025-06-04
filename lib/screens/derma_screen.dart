@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../services/firestore_service.dart';
 import '../../providers/user.provider.dart';
+import '../../widgets/image_picker_widget.dart';
 
 class DermaScreen extends StatefulWidget {
   static const String routeName = '/derma';
@@ -25,6 +26,7 @@ class _DermaScreenState extends State<DermaScreen> {
   final nameController = TextEditingController();
   final descController = TextEditingController();
   FireStoreService fireStoreService = FireStoreService();
+  String? _imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +90,17 @@ class _DermaScreenState extends State<DermaScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Image Picker
+                            ImagePickerWidget(
+                              label: 'Bukti Derma',
+                              onImageUploaded: (String url) {
+                                setState(() {
+                                  _imageUrl = url;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 15),
+
                             // Amount
                             Padding(
                               padding: const EdgeInsets.only(
@@ -266,7 +279,8 @@ class _DermaScreenState extends State<DermaScreen> {
         amountController.text,
         nameController.text,
         descController.text,
-        AppUser().user!.uid
+        AppUser().user!.uid,
+        _imageUrl,
       );
 
       EasyLoading.showSuccess('Derma berjaya dihantar');

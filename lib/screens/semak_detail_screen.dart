@@ -33,8 +33,7 @@ class SemakDetail extends StatefulWidget {
   State<SemakDetail> createState() => _SemakDetailState();
 }
 
-class _SemakDetailState extends State<SemakDetail>
-    with SingleTickerProviderStateMixin { // Added for animations
+class _SemakDetailState extends State<SemakDetail> {
   bool _isPetugas = false; // Combined visibility logic
   bool _isLoadingConfirmation = false; // For the Sahkan button
   bool _isLoading = true; // Add loading state
@@ -44,19 +43,9 @@ class _SemakDetailState extends State<SemakDetail>
   String _formattedLastDate = ""; // For date ranges
   String _formattedSingleDate = ""; // For single date entries like 'tarikh'
 
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500), // Animation duration
-    );
-    _fadeAnimation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
-
     _initializeDetails();
   }
 
@@ -67,13 +56,11 @@ class _SemakDetailState extends State<SemakDetail>
       setState(() {
         _isLoading = false;
       });
-      _animationController.forward();
     }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
     super.dispose();
   }
 
@@ -284,7 +271,6 @@ class _SemakDetailState extends State<SemakDetail>
       SizedBox(height: _isPetugas ? 80.h : 20.h), // Space for FAB or general padding
     ];
 
-
     return Scaffold(
       extendBodyBehindAppBar: true, // Make AppBar transparent over gradient
       floatingActionButton: Visibility(
@@ -329,31 +315,13 @@ class _SemakDetailState extends State<SemakDetail>
           _buildGradientBackground(),
           _buildDecorativeCircles(context),
           SafeArea(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding:
-                    EdgeInsets.symmetric(horizontal: 18.w, vertical: 15.h),
-                child: AnimationLimiter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: List.generate( // Generates animated list items
-                      contentCards.length,
-                      (index) => AnimationConfiguration.staggeredList(
-                        position: index,
-                        duration: const Duration(milliseconds: 400),
-                        delay: Duration(milliseconds: (index * 70)), // Stagger delay
-                        child: SlideAnimation(
-                          verticalOffset: 50.0,
-                          child: FadeInAnimation(
-                            child: contentCards[index],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding:
+                  EdgeInsets.symmetric(horizontal: 18.w, vertical: 15.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: contentCards,
               ),
             ),
           ),
@@ -432,7 +400,7 @@ class _SemakDetailState extends State<SemakDetail>
           ? Icons.check_circle_rounded
           : (statusText == 'Ditolak'
               ? Icons.cancel_rounded
-              : Icons.hourglass_empty_rounded), // Changed to hourglass for pending
+              : Icons.hourglass_empty_rounded),
       label: 'Status:',
       value: statusText ?? (isApproved ? 'Diluluskan' : 'Dalam Proses'),
       valueColor: isApproved
@@ -455,12 +423,12 @@ class _SemakDetailState extends State<SemakDetail>
             icon: Icons.calendar_today_outlined,
             label: jenisTemuJanji == "Nikah"
                 ? 'Tarikh Nikah Dicadang:'
-                : 'Tarikh Hantar:', // Changed for "Pertanyaan"
+                : 'Tarikh Hantar:',
             value: _formattedSingleDate));
       }
     } else if (jenisTemuJanji == "Qurban") {
       details.add(_buildDetailRow(
-          icon: Icons.confirmation_number_outlined, // More relevant icon
+          icon: Icons.confirmation_number_outlined,
           label: 'Bilangan Bahagian:',
           value: data["bilangan"]?.toString() ?? 'N/A'));
       if (_formattedFirstDate.isNotEmpty && _formattedFirstDate != "Ralat") {
@@ -495,20 +463,102 @@ class _SemakDetailState extends State<SemakDetail>
             label: 'Anggaran Bayaran:',
             value: "RM ${(data['price'] as num).toStringAsFixed(2)}"));
       }
-    } else if (jenisTemuJanji == "Sumbangan") {
-      if (data["namaProgram"] != null &&
-          (data["namaProgram"] as String).isNotEmpty) {
-        details.add(_buildDetailRow(
-            icon: Icons.event_note_outlined,
-            label: 'Program Disumbang Kepada:',
-            value: data["namaProgram"]));
-        details.add(SizedBox(height: 8.h));
+
+      // Show image only for petugas
+      if (_isPetugas && data["imageUrl"] != null && data["imageUrl"].toString().isNotEmpty) {
+        details.add(SizedBox(height: 16.h));
+        details.add(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: Row(
+                  children: [
+                    Icon(Icons.image_outlined,
+                        size: 18.sp, color: kPrimaryColor.withOpacity(0.9)),
+                    SizedBox(width: 12.w),
+                    Text(
+                      'Dokumen Sokongan:',
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.black87.withOpacity(0.75),
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Show full screen image
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Stack(
+                          children: [
+                            InteractiveViewer(
+                              child: Image.network(
+                                data["imageUrl"],
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: IconButton(
+                                icon: const Icon(Icons.close, color: Colors.white),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: Image.network(
+                    data["imageUrl"],
+                    height: 200.h,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 200.h,
+                        width: double.infinity,
+                        color: Colors.grey[200],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.error_outline,
+                                size: 40.sp, color: Colors.grey[400]),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Gagal memuatkan imej',
+                              style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14.sp),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
       }
-      if (data["jumlah"] != null) {
+    } else if (jenisTemuJanji == "Sumbangan") {
+      if (data["amount"] != null) {
         details.add(_buildDetailRow(
             icon: Icons.attach_money_rounded,
             label: 'Jumlah Sumbangan:',
-            value: "RM ${(data['jumlah'] as num).toStringAsFixed(2)}"));
+            value: "RM ${data['amount']}"));
         details.add(SizedBox(height: 8.h));
       }
       if (_formattedSingleDate.isNotEmpty && _formattedSingleDate != "Ralat") {
@@ -516,6 +566,96 @@ class _SemakDetailState extends State<SemakDetail>
             icon: Icons.calendar_today_outlined,
             label: 'Tarikh Transaksi:',
             value: _formattedSingleDate));
+      }
+      
+      // Add image display for donations
+      if (data["imageUrl"] != null && data["imageUrl"].toString().isNotEmpty) {
+        details.add(SizedBox(height: 16.h));
+        details.add(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: Row(
+                  children: [
+                    Icon(Icons.image_outlined,
+                        size: 18.sp, color: kPrimaryColor.withOpacity(0.9)),
+                    SizedBox(width: 12.w),
+                    Text(
+                      'Bukti Derma:',
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.black87.withOpacity(0.75),
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Show full screen image
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Stack(
+                          children: [
+                            InteractiveViewer(
+                              child: Image.network(
+                                data["imageUrl"],
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: IconButton(
+                                icon: const Icon(Icons.close, color: Colors.white),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: Image.network(
+                    data["imageUrl"],
+                    height: 500.h,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 200.h,
+                        width: double.infinity,
+                        color: Colors.grey[200],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.error_outline,
+                                size: 40.sp, color: Colors.grey[400]),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Gagal memuatkan imej',
+                              style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14.sp),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
       }
     }
 
@@ -531,7 +671,7 @@ class _SemakDetailState extends State<SemakDetail>
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline_rounded, // Changed icon
+                Icon(Icons.info_outline_rounded,
                     color: kPrimaryColorDark,
                     size: 20.sp),
                 SizedBox(width: 10.w),

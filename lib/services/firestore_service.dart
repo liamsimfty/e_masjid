@@ -255,7 +255,8 @@ class FireStoreService {
       DateTime date,
       String startTime,
       String endTime,
-      String authorId) async {
+      String authorId,
+      String? imageUrl) async {
     try {
       // Calculate duration in hours
       final startTime24 = DateFormat('HH:mm').parse(startTime);
@@ -284,6 +285,7 @@ class FireStoreService {
             "Permohonan Sewa Aula oleh $pemohon untuk $jenisKegiatan pada tarikh : ${date.day}/${date.month}/${date.year}, dari jam : $startTime hingga $endTime",
         "balasan": "Tidak perlu balasan",
         "authorId": authorId,
+        "imageUrl": imageUrl,
         "createdAt": FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -321,12 +323,14 @@ class FireStoreService {
     String name,
     String description,
     String authorId,
+    String? imageUrl,
   ) async {
     try {
       await _firebaseFirestore.collection("sumbangan").doc().set({
         "amount": amount,
         "name": name,
         "description": description,
+        "imageUrl": imageUrl,
         "JenisTemuJanji": "Sumbangan",
         "isApproved": false,
         "title": "Sumbangan dari $name",
@@ -389,6 +393,18 @@ class FireStoreService {
     } catch (e) {
       print("Error formatting date with time: $e");
       return "";
+    }
+  }
+
+  Future<void> updateUserProfileImage(String userId, String imageUrl) async {
+    try {
+      await _firebaseFirestore.collection("users").doc(userId).update({
+        "profileImage": imageUrl,
+        "updatedAt": FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log("Error updating user profile image: ${e.toString()}");
+      rethrow;
     }
   }
 }
