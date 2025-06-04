@@ -228,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           }
         }
       } catch (e) {
-        print("Error parsing time for ${prayerEntry['name']}: ${e}");
+        print("Error parsing time for ${prayerEntry['name']}: $e");
       }
     }
     

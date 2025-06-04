@@ -43,7 +43,7 @@ class CloudinaryService {
         ),
       );
 
-      if (response.secureUrl != null && response.secureUrl!.isNotEmpty) {
+      if (response.secureUrl.isNotEmpty) {
         print('✅ Successfully uploaded image to Cloudinary');
         print('🔗 URL: ${response.secureUrl}');
         print('📁 Public ID: ${response.publicId}');
@@ -55,7 +55,7 @@ class CloudinaryService {
     } catch (e) {
       print('❌ Error uploading image to Cloudinary: $e');
       
-      if (e is DioError) {
+      if (e is DioException) {
         print('📊 DioError Status Code: ${e.response?.statusCode}');
         print('📋 DioError Response Data: ${e.response?.data}');
         print('🔍 DioError Message: ${e.message}');
@@ -114,11 +114,9 @@ class CloudinaryService {
         ),
       );
       
-      if (response.secureUrl != null) {
-        print('✅ Upload preset test successful!');
-        return true;
-      }
-      return false;
+      print('✅ Upload preset test successful!');
+      return true;
+          return false;
     } catch (e) {
       print('❌ Upload preset test failed: $e');
       return false;

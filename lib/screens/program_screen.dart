@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/screens/petugas/add_program_screen.dart';
 import 'package:e_masjid/screens/petugas/program_detail_screen.dart';
-import 'package:e_masjid/widgets/custom_navbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

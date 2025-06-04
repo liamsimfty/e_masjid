@@ -1,6 +1,5 @@
 import 'package:e_masjid/config/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:e_masjid/widgets/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../providers/user.provider.dart';

@@ -3,7 +3,7 @@ import 'package:e_masjid/screens/screens.dart'; // Assuming HomeScreen, SignUpSc
 import 'package:e_masjid/config/constants.dart';
 // import 'package:e_masjid/widgets/login_form.dart'; // Assuming LogInForm is here
 import 'package:e_masjid/providers/user.provider.dart';
-import 'dart:math' as math; // For animations if needed
+// For animations if needed
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Define constants if not in constants.dart

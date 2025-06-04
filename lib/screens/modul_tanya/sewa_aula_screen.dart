@@ -4,7 +4,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../providers/user.provider.dart';
 import '../../services/firestore_service.dart';
-import 'package:e_masjid/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:e_masjid/services/cloudinary_service.dart';
 import 'package:image_picker/image_picker.dart';

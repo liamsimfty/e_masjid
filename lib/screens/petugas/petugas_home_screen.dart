@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:async';
-import 'package:e_masjid/animations/bottom_animation.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/providers/user.provider.dart'; // For AppUser.instance.signOut()
 import 'package:e_masjid/screens/screens.dart'; // For LoginScreen

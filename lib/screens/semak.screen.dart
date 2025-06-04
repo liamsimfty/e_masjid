@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_masjid/config/constants.dart';
-import 'package:e_masjid/providers/user.provider.dart'; // Assuming AppUser().user is accessible
+// Assuming AppUser().user is accessible
 import 'package:e_masjid/screens/semak_detail_screen.dart';
-import 'package:e_masjid/widgets/custom_navbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart'; // For date formatting if needed, though not explicitly used in current item display
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shimmer/shimmer.dart';

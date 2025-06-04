@@ -1,8 +1,6 @@
-import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/services/firestore_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
