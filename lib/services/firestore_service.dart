@@ -163,26 +163,6 @@ class FireStoreService {
     }
   }
 
-  Future<void> uploadTempahQurban(String pemohon, int bilangan, String authorId) async {
-    try {
-      await _firebaseFirestore.collection("qurban").doc().set({
-        "pemohon": pemohon,
-        "bilangan": bilangan,
-        "JenisTemuJanji": "Qurban",
-        "isApproved": false,
-        "title": "$pemohon (Tempah Qurban)",
-        "description":
-            "Tempahan Qurban oleh $pemohon iaitu sebanyak bilangan : $bilangan",
-        "balasan": "Tempahan Qurban",
-        "authorId": authorId,
-        "createdAt": FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log("Error uploading qurban booking: ${e.toString()}");
-      rethrow;
-    }
-  }
-
   Future<void> updateBalasan(
     String title,
     String desc,
@@ -221,30 +201,6 @@ class FireStoreService {
       });
     } catch (e) {
       log("Error approving nikah: ${e.toString()}");
-      rethrow;
-    }
-  }
-
-  Future<void> updateApprovalQurban(String id) async {
-    try {
-      await _firebaseFirestore.collection("qurban").doc(id).update({
-        "isApproved": true,
-        "approvedAt": FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log("Error approving qurban: ${e.toString()}");
-      rethrow;
-    }
-  }
-
-  Future<void> updateApprovalPertanyaan(String id) async {
-    try {
-      await _firebaseFirestore.collection("tanya").doc(id).update({
-        "isApproved": true,
-        "approvedAt": FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log("Error approving question: ${e.toString()}");
       rethrow;
     }
   }
@@ -363,13 +319,6 @@ class FireStoreService {
           .get();
       pending.addAll(nikahQuery.docs);
       
-      // Get pending qurban
-      var qurbanQuery = await _firebaseFirestore
-          .collection("qurban")
-          .where("isApproved", isEqualTo: false)
-          .get();
-      pending.addAll(qurbanQuery.docs);
-      
       return pending;
     } catch (e) {
       log("Error getting pending approvals: ${e.toString()}");
@@ -404,6 +353,18 @@ class FireStoreService {
       });
     } catch (e) {
       log("Error updating user profile image: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<void> updateApprovalPertanyaan(String id) async {
+    try {
+      await _firebaseFirestore.collection("tanya").doc(id).update({
+        "isApproved": true,
+        "updatedAt": FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log("Error updating pertanyaan approval: ${e.toString()}");
       rethrow;
     }
   }

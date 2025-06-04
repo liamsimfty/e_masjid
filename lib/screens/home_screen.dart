@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:e_masjid/widgets/widgets.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:e_masjid/providers/user.provider.dart';
@@ -729,7 +728,6 @@ class Choice {
 const List<Choice> choices = <Choice>[ // Your choices list remains the same
   Choice(title: 'Tanya Imam', icon: Icons.edit_note_outlined, cardColor: Colors.yellow, iconColor: Color(0xFF6366F1), route: '/tanya-imam'),
   Choice(title: 'Sewa Aula', icon: Icons.assessment_outlined, cardColor: Colors.yellow, iconColor: Color(0xFFEF4444), route: '/sewa-aula'),
-  Choice(title: 'Tempah Qurban', icon: Icons.payment_outlined, cardColor: Colors.yellow, iconColor: Color(0xFFF59E0B), route: '/qurban'),
   Choice(title: 'Jadual Program', icon: Icons.calendar_today, cardColor: Colors.yellow, iconColor: Color(0xFF06B6D4), route: '/program'),
   Choice(title: 'Sumbangan', icon: Icons.volunteer_activism, cardColor: Colors.yellow, iconColor: Color(0xFFFBBF24), route: '/derma'),
   Choice(title: 'Semak Status', icon: Icons.check_circle_outline, cardColor: Colors.yellow, iconColor: Color(0xFF10B981), route: '/semak'),

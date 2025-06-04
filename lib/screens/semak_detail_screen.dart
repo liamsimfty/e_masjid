@@ -103,8 +103,6 @@ class _SemakDetailState extends State<SemakDetail> {
             .format((widget.data['date'] as Timestamp).toDate());
       }
 
-
-      // Handle 'firstDate' and 'lastDate' (common for Qurban, Sewa Aula, some Programs)
       if (widget.data['firstDate'] is Timestamp) {
         _formattedFirstDate = displayFormatter
             .format((widget.data['firstDate'] as Timestamp).toDate());
@@ -338,7 +336,6 @@ class _SemakDetailState extends State<SemakDetail> {
     switch (jenisTemuJanji) {
       case "Tanya Imam": typeIcon = Icons.contact_support_outlined; break;
       case "Nikah": typeIcon = Icons.church_outlined; break; // Or Icons.favorite
-      case "Qurban": typeIcon = Icons.savings_outlined; break;
       case "Sewa Aula": typeIcon = Icons.meeting_room_outlined; break;
       case "Sumbangan": typeIcon = Icons.volunteer_activism_outlined; break;
     }
@@ -426,18 +423,6 @@ class _SemakDetailState extends State<SemakDetail> {
                 : 'Tarikh Hantar:',
             value: _formattedSingleDate));
       }
-    } else if (jenisTemuJanji == "Qurban") {
-      details.add(_buildDetailRow(
-          icon: Icons.confirmation_number_outlined,
-          label: 'Bilangan Bahagian:',
-          value: data["bilangan"]?.toString() ?? 'N/A'));
-      if (_formattedFirstDate.isNotEmpty && _formattedFirstDate != "Ralat") {
-        details.add(SizedBox(height: 8.h));
-        details.add(_buildDetailRow(
-            icon: Icons.event_available_outlined,
-            label: "Tarikh Korban:",
-            value: _formattedFirstDate));
-      }
     } else if (jenisTemuJanji == "Sewa Aula") {
       if (_formattedFirstDate.isNotEmpty && _formattedFirstDate != "Ralat") {
         String dateRangeDisplay = _formattedFirstDate;
@@ -466,7 +451,7 @@ class _SemakDetailState extends State<SemakDetail> {
 
       // Show image only for petugas
       if (_isPetugas && data["imageUrl"] != null && data["imageUrl"].toString().isNotEmpty) {
-        details.add(SizedBox(height: 16.h));
+        details.add(SizedBox(height: 34.h));
         details.add(
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -823,17 +808,13 @@ class _SemakDetailState extends State<SemakDetail> {
 
       // Ensure these methods exist in your FireStoreService and handle updates correctly
       // The `category` variable here IS `jenisTemuJanji`
-      if (category == "Qurban") {
-        await firestoreService.updateApprovalQurban(id); success = true;
-      } else if (category == "Nikah") {
+      if (category == "Nikah") {
         await firestoreService.updateApprovalNikah(id); success = true;
       } else if (category == "Pertanyaan") {
         await firestoreService.updateApprovalPertanyaan(id); success = true;
       } else if (category == "Sewa Aula") {
-        // Ensure updateApprovalSewaAula method exists in FireStoreService
         await firestoreService.updateApprovalSewaAula(id); success = true;
       } else if (category == "Sumbangan") {
-        // Ensure updateApprovalSumbangan method exists in FireStoreService
         await firestoreService.updateApprovalSumbangan(id); success = true;
       }
 
@@ -841,11 +822,8 @@ class _SemakDetailState extends State<SemakDetail> {
         EasyLoading.showSuccess('Permohonan telah disahkan!');
         if (mounted) {
           setState(() {
-            // This mutates widget.data, which is generally okay for immediate UI feedback here.
-            // For a more robust pattern, especially if this data is shared/cached,
-            // consider a proper state management solution or callback to refresh from source.
             widget.data["isApproved"] = true;
-            widget.data["status"] = (category == "Sumbangan" || category == "Qurban") ? "Diterima" : "Diluluskan";
+            widget.data["status"] = (category == "Sumbangan") ? "Diterima" : "Diluluskan";
           });
         }
       } else {

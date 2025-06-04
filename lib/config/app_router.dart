@@ -23,8 +23,6 @@ class AppRouter {
         return TanyaImamScreen.route();
       case SewaAulaScreen.routeName:
         return SewaAulaScreen.route();
-      case TempahQurbanScreen.routeName:
-        return TempahQurbanScreen.route();
       case SemakStatusScreen.routeName:
         return SemakStatusScreen.route();
       case HadisScreen.routeName:

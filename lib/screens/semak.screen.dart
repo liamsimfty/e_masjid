@@ -407,7 +407,6 @@ class _StatusItemCard extends StatelessWidget {
   String _getDisplayTitle() {
     return itemData['title'] ?? 
            itemData['nama_penuh'] ?? // For Nikah
-           itemData['namaPeserta'] ?? // For Qurban
            itemData['pemohon'] ?? // For Sewa Aula
            itemData['nama_program'] ?? // For Sumbangan
            'Tiada Tajuk';
@@ -417,7 +416,7 @@ class _StatusItemCard extends StatelessWidget {
     Timestamp? ts;
     if (itemData['tarikh'] is Timestamp) { // Tanya Imam, Nikah
       ts = itemData['tarikh'];
-    } else if (itemData['firstDate'] is Timestamp) { // Qurban, Sewa Aula
+    } else if (itemData['firstDate'] is Timestamp) {
       ts = itemData['firstDate'];
     } else if (itemData['date'] is Timestamp) { // Sumbangan
       ts = itemData['date'];
