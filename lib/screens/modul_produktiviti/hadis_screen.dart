@@ -29,7 +29,7 @@ class _HadisScreenState extends State<HadisScreen> {
         NavigationDelegate(
           onPageStarted: (url) {
             try {
-              if (url.contains('http://www.al-ahkam.net/home/bahan-ilmiah/hadis-40-imam-al-nawawi')) {
+              if (url.contains('https://rumaysho.com/25050-hadits-arbain-40-hidup-di-dunia-hanya-sebentar.html')) {
                 Future.delayed(const Duration(milliseconds: 200), () {
                   // Remove header
                   controller.runJavaScript(
@@ -45,7 +45,7 @@ class _HadisScreenState extends State<HadisScreen> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('http://www.al-ahkam.net/home/bahan-ilmiah/hadis-40-imam-al-nawawi'));
+      ..loadRequest(Uri.parse('https://rumaysho.com/25050-hadits-arbain-40-hidup-di-dunia-hanya-sebentar.html'));
   }
 
   @override

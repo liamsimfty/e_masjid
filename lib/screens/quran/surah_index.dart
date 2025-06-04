@@ -102,7 +102,7 @@ class _SurahIndexState extends State<SurahIndex> {
               CustomImage(
                 opacity: 0.3,
                 height: height * 0.17,
-                imagePath: 'assets/images/kaba.png',
+                imagePath: 'assets/images/logo.png',
               ),
               const BackBtn(),
               const CustomTitle(
