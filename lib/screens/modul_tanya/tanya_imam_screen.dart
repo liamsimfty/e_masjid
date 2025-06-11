@@ -100,7 +100,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                                   width: 7.w,
                                 ),
                                 Text(
-                                  'Tajuk',
+                                  'Kasus',
                                   style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
@@ -152,7 +152,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                                 width: 7.w,
                               ),
                               Text(
-                                'Huraian',
+                                'Pertanyaan',
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,

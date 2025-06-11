@@ -49,7 +49,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
 
   String getStartDate() {
     if (!pickedDateRange) {
-      return 'Pilih Tarikh Mula';
+      return 'Pilih Tanggal Mula';
     } else {
       return formatDate;
     }
@@ -57,7 +57,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
 
   String getEndDate() {
     if (!pickedDateRange) {
-      return 'Pilih Tarikh Tamat';
+      return 'Pilih Tanggal Tamat';
     } else {
       return formatDate2;
     }
@@ -65,7 +65,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
 
   String getStartTime() {
     if (pickedStartTime != true) {
-      return 'Pilih Masa Mula';
+      return 'Pilih Waktu Mulai';
     } else {
       return startTimeString;
     }
@@ -73,7 +73,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
 
   String getEndTime() {
     if (pickedEndTime != true) {
-      return 'Pilih Masa Tamat';
+      return 'Pilih Waktu Tamat';
     } else {
       return endTimeString;
     }
@@ -329,7 +329,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: kPrimaryColor),
                                   child: const Text(
-                                    'Pilih Tarikh',
+                                    'Pilih Waktu',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -477,7 +477,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
                           // Add Image Upload Section
                           const SizedBox(height: 20),
                           ImagePickerWidget(
-                            label: 'Dokumen Sokongan',
+                            label: 'Bukti Pembayaran',
                             onImageUploaded: (String url) {
                               setState(() {
                                 _imageUrl = url;

@@ -377,7 +377,7 @@ class _EditProgramState extends State<EditProgram> {
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: kPrimaryColor),
                                       child: const Text(
-                                        'Pilih Tarikh',
+                                        'Pilih Waktu',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     )),

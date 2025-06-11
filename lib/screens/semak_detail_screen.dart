@@ -464,7 +464,7 @@ class _SemakDetailState extends State<SemakDetail> {
                         size: 18.sp, color: kPrimaryColor.withOpacity(0.9)),
                     SizedBox(width: 12.w),
                     Text(
-                      'Dokumen Sokongan:',
+                      'Bukti Pembayaran:',
                       style: TextStyle(
                           fontSize: 14.sp,
                           color: Colors.black87.withOpacity(0.75),
@@ -522,7 +522,7 @@ class _SemakDetailState extends State<SemakDetail> {
                                 size: 40.sp, color: Colors.grey[400]),
                             SizedBox(height: 8.h),
                             Text(
-                              'Gagal memuatkan imej',
+                              'Gagal memuatkan image',
                               style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 14.sp),
@@ -568,7 +568,7 @@ class _SemakDetailState extends State<SemakDetail> {
                         size: 18.sp, color: kPrimaryColor.withOpacity(0.9)),
                     SizedBox(width: 12.w),
                     Text(
-                      'Bukti Derma:',
+                      'Bukti Donasi:',
                       style: TextStyle(
                           fontSize: 14.sp,
                           color: Colors.black87.withOpacity(0.75),
@@ -626,7 +626,7 @@ class _SemakDetailState extends State<SemakDetail> {
                                 size: 40.sp, color: Colors.grey[400]),
                             SizedBox(height: 8.h),
                             Text(
-                              'Gagal memuatkan imej',
+                              'Gagal memuatkan iamge',
                               style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 14.sp),

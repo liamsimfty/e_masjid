@@ -178,7 +178,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Pilih Sumber Imej'),
+        title: const Text('Pilih Sumber Image'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -263,7 +263,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Tekan untuk tambah imej',
+                            'Tekan untuk tambah image',
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 16,
