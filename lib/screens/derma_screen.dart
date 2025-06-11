@@ -92,7 +92,7 @@ class _DermaScreenState extends State<DermaScreen> {
                           children: [
                             // Image Picker
                             ImagePickerWidget(
-                              label: 'Bukti Derma',
+                              label: 'Bukti Donasi',
                               onImageUploaded: (String url) {
                                 setState(() {
                                   _imageUrl = url;
@@ -117,7 +117,7 @@ class _DermaScreenState extends State<DermaScreen> {
                                   ),
                                   SizedBox(width: 7.w),
                                   Text(
-                                    'Jumlah Derma (RM)',
+                                    'Jumlah Donasi (RM)',
                                     style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class _DermaScreenState extends State<DermaScreen> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                labelText: 'Masukkan jumlah derma',
+                                labelText: 'Masukkan jumlah donasi',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
