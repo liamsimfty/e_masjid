@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Needed for SystemUiOverlayStyle
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// For list animations
 import 'package:intl/intl.dart';
 
 class SemakDetail extends StatefulWidget {
@@ -92,7 +91,7 @@ class _SemakDetailState extends State<SemakDetail> {
     // Use a consistent formatter for display
     final DateFormat displayFormatter = DateFormat("dd MMMM yyyy", "ms_MY"); // e.g., 02 Jun 2025
     try {
-      // Handle 'tarikh' field (common for Nikah, Pertanyaan)
+      // Handle 'tarikh' field (common for Pertanyaan)
       if (widget.data['tarikh'] is Timestamp) {
         _formattedSingleDate = displayFormatter
             .format((widget.data['tarikh'] as Timestamp).toDate());
@@ -202,7 +201,6 @@ class _SemakDetailState extends State<SemakDetail> {
 
     // Determine title based on available fields, specific to application type
     String title = widget.data["title"] ??
-        widget.data["nama_penuh"] ?? // For Nikah
         widget.data["namaPeserta"] ?? // For Qurban
         widget.data["pemohon"] ?? // For Sewa Aula
         widget.data["nama_program"] ?? // For Sumbangan
@@ -335,7 +333,6 @@ class _SemakDetailState extends State<SemakDetail> {
     IconData typeIcon = Icons.article_outlined; // Default
     switch (jenisTemuJanji) {
       case "Tanya Imam": typeIcon = Icons.contact_support_outlined; break;
-      case "Nikah": typeIcon = Icons.church_outlined; break; // Or Icons.favorite
       case "Sewa Aula": typeIcon = Icons.meeting_room_outlined; break;
       case "Sumbangan": typeIcon = Icons.volunteer_activism_outlined; break;
     }
@@ -414,13 +411,13 @@ class _SemakDetailState extends State<SemakDetail> {
     details.add(SizedBox(height: 10.h));
 
     // Category Specific Details
-    if (jenisTemuJanji == "Pertanyaan" || jenisTemuJanji == "Nikah") {
+    if (jenisTemuJanji == "Pertanyaan" || jenisTemuJanji == "Sewa Aula") {
       if (_formattedSingleDate.isNotEmpty && _formattedSingleDate != "Ralat") {
         details.add(_buildDetailRow(
             icon: Icons.calendar_today_outlined,
-            label: jenisTemuJanji == "Nikah"
-                ? 'Tarikh Nikah Dicadang:'
-                : 'Tarikh Hantar:',
+            label: jenisTemuJanji == "Sewa Aula"
+                ? 'Tanggal Sewaan Dicadang:'
+                : 'Tanggal Hantar:',
             value: _formattedSingleDate));
       }
     } else if (jenisTemuJanji == "Sewa Aula") {
@@ -808,9 +805,7 @@ class _SemakDetailState extends State<SemakDetail> {
 
       // Ensure these methods exist in your FireStoreService and handle updates correctly
       // The `category` variable here IS `jenisTemuJanji`
-      if (category == "Nikah") {
-        await firestoreService.updateApprovalNikah(id); success = true;
-      } else if (category == "Pertanyaan") {
+      if (category == "Pertanyaan") {
         await firestoreService.updateApprovalPertanyaan(id); success = true;
       } else if (category == "Sewa Aula") {
         await firestoreService.updateApprovalSewaAula(id); success = true;

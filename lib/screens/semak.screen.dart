@@ -19,16 +19,7 @@ class SemakStatusScreen extends StatefulWidget {
       settings: const RouteSettings(name: routeName),
       pageBuilder: (_, __, ___) => const SemakStatusScreen(),
       transitionsBuilder: (_, animation, __, child) {
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1.0, 0.0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOutCubic,
-          )),
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
       transitionDuration: const Duration(milliseconds: 300),
     );
@@ -138,8 +129,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
     switch (_selectedFilter) {
       case "Tanya Imam":
         return "tanya";
-      case "Nikah":
-        return "nikah";
       case "Sewa Aula":
         return "sewa_aula";
       case "Sumbangan":
@@ -215,14 +204,17 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       centerTitle: true,
-      title: Hero(
-        tag: 'app_logo',
-        child: Image.asset(
-          'assets/images/e_masjid.png',
-          height: 35.h,
-          fit: BoxFit.contain,
+        title: Hero(
+          tag: 'app_logo',
+          child: Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: Image.asset(
+              'assets/images/e_masjid.png',
+              height: 60.h,
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
-      ),
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
@@ -420,7 +412,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       child: Material(
-        color: Colors.transparent,
+        color: const Color.fromARGB(0, 0, 0, 0),
         child: InkWell(
           borderRadius: BorderRadius.circular(25.r),
           onTap: () => _onFilterChanged(filter.name),

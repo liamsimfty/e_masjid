@@ -120,49 +120,6 @@ class FireStoreService {
     }
   }
 
-  Future<void> uploadMohonNikah(
-      String pemohon,
-      String pasangan,
-      DateTime date,
-      String startTime,
-      String endTime,
-      String authorId) async {
-    try {
-      // Calculate duration in hours
-      final startTime24 = DateFormat('HH:mm').parse(startTime);
-      final endTime24 = DateFormat('HH:mm').parse(endTime);
-      
-      int duration = endTime24.hour - startTime24.hour;
-      if (endTime24.minute > startTime24.minute) {
-        duration += 1;
-      }
-      
-      // Calculate price (example: RM100 per hour)
-      double price = duration * 100.0;
-
-      await _firebaseFirestore.collection("nikah").doc().set({
-        "pemohon": pemohon,
-        "pasangan": pasangan,
-        "tarikh": Timestamp.fromDate(date),
-        "masaMula": startTime,
-        "masaTamat": endTime,
-        "tempohJam": duration,
-        "harga": price,
-        "JenisTemuJanji": "Nikah",
-        "isApproved": false,
-        "title": "$pemohon & $pasangan",
-        "description":
-            "Permohonan Nikah $pemohon & $pasangan pada tarikh : ${date.day}/${date.month}/${date.year}, dari jam : $startTime hingga $endTime",
-        "balasan": "Tidak perlu balasan",
-        "authorId": authorId,
-        "createdAt": FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log("Error uploading nikah application: ${e.toString()}");
-      rethrow;
-    }
-  }
-
   Future<void> updateBalasan(
     String title,
     String desc,
@@ -189,18 +146,6 @@ class FireStoreService {
       return data;
     } catch (e) {
       log("Error getting question data: ${e.toString()}");
-      rethrow;
-    }
-  }
-
-  Future<void> updateApprovalNikah(String id) async {
-    try {
-      await _firebaseFirestore.collection("nikah").doc(id).update({
-        "isApproved": true,
-        "approvedAt": FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log("Error approving nikah: ${e.toString()}");
       rethrow;
     }
   }
@@ -312,13 +257,6 @@ class FireStoreService {
           .get();
       pending.addAll(tanyaQuery.docs);
       
-      // Get pending nikah
-      var nikahQuery = await _firebaseFirestore
-          .collection("nikah")
-          .where("isApproved", isEqualTo: false)
-          .get();
-      pending.addAll(nikahQuery.docs);
-      
       return pending;
     } catch (e) {
       log("Error getting pending approvals: ${e.toString()}");
@@ -366,6 +304,39 @@ class FireStoreService {
     } catch (e) {
       log("Error updating pertanyaan approval: ${e.toString()}");
       rethrow;
+    }
+  }
+
+  Future<bool> approveApplication(String category, String docId) async {
+    try {
+      String collection;
+      switch (category) {
+        case "Tanya Imam":
+          collection = "tanya";
+          break;
+        case "Sewa Aula":
+          collection = "sewa_aula";
+          break;
+        case "Sumbangan":
+          collection = "sumbangan";
+          break;
+        case "Qurban":
+          collection = "qurban";
+          break;
+        default:
+          throw Exception("Invalid category: $category");
+      }
+
+      await _firebaseFirestore.collection(collection).doc(docId).update({
+        "isApproved": true,
+        "approvedAt": FieldValue.serverTimestamp(),
+        "status": (category == "Sumbangan" || category == "Qurban") ? "Diterima" : "Diluluskan"
+      });
+      
+      return true;
+    } catch (e) {
+      log("Error approving application: ${e.toString()}");
+      return false;
     }
   }
 }
