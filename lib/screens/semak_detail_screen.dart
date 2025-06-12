@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/widgets/widgets.dart';
 
 
 // Keys for accessing data from the widget's map to avoid "magic strings".

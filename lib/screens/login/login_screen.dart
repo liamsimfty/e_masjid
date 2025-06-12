@@ -4,7 +4,7 @@ import 'package:e_masjid/screens/screens.dart'; // Assuming HomeScreen, SignUpSc
 import 'package:e_masjid/providers/user.provider.dart';
 // For animations if needed
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/widgets/widgets.dart';
 import 'package:e_masjid/config/constants.dart';
 
 

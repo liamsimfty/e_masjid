@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:e_masjid/providers/user.provider.dart';
 import '../services/firestore_service.dart';
 import 'package:e_masjid/screens/screens.dart';
-import 'package:e_masjid/widgets/background.dart';
-import 'package:e_masjid/widgets/logout_button.dart';
+import 'package:e_masjid/widgets/widgets.dart';
+
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';

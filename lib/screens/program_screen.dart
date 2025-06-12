@@ -10,8 +10,8 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:e_masjid/widgets/background.dart';
-import 'package:e_masjid/widgets/loading_shimmer.dart';
+import 'package:e_masjid/widgets/widgets.dart';
+
 
 
 class ProgramScreen extends StatefulWidget {

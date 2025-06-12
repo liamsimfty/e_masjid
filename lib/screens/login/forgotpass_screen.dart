@@ -1,9 +1,8 @@
-import 'package:e_masjid/screens/screens.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../config/constants.dart';
-import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/widgets/widgets.dart';
 
 
 // import '../../providers/user.provider.dart'; // AppUser instance not used in resetPassword directly
