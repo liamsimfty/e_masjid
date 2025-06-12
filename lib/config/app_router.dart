@@ -31,17 +31,6 @@ class AppRouter {
         return DoaScreen.route();
       case SurahIndex.routeName:
         return SurahIndex.route();
-      case PetugasHomeScreen.routeName:
-        return PetugasHomeScreen.route();
-      case ProgramScreen.routeName:
-        return ProgramScreen.route();
-      case ProgramDetail.routeName:
-        return ProgramDetail.route(data: settings.arguments as Map<String, dynamic>);
-        //admin
-      case SahPermohonanScreen.routeName:
-        return SahPermohonanScreen.route();
-
-
       default:
         return _errorRoute();
     }

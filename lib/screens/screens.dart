@@ -13,6 +13,5 @@ export 'quran/surah_index.dart';
 export 'program_screen.dart';
 
 //admin
-export 'petugas/petugas_home_screen.dart';
 export 'petugas/sah_permohonan_screen.dart';
 export 'petugas/edit_program.dart';

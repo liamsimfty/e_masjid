@@ -455,12 +455,3 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
     );
   }
 }
-
-// Ensure these are defined in your config/constants.dart
-// const Color kPrimaryColor = Color(0xFF00796B); // Example
-// const Color kInputTextColor = Color(0xFF333333); // Example for text in fields
-// final TextStyle titleText = TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black87); // Example
-// final TextStyle subTitle = TextStyle(fontSize: 16, color: Colors.black54); // Example
-// final TextStyle textButton = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kPrimaryColor); // Example
-// const Color kWhiteColor = Colors.white;
-// const EdgeInsets kDefaultPadding = EdgeInsets.all(20.0);

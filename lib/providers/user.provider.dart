@@ -2,16 +2,48 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppUser extends ChangeNotifier {
+  bool _isPetugas = false;
+  
+  bool get isPetugas => _isPetugas;
+
+  void setPetugasStatus(bool status) {
+    _isPetugas = status;
+    notifyListeners();
+  }
+
   update() {
     notifyListeners();
   }
 
   AppUser._() {
-    FirebaseAuth.instance.authStateChanges().listen((user) {
+    FirebaseAuth.instance.authStateChanges().listen((user) async {
+      if (user != null) {
+        // Check role when auth state changes
+        await _checkUserRole(user.uid);
+      } else {
+        _isPetugas = false;
+      }
       notifyListeners();
     });
+  }
+
+  Future<void> _checkUserRole(String userId) async {
+    try {
+      final userData = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .get();
+      
+      if (userData.exists) {
+        _isPetugas = userData.data()?['role'] == 'petugas';
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error checking user role: $e');
+    }
   }
 
   User? get user => FirebaseAuth.instance.currentUser;
@@ -29,8 +61,23 @@ class AppUser extends ChangeNotifier {
 
     try {
       EasyLoading.show(status: 'sedang melog masuk...');
-      await FirebaseAuth.instance
+      final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      
+      // Check if user is petugas (staff) from Firestore
+      final user = userCredential.user;
+      if (user != null) {
+        final userData = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .get();
+        
+        if (userData.exists) {
+          _isPetugas = userData.data()?['role'] == 'petugas';
+          notifyListeners();
+        }
+      }
+      
       EasyLoading.showSuccess('Log Masuk berjaya.');
     } on FirebaseAuthException catch (e) {
       EasyLoading.dismiss();

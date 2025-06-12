@@ -245,26 +245,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         if (userDoc.exists && userDoc.data() != null) {
           final userData = userDoc.data() as Map<String, dynamic>;
           final role = userData['role'] as String?;
-
-          if (role == 'petugas') {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PetugasHomeScreen(
-                  maxSlide: MediaQuery.of(context).size.width * 0.835,
-                ),
-              ),
-              (route) => false,
-            );
-          } else {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-              (route) => false,
-            );
-          }
-        } else {
-          // If no role found, default to HomeScreen
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),

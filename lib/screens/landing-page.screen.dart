@@ -50,14 +50,7 @@ class LandingScreen extends StatelessWidget {
 
                   if (user != null && user.containsKey('role')) {
                     print('User data: $user');
-
-                    // Check role
-                    if (user['role'] == 'petugas') {
-                      return PetugasHomeScreen(
-                          maxSlide: MediaQuery.of(context).size.width * 0.835);
-                    } else {
-                      return const HomeScreen();
-                    }
+                    return const HomeScreen();
                   } else {
                     // Case: Document exists but user data is null or 'role' field is missing
                     print("User document exists but data is null or 'role' field is missing. Navigating to LoginScreen.");
