@@ -4,3 +4,6 @@ export 'background.dart';
 export 'loading_shimmer.dart';
 export 'logout_button.dart';
 export 'signup_form.dart';
+export 'prayertime.dart';
+export 'card.dart';
+export 'homeheader.dart';

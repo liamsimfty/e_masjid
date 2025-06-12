@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
+import 'package:e_masjid/widgets/widgets.dart';
+
 
 class ProgramDetail extends StatefulWidget {
   static const String routeName = '/program_detail';
@@ -112,55 +114,6 @@ class _ProgramDetailState extends State<ProgramDetail>
     }
   }
 
-  Widget _buildGradientBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.85),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.8),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDecorativeCircles(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Stack(
-      children: [
-        Positioned(
-          top: screenHeight * -0.05,
-          left: screenWidth * -0.15,
-          child: Container(
-            width: screenWidth * 0.45,
-            height: screenWidth * 0.45,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.07),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: screenHeight * -0.1,
-          right: screenWidth * -0.2,
-          child: Container(
-            width: screenWidth * 0.6,
-            height: screenWidth * 0.6,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     String title = widget.data["title"] ?? "Tiada Tajuk";
@@ -231,8 +184,10 @@ class _ProgramDetailState extends State<ProgramDetail>
       ),
       body: Stack(
         children: [
-          _buildGradientBackground(),
-          _buildDecorativeCircles(context),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: SizedBox.expand(),
+          ),
           SafeArea(
             child: FadeTransition(
               opacity: _fadeAnimation,
@@ -424,7 +379,3 @@ class _ProgramDetailState extends State<ProgramDetail>
     );
   }
 }
-
-// Ensure kPrimaryColor and kPrimaryColorDark are defined in your constants.dart
-// const Color kPrimaryColor = Color(0xFF00796B); // Example
-// const Color kPrimaryColorDark = Color(0xFF004D40); // Example

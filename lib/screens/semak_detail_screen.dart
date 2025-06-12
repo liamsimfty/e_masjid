@@ -159,7 +159,7 @@ class _SemakDetailState extends State<SemakDetail> {
     final bool isApproved = widget.data[_AppKeys.isApproved] ?? false;
 
     // Determine visibility of action buttons
-    final bool showBalasFab = _isPetugas && jenisTemuJanji == "Tanya Imam" && (balasan.isEmpty || balasan == "tiada");
+    final bool showBalasFab = _isPetugas;
     final bool showSahkanButton = _isPetugas && !isApproved;
 
     return Scaffold(

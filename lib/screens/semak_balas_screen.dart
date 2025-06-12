@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:e_masjid/widgets/widgets.dart';
+
 
 class SemakBalas extends StatefulWidget {
   static const String routeName = '/semak_balas';
@@ -171,24 +173,6 @@ class _SemakBalasState extends State<SemakBalas>
     _fabAnimationController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Widget _buildEnhancedBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.9),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.8),
-            kPrimaryColor.withOpacity(0.95),
-          ],
-          stops: const [0.0, 0.3, 0.7, 1.0],
-        ),
-      ),
-    );
   }
 
   Widget _buildFloatingElements() {
@@ -726,7 +710,10 @@ class _SemakBalasState extends State<SemakBalas>
       return Scaffold(
         body: Stack(
           children: [
-            _buildEnhancedBackground(),
+            const GradientBackground(
+              showDecorativeCircles: true,
+              child: SizedBox.expand(),
+            ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -764,7 +751,10 @@ class _SemakBalasState extends State<SemakBalas>
         ),
         body: Stack(
           children: [
-            _buildEnhancedBackground(),
+            const GradientBackground(
+              showDecorativeCircles: true,
+              child: SizedBox.expand(),
+            ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -811,7 +801,10 @@ class _SemakBalasState extends State<SemakBalas>
       ),
       body: Stack(
         children: [
-          _buildEnhancedBackground(),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: SizedBox.expand(),
+          ),
           _buildFloatingElements(),
           Column(
             children: [
