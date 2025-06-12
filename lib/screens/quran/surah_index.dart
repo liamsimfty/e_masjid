@@ -2,7 +2,7 @@ import 'package:e_masjid/animations/bottom_animation.dart';
 import 'package:e_masjid/services/quran_controller.dart';
 import 'package:e_masjid/widgets/quran/back_btn.dart';
 import 'package:e_masjid/widgets/quran/custom_image.dart';
-import 'package:e_masjid/widgets/quran/loading_shimmer.dart';
+import 'package:e_masjid/widgets/loading_shimmer.dart';
 import 'package:e_masjid/widgets/quran/title.dart';
 import 'package:e_masjid/models/quran/surah/surah.dart';
 import 'package:e_masjid/models/quran/surah/surah_list.dart';

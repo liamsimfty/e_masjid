@@ -8,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:e_masjid/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../widgets/loading-indicator.dart'; // Assuming this is your custom loading dialog
+import 'package:e_masjid/widgets/background.dart';
 
 // --- Placeholder for SignUpFormWidget ---
 // Replace this with your actual SignUpForm and pass the controllers
@@ -305,53 +306,6 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
     }
   }
 
-  Widget _buildGradientBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.8),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.7),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDecorativeCircles() {
-    return Stack(
-      children: [
-        Positioned(
-          top: -MediaQuery.of(context).size.height * 0.05,
-          left: -MediaQuery.of(context).size.width * 0.15,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.4,
-            height: MediaQuery.of(context).size.width * 0.4,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: -MediaQuery.of(context).size.height * 0.1,
-          right: -MediaQuery.of(context).size.width * 0.2,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.55,
-            height: MediaQuery.of(context).size.width * 0.55,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.06),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -366,8 +320,10 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
       ),
       body: Stack(
         children: [
-          _buildGradientBackground(),
-          _buildDecorativeCircles(),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: const SizedBox.expand(),
+          ),
           SafeArea(
             child: SingleChildScrollView(
               child: Padding(

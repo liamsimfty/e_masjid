@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:e_masjid/widgets/background.dart';
+
 
 // Keys for accessing data from the widget's map to avoid "magic strings".
 class _AppKeys {
@@ -169,8 +171,10 @@ class _SemakDetailState extends State<SemakDetail> {
       ),
       body: Stack(
         children: [
-          _buildGradientBackground(),
-          _buildDecorativeCircles(context),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: const SizedBox.expand(),
+          ),
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -213,55 +217,6 @@ class _SemakDetailState extends State<SemakDetail> {
         fontWeight: FontWeight.w600,
       ),
       systemOverlayStyle: SystemUiOverlayStyle.light,
-    );
-  }
-
-  Widget _buildGradientBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.85),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.8),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDecorativeCircles(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Stack(
-      children: [
-        Positioned(
-          top: screenHeight * -0.05,
-          left: screenWidth * -0.15,
-          child: Container(
-            width: screenWidth * 0.45,
-            height: screenWidth * 0.45,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.07),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: screenHeight * -0.1,
-          right: screenWidth * -0.2,
-          child: Container(
-            width: screenWidth * 0.6,
-            height: screenWidth * 0.6,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

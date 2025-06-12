@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:e_masjid/screens/screens.dart'; // Assuming HomeScreen, SignUpScreen, ForgotPassword are here
-import 'package:e_masjid/config/constants.dart';
 // import 'package:e_masjid/widgets/login_form.dart'; // Assuming LogInForm is here
 import 'package:e_masjid/providers/user.provider.dart';
 // For animations if needed
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/config/constants.dart';
 
-// Define constants if not in constants.dart
-const Color kInputTextColor = Color(0xFF333333);
 
 // --- Placeholder for LogInForm if you don't provide it ---
 // If you have your own LogInForm, ensure it accepts these controllers.
@@ -303,53 +302,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     }
   }
 
-  Widget _buildGradientBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.8),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.7),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDecorativeCircles() {
-    return Stack(
-      children: [
-        Positioned(
-          top: -MediaQuery.of(context).size.height * 0.1,
-          right: -MediaQuery.of(context).size.width * 0.2,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.5,
-            height: MediaQuery.of(context).size.width * 0.5,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: -MediaQuery.of(context).size.height * 0.15,
-          left: -MediaQuery.of(context).size.width * 0.25,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: MediaQuery.of(context).size.width * 0.6,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -358,8 +310,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     return Scaffold(
       body: Stack(
         children: [
-          _buildGradientBackground(),
-          _buildDecorativeCircles(),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: const SizedBox.expand(),
+          ),
           SafeArea(
             child: SingleChildScrollView(
               child: Padding(

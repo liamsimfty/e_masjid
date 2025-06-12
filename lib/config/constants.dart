@@ -24,7 +24,7 @@ final TextStyle textButton = TextStyle(fontSize: 18, fontWeight: FontWeight.w700
 const EdgeInsets kDefaultPadding = EdgeInsets.all(20.0);
 const Color kPrimaryColorDark = Color(0xFF00796B);
 const kInputTextColor1 = Color(0xFF3A3A3A);
-
+const kInputTextColor = Color(0xFF333333);
 // const kDefaultPadding = EdgeInsets.symmetric(horizontal: 30);
 
 TextStyle titleText = const TextStyle(

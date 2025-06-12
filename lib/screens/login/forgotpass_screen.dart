@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../config/constants.dart';
+import 'package:e_masjid/widgets/background.dart';
+
+
 // import '../../providers/user.provider.dart'; // AppUser instance not used in resetPassword directly
 
 class ForgotPassword extends StatefulWidget {
@@ -74,57 +77,6 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
     );
   }
 
-  Widget _buildGradientBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.8),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.7),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDecorativeCircles(BuildContext context) {
-     // Using MediaQuery for responsive positioning and sizing
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Stack(
-      children: [
-        Positioned(
-          top: -screenHeight * 0.05,
-          left: -screenWidth * 0.15,
-          child: Container(
-            width: screenWidth * 0.4,
-            height: screenWidth * 0.4,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: -screenHeight * 0.1,
-          right: -screenWidth * 0.2,
-          child: Container(
-            width: screenWidth * 0.55,
-            height: screenWidth * 0.55,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.06),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-
   Future<void> resetPassword() async {
     if (!_formKey.currentState!.validate()) {
       // Validator will show individual field errors.
@@ -188,8 +140,10 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
       ),
       body: Stack(
         children: [
-          _buildGradientBackground(),
-          _buildDecorativeCircles(context),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: const SizedBox.expand(),
+          ),
           SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),

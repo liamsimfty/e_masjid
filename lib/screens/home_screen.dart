@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:e_masjid/providers/user.provider.dart';
 import '../services/firestore_service.dart';
 import 'package:e_masjid/screens/screens.dart';
+import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/widgets/logout_button.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -297,43 +299,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft, 
-                end: Alignment.bottomRight,
-                colors: [
-                  kPrimaryColor, 
-                  kPrimaryColor.withOpacity(0.8), 
-                  kPrimaryColor.withOpacity(0.6)
-                ],
-              ),
-            ),
-          ),
-          // Simplified background decorations
-          Positioned(
-            top: -50, 
-            right: -50, 
-            child: Container(
-              width: 200, 
-              height: 200, 
-              decoration: BoxDecoration(
-                shape: BoxShape.circle, 
-                color: Colors.white.withOpacity(0.1)
-              )
-            )
-          ),
-          Positioned(
-            top: 100, 
-            left: -80, 
-            child: Container(
-              width: 150, 
-              height: 150, 
-              decoration: BoxDecoration(
-                shape: BoxShape.circle, 
-                color: Colors.white.withOpacity(0.05)
-              )
-            )
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: SizedBox.expand(),
           ),
           SafeArea(
             child: AnimatedBuilder(
@@ -426,7 +394,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ],
             ),
           ),
-          _buildLogoutButton(appUser),
+          LogoutButtonWidget(
+            appUser: appUser,
+            loginScreen: const LoginScreen(),
+          ),
         ],
       ),
     );
@@ -639,94 +610,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               color: Colors.white, 
               fontSize: timeFontSize, 
               fontWeight: FontWeight.bold
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton(AppUser appUser) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.white.withOpacity(0.3), Colors.white.withOpacity(0.1)]
-        ),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1), 
-            blurRadius: 10, 
-            offset: const Offset(0, 5)
-          )
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(25),
-          onTap: () => _showLogoutDialog(appUser),
-          child: Container(
-            width: 50, 
-            height: 50, 
-            decoration: const BoxDecoration(shape: BoxShape.circle), 
-            child: const Icon(Icons.logout_rounded, color: Colors.white, size: 24)
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showLogoutDialog(AppUser appUser) {
-    showDialog(
-      context: context, 
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Icon(Icons.logout, color: Colors.red), 
-            SizedBox(width: 10), 
-            Text("Log Keluar")
-          ]
-        ),
-        content: const Text(
-          "Anda pasti mahu log keluar?", 
-          style: TextStyle(fontSize: 16)
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context), 
-            child: Text(
-              "Tidak", 
-              style: TextStyle(
-                color: Colors.grey[600], 
-                fontWeight: FontWeight.w600
-              )
-            )
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await appUser.signOut();
-              if (mounted) {
-                Navigator.pop(context);
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, 
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
-            ),
-            child: const Text(
-              "Ya", 
-              style: TextStyle(
-                color: Colors.white, 
-                fontWeight: FontWeight.w600
-              )
             ),
           ),
         ],

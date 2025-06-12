@@ -7,7 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/widgets/loading_shimmer.dart';
+
 
 class SemakStatusScreen extends StatefulWidget {
   static const String routeName = '/semak';
@@ -184,8 +186,10 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
       appBar: _buildAppBar(),
       body: Stack(
         children: [
-          _buildGradientBackground(),
-          _buildDecorativeElements(context),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: const SizedBox.expand(),
+          ),
           SafeArea(
             child: Column(
               children: [
@@ -233,73 +237,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
         onPressed: () => Navigator.of(context).pop(),
       ),
       systemOverlayStyle: SystemUiOverlayStyle.light,
-    );
-  }
-
-  Widget _buildGradientBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.9),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.85),
-            kPrimaryColorDark.withOpacity(0.8),
-          ],
-          stops: const [0.0, 0.3, 0.7, 1.0],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDecorativeElements(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    
-    return Stack(
-      children: [
-        // Top left circle
-        Positioned(
-          top: screenHeight * -0.08,
-          left: screenWidth * -0.2,
-          child: Container(
-            width: screenWidth * 0.5,
-            height: screenWidth * 0.5,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        // Bottom right circle
-        Positioned(
-          bottom: screenHeight * -0.15,
-          right: screenWidth * -0.25,
-          child: Container(
-            width: screenWidth * 0.7,
-            height: screenWidth * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.06),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        // Additional accent circles
-        Positioned(
-          top: screenHeight * 0.15,
-          right: screenWidth * -0.1,
-          child: Container(
-            width: screenWidth * 0.3,
-            height: screenWidth * 0.3,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.04),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -469,7 +406,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
 
   Widget _buildContent() {
     if (_isLoading) {
-      return _buildShimmerList();
+      return const LoadingShimmer();
     }
 
     if (_displayedItems.isEmpty) {
@@ -563,81 +500,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildShimmerList() {
-    return ListView.builder(
-      itemCount: 8,
-      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
-      itemBuilder: (context, index) {
-        return Shimmer.fromColors(
-          baseColor: Colors.white.withOpacity(0.1),
-          highlightColor: Colors.white.withOpacity(0.2),
-          child: Container(
-            margin: EdgeInsets.only(bottom: 16.h),
-            padding: EdgeInsets.all(20.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48.w,
-                  height: 48.w,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 16.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: 12.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6.r),
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: 10.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.r),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 80.w,
-                  height: 32.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

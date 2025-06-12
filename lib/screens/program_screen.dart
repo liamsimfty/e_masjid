@@ -9,8 +9,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/widgets/loading_shimmer.dart';
+
 
 class ProgramScreen extends StatefulWidget {
   static const String routeName = '/program';
@@ -200,73 +202,6 @@ class _ProgramScreenState extends State<ProgramScreen>
     });
   }
 
-  Widget _buildGradientBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.9),
-            kPrimaryColor,
-            kPrimaryColor.withOpacity(0.85),
-            kPrimaryColorDark.withOpacity(0.8),
-          ],
-          stops: const [0.0, 0.3, 0.7, 1.0],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDecorativeElements(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    
-    return Stack(
-      children: [
-        // Top left circle
-        Positioned(
-          top: screenHeight * -0.08,
-          left: screenWidth * -0.2,
-          child: Container(
-            width: screenWidth * 0.5,
-            height: screenWidth * 0.5,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        // Bottom right circle
-        Positioned(
-          bottom: screenHeight * -0.15,
-          right: screenWidth * -0.25,
-          child: Container(
-            width: screenWidth * 0.7,
-            height: screenWidth * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.06),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        // Additional accent circles
-        Positioned(
-          top: screenHeight * 0.15,
-          right: screenWidth * -0.1,
-          child: Container(
-            width: screenWidth * 0.3,
-            height: screenWidth * 0.3,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.04),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -327,8 +262,11 @@ class _ProgramScreenState extends State<ProgramScreen>
           : null,
       body: Stack(
         children: [
-          _buildGradientBackground(),
-          _buildDecorativeElements(context),
+          const GradientBackground(child: SizedBox.expand()),
+          const GradientBackground(
+            showDecorativeCircles: true,
+            child: const SizedBox.expand(),
+          ),
           SafeArea(
             child: FadeTransition(
               opacity: _fadeAnimation,
@@ -567,7 +505,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                   // List of Programs
                   Expanded(
                     child: _isLoading
-                        ? _buildShimmerList()
+                        ? const LoadingShimmer()
                         : _displayedPrograms.isEmpty
                             ? Center(
                                 child: Padding(
@@ -634,73 +572,6 @@ class _ProgramScreenState extends State<ProgramScreen>
         ],
       ),
       //bottomNavigationBar: _isPetugas ? null : const CustomNavBar(),
-    );
-  }
-
-  Widget _buildShimmerList() {
-    return ListView.builder(
-      itemCount: 6,
-      padding: EdgeInsets.only(top: 5.h),
-      itemBuilder: (context, index) {
-        return Shimmer.fromColors(
-          baseColor: Colors.white.withOpacity(0.1),
-          highlightColor: Colors.white.withOpacity(0.2),
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-            padding: EdgeInsets.all(20.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48.w,
-                  height: 48.w,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 16.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: 12.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6.r),
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: 10.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.r),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
