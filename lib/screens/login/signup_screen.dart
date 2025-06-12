@@ -53,15 +53,15 @@ class SignUpFormWidget extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           style: const TextStyle(color: kInputTextColor),
           decoration: _inputDecoration(
-            hintText: 'Emel',
+            hintText: 'Email',
             icon: Icons.email_outlined,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Sila masukkan emel anda';
+              return 'Masukkan Email anda';
             }
             if (!value.contains('@') || !value.contains('.')) {
-              return 'Format emel tidak sah';
+              return 'Format Email salah';
             }
             return null;
           },
@@ -73,15 +73,15 @@ class SignUpFormWidget extends StatelessWidget {
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
           decoration: _inputDecoration(
-            hintText: 'Kata Laluan',
+            hintText: 'Sandi',
             icon: Icons.lock_outline,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Sila masukkan kata laluan';
+              return 'Sila masukkan Sandi';
             }
             if (value.length < 6) {
-              return 'Kata laluan mesti sekurang-kurangnya 6 aksara';
+              return 'Sandi mesti sekurang-kurangnya 6 aksara';
             }
             return null;
           },
@@ -93,15 +93,15 @@ class SignUpFormWidget extends StatelessWidget {
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
           decoration: _inputDecoration(
-            hintText: 'Sahkan Kata Laluan',
+            hintText: 'Sahkan Sandi',
             icon: Icons.lock_outline,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Sila sahkan kata laluan';
+              return 'Sila sahkan Sandi';
             }
             if (value != passwordController.text) {
-              return 'Kata laluan tidak sepadan';
+              return 'Sandi tidak sepadan';
             }
             return null;
           },
@@ -254,13 +254,13 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
       String message;
       switch (e.code) {
         case 'email-already-in-use':
-          message = "Emel telah digunakan. Sila guna emel lain.";
+          message = "Email telah digunakan. Sila guna Email lain.";
           break;
         case 'invalid-email':
-          message = "Format emel tidak sah.";
+          message = "Format Email tidak sah.";
           break;
         case 'weak-password':
-          message = "Kata laluan terlalu lemah.";
+          message = "Sandi terlalu lemah.";
           break;
         case 'operation-not-allowed':
           message = "Operasi tidak dibenarkan.";

@@ -93,7 +93,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
       EasyLoading.dismiss(); // Dismiss before showing success
-      EasyLoading.showSuccess('Pautan tetapan semula kata laluan telah dihantar ke emel anda.');
+      EasyLoading.showSuccess('Cek Email anda untuk mengganti password.');
       // Optionally navigate back or clear field after a delay
       // Future.delayed(Duration(seconds: 2), () {
       //   if(mounted) Navigator.pop(context);
@@ -102,9 +102,9 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
       EasyLoading.dismiss(); // Dismiss before showing error
       String errorMessage = "Operasi gagal.";
       if (e.code == 'user-not-found') {
-        errorMessage = 'Tiada pengguna ditemui untuk emel tersebut.';
+        errorMessage = 'Tiada pengguna ditemui untuk Email tersebut.';
       } else if (e.code == 'invalid-email') {
-        errorMessage = 'Format emel tidak sah.';
+        errorMessage = 'Format Email salah.';
       } else {
         errorMessage = e.message ?? "Ralat tidak diketahui. Sila cuba lagi.";
       }
@@ -131,7 +131,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Lupa Kata Laluan'), // Changed from 'Tetapan semula...'
+        title: const Text('Lupa Password'), // Changed from 'Tetapan semula...'
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white), // Back button color
@@ -162,7 +162,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
                       ),
                       SizedBox(height: screenHeight * 0.03),
                       Text(
-                        'Masukkan emel anda untuk menerima pautan tetapan semula kata laluan.',
+                        'Masukkan email anda untuk mengganti sandi.',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.85)),
                       ),
@@ -187,17 +187,17 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
                           cursorColor: kPrimaryColor, // Cursor color matching theme
                           textInputAction: TextInputAction.done,
                           decoration: _inputDecoration(
-                            hintText: 'Emel Anda',
+                            hintText: 'Email Anda',
                             icon: Icons.email_outlined,
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Sila masukkan emel";
+                              return "Sila masukkan Email";
                             }
                             if (!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
                                 .hasMatch(value)) { // More robust regex
-                              return "Sila masukkan emel yang sah";
+                              return "Sila masukkan Email yang benar";
                             }
                             return null;
                           },

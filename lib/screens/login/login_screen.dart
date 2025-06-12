@@ -48,7 +48,7 @@ class _LogInFormState extends State<LogInForm> {
                 keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(color: kInputTextColor),
                 decoration: InputDecoration(
-                  hintText: 'Emel',
+                  hintText: 'Email',
                   hintStyle: TextStyle(color: Colors.grey.shade500),
                   prefixIcon: Icon(Icons.email_outlined, color: kPrimaryColor.withOpacity(0.7)),
                   filled: true,
@@ -65,10 +65,10 @@ class _LogInFormState extends State<LogInForm> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Sila masukkan emel anda';
+                    return 'Masukkan Email anda';
                   }
                   if (value.contains('@') || value.contains(' ')) {
-                    return 'Format emel tidak sah';
+                    return 'Format Email salah';
                   }
                   return null;
                 },
@@ -117,7 +117,7 @@ class _LogInFormState extends State<LogInForm> {
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
           decoration: InputDecoration(
-            hintText: 'Kata Laluan',
+            hintText: 'Sandi',
             hintStyle: TextStyle(color: Colors.grey.shade500),
             prefixIcon: Icon(Icons.lock_outline, color: kPrimaryColor.withOpacity(0.7)),
             filled: true,
@@ -134,7 +134,7 @@ class _LogInFormState extends State<LogInForm> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Sila masukkan kata laluan anda';
+              return 'Masukkan sandi anda';
             }
             return null;
           },
@@ -278,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         if (e is FormatException) { // Example of more specific error
           errorMessage = e.message;
         } else if (e.toString().contains('user-not-found') || e.toString().contains('wrong-password')) {
-          errorMessage = "Emel atau kata laluan tidak sah.";
+          errorMessage = "Email atau sandi salah.";
         } else {
            errorMessage = e.toString().replaceFirst("Exception: ", ""); // Clean up generic exception message
         }
@@ -382,7 +382,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                     );
                                   },
                                   child: Text(
-                                    'Terlupa kata laluan?',
+                                    'Lupa Sandi?',
                                     style: TextStyle(
                                       color: Colors.white.withOpacity(0.9),
                                       fontSize: 14,

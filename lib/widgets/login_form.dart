@@ -33,16 +33,16 @@ class _LogInFormState extends State<LogInForm> {
     String message;
     switch (errorCode) {
       case 'invalid-credential':
-        message = 'Emel atau kata laluan tidak sah';
+        message = 'Email atau Sandi salah';
         break;
       case 'user-not-found':
         message = 'Pengguna tidak dijumpai';
         break;
       case 'wrong-password':
-        message = 'Kata laluan tidak sah';
+        message = 'Sandi tidak sah';
         break;
       case 'invalid-email':
-        message = 'Format emel tidak sah';
+        message = 'Format Email salah';
         break;
       case 'user-disabled':
         message = 'Akaun telah dinyahaktifkan';
@@ -82,10 +82,10 @@ class _LogInFormState extends State<LogInForm> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) {
                 if (email == null || email.isEmpty) {
-                  return 'Sila masukkan emel anda';
+                  return 'Sila masukkan Email anda';
                 }
                 if (!EmailValidator.validate(email)) {
-                  return 'Masukkan emel yang sah';
+                  return 'Masukkan Email yang benar';
                 }
                 return null;
               },
@@ -117,7 +117,7 @@ class _LogInFormState extends State<LogInForm> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Sila masukkan kata laluan';
+                  return 'Sila masukkan Sandi';
                 }
                 if (value.length < 6) {
                   return 'Masukkan minimum 6 aksara';
@@ -131,7 +131,7 @@ class _LogInFormState extends State<LogInForm> {
               },
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.vpn_key),
-                labelText: 'Kata Laluan',
+                labelText: 'Sandi',
                 labelStyle: const TextStyle(
                   color: kTextFieldColor,
                 ),

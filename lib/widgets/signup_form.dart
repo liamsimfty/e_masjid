@@ -38,7 +38,7 @@ class _SignUpFormState extends State<SignUpForm> {
             child: TextFormField(
               controller: emailController,
               decoration: const InputDecoration(
-                hintText: "Emel",
+                hintText: "Email",
                 hintStyle: TextStyle(color: kTextFieldColor),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: kPrimaryColor)),
@@ -50,7 +50,7 @@ class _SignUpFormState extends State<SignUpForm> {
               controller: passwordController,
               obscureText: pass ? _isObscure : false,
               decoration: InputDecoration(
-                hintText: "Kata Laluan",
+                hintText: "Sandi",
                 hintStyle: const TextStyle(color: kTextFieldColor),
                 focusedBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(color: kPrimaryColor)),

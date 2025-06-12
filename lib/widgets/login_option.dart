@@ -12,25 +12,25 @@ class LoginOption extends StatelessWidget {
     String message;
     switch (error) {
       case 'account-exists-with-different-credential':
-        message = 'Akaun dengan emel ini telah wujud dengan kaedah log masuk yang berbeza';
+        message = 'Akaun dengan Email ini telah digunakan';
         break;
       case 'invalid-credential':
-        message = 'Kredensial tidak sah';
+        message = 'Kredensial salah';
         break;
       case 'operation-not-allowed':
-        message = 'Kaedah log masuk ini tidak dibenarkan';
+        message = 'Akun ini tidak diizinkan';
         break;
       case 'user-disabled':
-        message = 'Akaun telah dinyahaktifkan';
+        message = 'Akun telah di nonaktifkan';
         break;
       case 'user-not-found':
         message = 'Pengguna tidak dijumpai';
         break;
       case 'network-request-failed':
-        message = 'Ralat rangkaian. Sila periksa sambungan internet anda';
+        message = 'Jaringan Error. Sila periksa sambungan internet anda';
         break;
       default:
-        message = 'Ralat semasa log masuk. Sila cuba lagi';
+        message = 'Muat ulang log masuk. Coba ulang';
     }
     
     ScaffoldMessenger.of(context).showSnackBar(
