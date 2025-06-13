@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../services/firestore_service.dart';
 import '../../providers/user.provider.dart';
 import '../../widgets/image_picker_widget.dart';
+import '../../widgets/widgets.dart';
 
 class DermaScreen extends StatefulWidget {
   static const String routeName = '/derma';
@@ -32,28 +33,7 @@ class _DermaScreenState extends State<DermaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(right: 50.0, top: 15),
-          child: Center(
-            child: Image.asset(
-              'assets/images/e_masjid.png',
-              height: 50,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black87,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: CustomAppBar(title: 'Derma Masjid'),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

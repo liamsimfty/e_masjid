@@ -109,9 +109,7 @@ class _EditProgramState extends State<EditProgram> {
 
   @override
   Widget build(BuildContext context) {
-    final start = dateRange.start;
-    final end = dateRange.end;
-
+    
     return Scaffold(
       appBar: CustomAppBar(title: 'Sunting Program'),
       body: loading

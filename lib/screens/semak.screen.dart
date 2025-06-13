@@ -182,7 +182,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: _buildAppBar(),
+      appBar: CustomAppBar(title: 'Semak Status'),
       body: Stack(
         children: [
           const GradientBackground(
@@ -204,41 +204,6 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
           ),
         ],
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      centerTitle: true,
-        title: Hero(
-          tag: 'app_logo',
-          child: Padding(
-            padding: EdgeInsets.only(top: 10.h),
-            child: Image.asset(
-              'assets/images/e_masjid.png',
-              height: 60.h,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: Container(
-          padding: EdgeInsets.all(8.w),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 18.sp,
-          ),
-        ),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      systemOverlayStyle: SystemUiOverlayStyle.light,
     );
   }
   

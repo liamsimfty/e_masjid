@@ -84,11 +84,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         final appUser = Provider.of<AppUser>(context);
         return Scaffold(
           extendBodyBehindAppBar: true,
-          appBar: AppBar(
-              backgroundColor: Colors.transparent, 
-              elevation: 0,
-              iconTheme: const IconThemeData(color: Colors.white),
-              systemOverlayStyle: const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+          appBar: const CustomAppBar(
+            title: 'Home',
+            showBackButton: false,
           ),
           body: Stack(
             children: [

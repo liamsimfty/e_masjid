@@ -19,6 +19,8 @@ import 'models/quran/sajda/sajda_list.dart';
 import 'models/quran/surah/surah.dart';
 import 'models/quran/surah/surah_list.dart';
 import 'package:e_masjid/providers/user_role_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> main() async {
   try {
@@ -48,6 +50,7 @@ Future<void> main() async {
     print('Hive box opened successfully');
 
     print('Starting app...');
+    await initializeDateFormatting('ms_MY', null); // Initialize date formatting for Malaysian locale
     runApp(
       MultiProvider(
         providers: [
@@ -100,6 +103,14 @@ class MyApp extends StatelessWidget {
               // '/': (context) => PetugasHomeScreen(maxSlide: MediaQuery.of(context).size.width * 0.835),
 
             },
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('ms', 'MY'), // Malaysian locale
+            ],
           ),
         );
       },
