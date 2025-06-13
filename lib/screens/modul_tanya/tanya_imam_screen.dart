@@ -4,6 +4,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../providers/user.provider.dart';
 import '../../services/firestore_service.dart';
+import 'package:e_masjid/widgets/widgets.dart';
+
 
 class TanyaImamScreen extends StatefulWidget {
   const TanyaImamScreen({super.key});
@@ -31,27 +33,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(right: 50.0, top: 15),
-          child: Center(
-              child: Image.asset(
-                'assets/images/e_masjid.png',
-                height: 50,
-              )),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black87,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: CustomAppBar(title: 'Tanya Imam'),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Padding(
           padding: EdgeInsets.only(top: 25.0),

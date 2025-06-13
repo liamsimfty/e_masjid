@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/screens/semak_detail_screen.dart';
+import 'package:e_masjid/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:e_masjid/widgets/background.dart';
-import 'package:e_masjid/widgets/loading_shimmer.dart';
 
 
 class SemakStatusScreen extends StatefulWidget {
@@ -193,7 +192,10 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
           SafeArea(
             child: Column(
               children: [
-                _buildHeader(),
+                HeaderSection(
+                  onRefresh: _onRefresh,
+                  refreshController: _refreshController,
+                ),
                 _buildFilterSection(),
                 SizedBox(height: 16.h),
                 Expanded(child: _buildContent()),
@@ -239,78 +241,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
       systemOverlayStyle: SystemUiOverlayStyle.light,
     );
   }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Lihat',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.85),
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w300,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  'Status Permohonan',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26.sp,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16.r),
-                onTap: _onRefresh,
-                child: Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: AnimatedBuilder(
-                    animation: _refreshController,
-                    builder: (context, child) {
-                      return Transform.rotate(
-                        angle: _refreshController.value * 2 * 3.14159,
-                        child: Icon(
-                          Icons.refresh_rounded,
-                          color: Colors.white,
-                          size: 24.sp,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  
   Widget _buildFilterSection() {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),

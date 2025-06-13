@@ -9,6 +9,7 @@ import 'package:e_masjid/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../widgets/loading-indicator.dart'; // Assuming this is your custom loading dialog
 import 'package:e_masjid/widgets/background.dart';
+import 'package:e_masjid/widgets/widgets.dart';
 
 // --- Placeholder for SignUpFormWidget ---
 // Replace this with your actual SignUpForm and pass the controllers
@@ -35,7 +36,7 @@ class SignUpFormWidget extends StatelessWidget {
           controller: nameController,
           keyboardType: TextInputType.name,
           style: const TextStyle(color: kInputTextColor),
-          decoration: _inputDecoration(
+          decoration: CustomInputDecoration.getDecoration(
             hintText: 'Nama Penuh',
             icon: Icons.person_outline,
           ),
@@ -52,7 +53,7 @@ class SignUpFormWidget extends StatelessWidget {
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           style: const TextStyle(color: kInputTextColor),
-          decoration: _inputDecoration(
+          decoration: CustomInputDecoration.getDecoration(
             hintText: 'Email',
             icon: Icons.email_outlined,
           ),
@@ -72,7 +73,7 @@ class SignUpFormWidget extends StatelessWidget {
           controller: passwordController,
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
-          decoration: _inputDecoration(
+          decoration: CustomInputDecoration.getDecoration(
             hintText: 'Sandi',
             icon: Icons.lock_outline,
           ),
@@ -92,7 +93,7 @@ class SignUpFormWidget extends StatelessWidget {
           controller: confirmPasswordController,
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
-          decoration: _inputDecoration(
+          decoration: CustomInputDecoration.getDecoration(
             hintText: 'Sahkan Sandi',
             icon: Icons.lock_outline,
           ),
@@ -109,30 +110,7 @@ class SignUpFormWidget extends StatelessWidget {
       ],
     );
   }
-
-  InputDecoration _inputDecoration(
-      {required String hintText, required IconData icon}) {
-    return InputDecoration(
-      hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey.shade500),
-      prefixIcon: Icon(icon, color: kPrimaryColor.withOpacity(0.7)),
-      filled: true,
-      fillColor: Colors.white.withOpacity(0.9), // Slightly transparent white
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide(color: kPrimaryColor, width: 1.5),
-      ),
-      contentPadding:
-          const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 13),
-    );
-  }
 }
-// --- End of Placeholder SignUpFormWidget ---
 
 class SignUpScreen extends StatefulWidget {
   static const String routeName = '/signup';
@@ -313,11 +291,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
 
     return Scaffold(
       extendBodyBehindAppBar: true, // Allows gradient to go behind app bar
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white), // Back button color
-      ),
+      appBar: CustomAppBar(showLogo: false, title: 'Daftar Akaun'),
       body: Stack(
         children: [
           const GradientBackground(
@@ -335,20 +309,12 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                     children: [
                       SizedBox(height: screenHeight * 0.03),
                       Text(
-                        'Cipta Akaun Baharu',
+                        'Buat Akun Baru',
                         textAlign: TextAlign.center,
                         style: titleText.copyWith( // Use styles from constants
                             color: Colors.white,
                             fontSize: 28, // Adjusted size
                             fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: screenHeight * 0.015),
-                       Text(
-                        'Sila isi maklumat di bawah.',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.85),
-                          fontSize: 16,
-                        ),
                       ),
                       SizedBox(height: screenHeight * 0.04),
                       Container(
@@ -424,20 +390,18 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Sudah menjadi ahli? ',
+                              'Sudah mempunyai akun? ',
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.8),
                                 fontSize: 15,
                               ),
                             ),
                             Text(
-                              'Log Masuk',
+                              'Log In',
                               style: textButton.copyWith(
                                 color: Colors.white,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                // decoration: TextDecoration.underline,
-                                // decorationColor: Colors.white,
                               ),
                             ),
                           ],

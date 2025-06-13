@@ -18,6 +18,7 @@ import 'models/quran/sajda/sajda.dart';
 import 'models/quran/sajda/sajda_list.dart';
 import 'models/quran/surah/surah.dart';
 import 'models/quran/surah/surah_list.dart';
+import 'package:e_masjid/providers/user_role_provider.dart';
 
 Future<void> main() async {
   try {
@@ -47,7 +48,15 @@ Future<void> main() async {
     print('Hive box opened successfully');
 
     print('Starting app...');
-    runApp(const MyApp());
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AppUser>(create: (_) => AppUser()),
+          ChangeNotifierProvider(create: (_) => UserRoleProvider()),
+        ],
+        child: const MyApp(),
+      ),
+    );
   } catch (e, stackTrace) {
     print('Error during initialization: $e');
     print('Stack trace: $stackTrace');

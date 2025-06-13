@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/constants.dart';
+import '../../widgets/widgets.dart';
 
 class EditProgram extends StatefulWidget {
   final String id;
@@ -112,27 +113,7 @@ class _EditProgramState extends State<EditProgram> {
     final end = dateRange.end;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(right: 50.0, top: 15),
-          child: Center(
-              child: Image.asset(
-            'assets/images/e_masjid.png',
-            height: 50,
-          )),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black87,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: CustomAppBar(title: 'Sunting Program'),
       body: loading
           ? Center(
               child: SizedBox(

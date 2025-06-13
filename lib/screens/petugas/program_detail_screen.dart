@@ -1,14 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/screens/petugas/edit_program.dart'; // For navigation
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:intl/intl.dart';
 import 'package:e_masjid/widgets/widgets.dart';
-
+import 'package:e_masjid/utils/date_formatter.dart';
+import 'package:e_masjid/utils/auth_user.dart'; // adjust path if needed
+import 'package:e_masjid/providers/user_role_provider.dart';
+import 'package:e_masjid/mixins/role_checker_mixin.dart';
+import 'package:provider/provider.dart';
 
 class ProgramDetail extends StatefulWidget {
   static const String routeName = '/program_detail';
@@ -33,9 +34,7 @@ class ProgramDetail extends StatefulWidget {
 }
 
 class _ProgramDetailState extends State<ProgramDetail>
-    with SingleTickerProviderStateMixin {
-  bool _isPetugas = false;
-
+    with SingleTickerProviderStateMixin, RoleCheckerMixin {
   String _formattedStartDate = "N/A";
   String _formattedEndDate = "N/A";
 
@@ -47,14 +46,19 @@ class _ProgramDetailState extends State<ProgramDetail>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500), // Adjusted duration
+      duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _fadeAnimation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
 
-    _checkUserRole();
-    _prepareDateStrings();
+    _initializeData();
+    final dates = DateFormatter.formatDates(widget.data);
+    _formattedStartDate = dates.firstDate;
+    _formattedEndDate = dates.lastDate;
     _animationController.forward();
+  }
+
+  Future<void> _initializeData() async {
+    await initializeUserRole(context);
   }
 
   @override
@@ -63,151 +67,86 @@ class _ProgramDetailState extends State<ProgramDetail>
     super.dispose();
   }
 
-  Future<void> _checkUserRole() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      if (mounted) setState(() => _isPetugas = false);
-      return;
-    }
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(user.uid)
-          .get();
-      if (mounted) {
-        setState(() {
-          _isPetugas = (doc.exists && doc.data()?["role"] == "petugas");
-        });
-      }
-    } catch (e) {
-      print("Error checking user role: $e");
-      if (mounted) setState(() => _isPetugas = false);
-    }
-  }
-
-  void _prepareDateStrings() {
-    try {
-      dynamic firstDateData = widget.data["firstDate"];
-      dynamic lastDateData = widget.data["lastDate"];
-      DateFormat formatter = DateFormat("dd MMMM yyyy", "ms_MY");
-
-      if (firstDateData is Timestamp) {
-        _formattedStartDate = formatter.format(firstDateData.toDate());
-      } else if (firstDateData is DateTime) {
-        _formattedStartDate = formatter.format(firstDateData);
-      }
-
-      if (lastDateData is Timestamp) {
-        _formattedEndDate = formatter.format(lastDateData.toDate());
-      } else if (lastDateData is DateTime) {
-        _formattedEndDate = formatter.format(lastDateData);
-      }
-
-      // If dates are the same, only show start date effectively
-      if (_formattedStartDate == _formattedEndDate) {
-        _formattedEndDate = ""; // Clear end date to avoid "Date - "
-      }
-    } catch (e) {
-      print("Error formatting dates in ProgramDetail: $e");
-      _formattedStartDate = "Ralat Tarikh";
-      _formattedEndDate = "";
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    String title = widget.data["title"] ?? "Tiada Tajuk";
-    String description = widget.data["description"] ?? "Tiada huraian.";
-    String masaMula = widget.data["masaMula"] ?? "N/A";
-    String masaTamat = widget.data["masaTamat"] ?? "N/A";
+    return Consumer<UserRoleProvider>(
+      builder: (context, roleProvider, child) {
+        if (roleProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    // Prepare list of widgets for animation
-    List<Widget> contentWidgets = [
-      _buildTitleCard(title),
-      SizedBox(height: 16.h),
-      _buildScheduleCard(masaMula, masaTamat),
-      SizedBox(height: 16.h),
-      _buildDescriptionCard(description),
-      SizedBox(height: 80.h), // Space for FAB
-    ];
+        String title = widget.data["title"] ?? "Tiada Tajuk";
+        String description = widget.data["description"] ?? "Tiada huraian.";
+        String masaMula = widget.data["masaMula"] ?? "N/A";
+        String masaTamat = widget.data["masaTamat"] ?? "N/A";
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      floatingActionButton: Visibility(
-        visible: _isPetugas,
-        child: FloatingActionButton.extended(
-          heroTag: 'sunting_program_hero_detail', // Ensure unique heroTag
-          onPressed: () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditProgram(
-                    id: widget.data["id"], programData: widget.data),
+        // Prepare list of widgets for animation
+        List<Widget> contentWidgets = [
+          _buildTitleCard(title),
+          SizedBox(height: 16.h),
+          _buildScheduleCard(masaMula, masaTamat),
+          SizedBox(height: 16.h),
+          _buildDescriptionCard(description),
+          SizedBox(height: 80.h), // Space for FAB
+        ];
+
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: CustomAppBar(title: 'Jadwal Program'),
+          floatingActionButton: isPetugas(context)
+              ? FloatingActionButton.extended(
+                  heroTag: 'sunting_program_hero_detail', // Ensure unique heroTag
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProgram(
+                            id: widget.data["id"], programData: widget.data),
+                      ),
+                    );
+                    if (result == true && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Memuat semula data... (Contoh)")));
+                    }
+                  },
+                  label: const Text("Sunting",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  icon: const Icon(Icons.edit_outlined),
+                  backgroundColor: Colors.white,
+                  foregroundColor: kPrimaryColor,
+                  elevation: 6.0,
+                  shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                )
+              : null,
+          body: Stack(
+            children: [
+              const GradientBackground(
+                showDecorativeCircles: true,
+                child: SizedBox.expand(),
               ),
-            );
-            // If EditProgram returns true (or some indicator of change), refresh data
-            if (result == true && mounted) {
-              // You might need to re-fetch widget.data or have a way to update it.
-              // For simplicity, this example assumes the parent screen handles refresh
-              // or that Firestore streams update the data.
-              // If you need to force a refresh of this specific screen's data,
-              // you'd typically call a method here that re-fetches and updates `widget.data` via `setState`.
-              // However, since widget.data is final, this screen would need to be re-instantiated
-              // or the parent would pass updated data.
-              // A common pattern is to pop with a result that tells the parent to refresh.
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Memuat semula data... (Contoh)")));
-            }
-          },
-          label: const Text("Sunting",
-              style: TextStyle(fontWeight: FontWeight.w600)),
-          icon: const Icon(Icons.edit_outlined),
-          backgroundColor: Colors.white,
-          foregroundColor: kPrimaryColor,
-          elevation: 6.0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        ),
-      ),
-      appBar: AppBar(
-        title: const Text('Butiran Program'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        titleTextStyle: TextStyle(
-            color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w600),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-      ),
-      body: Stack(
-        children: [
-          const GradientBackground(
-            showDecorativeCircles: true,
-            child: SizedBox.expand(),
-          ),
-          SafeArea(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding:
-                    EdgeInsets.symmetric(horizontal: 18.w, vertical: 15.h),
-                child: AnimationLimiter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: List.generate(
-                      contentWidgets.length,
-                      (index) => AnimationConfiguration.staggeredList(
-                        position: index,
-                        duration: const Duration(milliseconds: 400),
-                        delay: Duration(milliseconds: (index * 50)), // Stagger delay
-                        child: SlideAnimation(
-                          verticalOffset: 50.0,
-                          child: FadeInAnimation(
-                            child: contentWidgets[index],
+              SafeArea(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 18.w, vertical: 15.h),
+                    child: AnimationLimiter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          contentWidgets.length,
+                          (index) => AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 400),
+                            delay: Duration(milliseconds: (index * 50)), // Stagger delay
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                child: contentWidgets[index],
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -215,10 +154,10 @@ class _ProgramDetailState extends State<ProgramDetail>
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -279,7 +218,7 @@ class _ProgramDetailState extends State<ProgramDetail>
                     color: kPrimaryColorDark, size: 20.sp),
                 SizedBox(width: 10.w),
                 Text(
-                  "Jadual & Masa",
+                  "Jadwal & Waktu",
                   style: TextStyle(
                       fontSize: 17.sp,
                       fontWeight: FontWeight.bold,

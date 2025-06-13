@@ -1,14 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/screens/semak_balas_screen.dart';
 import 'package:e_masjid/services/firestore_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:e_masjid/utils/date_formatter.dart'; // adjust path
 import 'package:e_masjid/widgets/widgets.dart';
+import 'package:e_masjid/utils/auth_user.dart'; // adjust path if needed
+import 'package:e_masjid/providers/user_role_provider.dart';
+import 'package:e_masjid/mixins/role_checker_mixin.dart';
+import 'package:provider/provider.dart';
 
 
 // Keys for accessing data from the widget's map to avoid "magic strings".
@@ -24,16 +26,11 @@ class _AppKeys {
   static const description = "description";
   static const mesejPertanyaan = "mesej_pertanyaan";
   static const balasan = "balasan";
-  static const tarikh = "tarikh";
-  static const date = "date";
-  static const firstDate = "firstDate";
-  static const lastDate = "lastDate";
   static const masaMula = "masaMula";
   static const masaTamat = "masaTamat";
   static const price = "price";
   static const amount = "amount";
   static const imageUrl = "imageUrl";
-  static const role = "role";
 }
 
 
@@ -60,163 +57,125 @@ class SemakDetail extends StatefulWidget {
   State<SemakDetail> createState() => _SemakDetailState();
 }
 
-class _SemakDetailState extends State<SemakDetail> {
+class _SemakDetailState extends State<SemakDetail> with RoleCheckerMixin {
   // region State Variables
-  bool _isPetugas = false;
   bool _isLoading = true;
   bool _isLoadingConfirmation = false;
 
   String _formattedFirstDate = "";
   String _formattedLastDate = "";
   String _formattedSingleDate = "";
-  // endregion
 
-  // region Lifecycle Methods
   @override
   void initState() {
     super.initState();
-    _initializeDetails();
+    _initializeData();
   }
 
-  Future<void> _initializeDetails() async {
-    await _checkUserRole();
-    _prepareDateStrings();
-    if (mounted) {
-      setState(() => _isLoading = false);
-    }
+  Future<void> _initializeData() async {
+    await initializeUserRole(context);
+    final formatted = DateFormatter.formatDates(widget.data);
+    _formattedSingleDate = formatted.singleDate;
+    _formattedFirstDate = formatted.firstDate;
+    _formattedLastDate = formatted.lastDate;
+    if (mounted) setState(() => _isLoading = false);
   }
   // endregion
 
   // region Core Logic
-  Future<void> _checkUserRole() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      if (mounted) setState(() => _isPetugas = false);
-      return;
-    }
-    try {
-      final doc = await FirebaseFirestore.instance.collection("users").doc(user.uid).get();
-      if (mounted) {
-        setState(() {
-          _isPetugas = (doc.exists && doc.data()?[_AppKeys.role] == "petugas");
-        });
-      }
-    } catch (e) {
-      print("Error checking user role: $e");
-      if (mounted) setState(() => _isPetugas = false);
-    }
-  }
-
-  void _prepareDateStrings() {
-    final displayFormatter = DateFormat("dd MMMM yyyy", "ms_MY");
-    try {
-      // Handle single date fields like 'tarikh' or 'date'
-      final singleDateTimestamp = widget.data[_AppKeys.tarikh] ?? widget.data[_AppKeys.date];
-      if (singleDateTimestamp is Timestamp) {
-        _formattedSingleDate = displayFormatter.format(singleDateTimestamp.toDate());
-      }
-
-      // Handle date range fields 'firstDate' and 'lastDate'
-      final firstDateValue = widget.data[_AppKeys.firstDate];
-      if (firstDateValue is Timestamp) {
-        _formattedFirstDate = displayFormatter.format(firstDateValue.toDate());
-      } else if (firstDateValue is DateTime) {
-        _formattedFirstDate = displayFormatter.format(firstDateValue);
-      }
-
-      final lastDateValue = widget.data[_AppKeys.lastDate];
-      if (lastDateValue is Timestamp) {
-        _formattedLastDate = displayFormatter.format(lastDateValue.toDate());
-      } else if (lastDateValue is DateTime) {
-        _formattedLastDate = displayFormatter.format(lastDateValue);
-      }
-
-      // If it's a single-day event, no need to show the end date.
-      if (_formattedFirstDate.isNotEmpty && _formattedFirstDate == _formattedLastDate) {
-        _formattedLastDate = "";
-      }
-    } catch (e) {
-      print("Error formatting dates in SemakDetail: $e");
-      _formattedFirstDate = "Ralat Tarikh";
-      _formattedLastDate = "";
-      _formattedSingleDate = "Ralat Tarikh";
-    }
-    if (mounted) setState(() {});
-  }
-  // endregion
-
-  // region UI Builders
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: kPrimaryColor)),
-      );
-    }
+    return Consumer<UserRoleProvider>(
+      builder: (context, roleProvider, child) {
+        if (roleProvider.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator(color: kPrimaryColor)),
+          );
+        }
 
-    final String jenisTemuJanji = widget.data[_AppKeys.jenisTemuJanji]?.toString() ?? "N/A";
-    final String balasan = widget.data[_AppKeys.balasan] ?? "";
-    final bool isApproved = widget.data[_AppKeys.isApproved] ?? false;
+        final String jenisTemuJanji = widget.data[_AppKeys.jenisTemuJanji]?.toString() ?? "N/A";
+        final String balasan = widget.data[_AppKeys.balasan] ?? "";
+        final bool isApproved = widget.data[_AppKeys.isApproved] ?? false;
 
-    // Determine visibility of action buttons
-    final bool showBalasFab = _isPetugas;
-    final bool showSahkanButton = _isPetugas && !isApproved;
+        // Determine visibility of action buttons
+        final bool showBalasFab = isPetugas(context);
+        final bool showSahkanButton = isPetugas(context) && !isApproved;
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: _buildAppBar(),
-      floatingActionButton: Visibility(
-        visible: showBalasFab,
-        child: _buildFloatingActionButton(),
-      ),
-      body: Stack(
-        children: [
-          const GradientBackground(
-            showDecorativeCircles: true,
-            child: const SizedBox.expand(),
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: CustomAppBar(title: 'Butiran Permohonan'),
+          floatingActionButton: Visibility(
+            visible: showBalasFab,
+            child: FloatingActionButton.extended(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SemakBalas(id: widget.data[_AppKeys.id]),
+                  ),
+                );
+              },
+              label: const Text("Balas",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
+              icon: const Icon(Icons.reply_all_outlined),
+              backgroundColor: Colors.white,
+              foregroundColor: kPrimaryColor,
+              elevation: 6.0,
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+            )
           ),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 15.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildInfoCard(),
-                  SizedBox(height: 16.h),
-                  _buildDetailsCard(isApproved: isApproved, jenisTemuJanji: jenisTemuJanji),
-                  SizedBox(height: 16.h),
-                  if (balasan.isNotEmpty) _buildReplyCard(reply: balasan),
-                  if (showSahkanButton) ...[
-                    SizedBox(height: 25.h),
-                    _buildSahkanButton(jenisTemuJanji),
-                  ],
-                  SizedBox(height: _isPetugas ? 80.h : 20.h),
-                ],
+          body: Stack(
+            children: [
+              const GradientBackground(
+                showDecorativeCircles: true,
+                child: const SizedBox.expand(),
               ),
-            ),
+              SafeArea(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 15.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildInfoCard(),
+                      SizedBox(height: 16.h),
+                      _buildDetailsCard(isApproved: isApproved, jenisTemuJanji: jenisTemuJanji),
+                      SizedBox(height: 16.h),
+                      if (balasan.isNotEmpty) _buildReplyCard(reply: balasan),
+                      if (showSahkanButton) ...[
+                        SizedBox(height: 25.h),
+                        Center(
+                          child: Material(
+                            elevation: 6.0,
+                            borderRadius: BorderRadius.circular(16.r),
+                            color: Colors.transparent,
+                            child: SizedBox(
+                              width: 150.w,
+                              height: 48.h,
+                              child: FloatingActionButton.extended(
+                                onPressed: () => _showConfirmationDialog(jenisTemuJanji),
+                                label: const Text(
+                                  "Sahkan",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                icon: const Icon(Icons.check_circle_outline),
+                                backgroundColor: Colors.white,
+                                foregroundColor: kPrimaryColor,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ]
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: const Text('Butiran Permohonan'),
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      titleTextStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 20.sp,
-        fontWeight: FontWeight.w600,
-      ),
-      systemOverlayStyle: SystemUiOverlayStyle.light,
+        );
+      },
     );
   }
 
@@ -328,7 +287,7 @@ class _SemakDetailState extends State<SemakDetail> {
         if (widget.data[_AppKeys.price] != null) {
           details.add(_buildDetailRow(icon: Icons.payments_outlined, label: 'Anggaran Bayaran:', value: "RM ${(widget.data[_AppKeys.price] as num).toStringAsFixed(2)}"));
         }
-        if (_isPetugas && imageUrl != null && imageUrl.isNotEmpty) {
+        if (isPetugas(context) && imageUrl != null && imageUrl.isNotEmpty) {
           details.add(SizedBox(height: 16.h));
           details.add(_buildImageDetail(imageUrl: imageUrl, title: 'Bukti Pembayaran:'));
         }
@@ -425,57 +384,6 @@ class _SemakDetailState extends State<SemakDetail> {
     );
   }
 
-  /// Builds the "Sahkan Permohonan" button.
-  Widget _buildSahkanButton(String jenisTemuJanji) {
-    return Center(
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: kPrimaryColor,
-          padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-          elevation: 4.0,
-        ),
-        icon: _isLoadingConfirmation
-            ? SizedBox(
-                width: 18.w,
-                height: 18.h,
-                child: const CircularProgressIndicator(strokeWidth: 2.0, color: kPrimaryColor),
-              )
-            : const Icon(Icons.check_circle_outline_rounded),
-        label: Text(
-          'Sahkan Permohonan',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-        ),
-        onPressed: _isLoadingConfirmation ? null : () => _showConfirmationDialog(jenisTemuJanji),
-      ),
-    );
-  }
-
-  /// Builds the "Balas" floating action button.
-  Widget _buildFloatingActionButton() {
-    return FloatingActionButton.extended(
-      heroTag: 'balas_hero_semak_detail_v4',
-      onPressed: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SemakBalas(id: widget.data[_AppKeys.id]),
-          ),
-        );
-      },
-      label: const Text("Balas", style: TextStyle(fontWeight: FontWeight.w600)),
-      icon: const Icon(Icons.reply_all_outlined),
-      backgroundColor: Colors.white,
-      foregroundColor: kPrimaryColor,
-      elevation: 6.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-    );
-  }
-  // endregion
-
-  // region Helper Widgets & Methods
-  /// A reusable row for displaying a piece of detail (Icon, Label, Value).
   Widget _buildDetailRow({
     required IconData icon,
     required String label,
@@ -588,29 +496,16 @@ class _SemakDetailState extends State<SemakDetail> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-          title: const Text("Sahkan Permohonan?", style: TextStyle(fontWeight: FontWeight.bold)),
-          content: const Text("Tindakan ini tidak boleh dibatalkan. Anda pasti?"),
-          actionsAlignment: MainAxisAlignment.spaceEvenly,
-          actions: <Widget>[
-            TextButton(
-              child: Text("Batal", style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.w600)),
-              onPressed: () => Navigator.of(dialogContext).pop(),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-              ),
-              child: const Text("Ya, Sahkan", style: TextStyle(fontWeight: FontWeight.w600)),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                _processApproval(jenisTemuJanji);
-              },
-            ),
-          ],
+        return CustomDialog(
+          title: "Sahkan Permohonan",
+          message: "Tindakan ini tidak boleh dibatalkan. Anda pasti?",
+          icon: Icons.check_circle_outline,
+          iconColor: kPrimaryColor,
+          confirmText: "Ya, Sahkan",
+          confirmColor: kPrimaryColor,
+          onConfirm: () {
+            _processApproval(jenisTemuJanji);
+          },
         );
       },
     );

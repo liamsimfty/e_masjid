@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:e_masjid/widgets/widgets.dart';
 
 class HadisScreen extends StatefulWidget {
   static const String routeName = '/hadis';
@@ -51,28 +52,7 @@ class _HadisScreenState extends State<HadisScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Padding(
-          padding: const EdgeInsets.only(right: 50.0, top: 15),
-          child: Center(
-            child: Image.asset(
-              'assets/images/e_masjid.png',
-              height: 50,
-            )
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black87,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: CustomAppBar(title: 'Hadis 40'),
       body: Padding(
         padding: const EdgeInsets.only(top: 15.0),
         child: WebViewWidget(controller: controller),

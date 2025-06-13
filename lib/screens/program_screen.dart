@@ -11,8 +11,9 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:e_masjid/widgets/widgets.dart';
-
-
+import 'package:e_masjid/mixins/role_checker_mixin.dart';
+import 'package:provider/provider.dart';
+import 'package:e_masjid/providers/user_role_provider.dart';
 
 class ProgramScreen extends StatefulWidget {
   static const String routeName = '/program';
@@ -33,8 +34,7 @@ class ProgramScreen extends StatefulWidget {
 }
 
 class _ProgramScreenState extends State<ProgramScreen>
-    with SingleTickerProviderStateMixin {
-  bool _isPetugas = false;
+    with SingleTickerProviderStateMixin, RoleCheckerMixin {
   bool _isLoading = true;
   bool _showCalendarView = false; // To toggle between list and calendar view
 
@@ -62,13 +62,11 @@ class _ProgramScreenState extends State<ProgramScreen>
       parent: _animationController,
       curve: Curves.easeInOut,
     );
-    initializeDateFormatting('ms_MY', null).then((_) {
-      _initializeData();
-    });
+    _initializeData();
   }
 
   Future<void> _initializeData() async {
-    await _checkUserRole();
+    await initializeUserRole(context);
     await _fetchProgramsData();
     if (mounted) {
       _animationController.forward();
@@ -81,26 +79,8 @@ class _ProgramScreenState extends State<ProgramScreen>
     super.dispose();
   }
 
-  Future<void> _checkUserRole() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      if (mounted) setState(() => _isPetugas = false);
-      return;
-    }
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(user.uid)
-          .get();
-      if (mounted) {
-        setState(() {
-          _isPetugas = (doc.exists && doc.data()?["role"] == "petugas");
-        });
-      }
-    } catch (e) {
-      print("Error checking user role: $e");
-      if (mounted) setState(() => _isPetugas = false);
-    }
+  bool _canEditProgram() {
+    return isAdmin(context) || isPetugas(context);
   }
 
   Future<void> _fetchProgramsData() async {
@@ -204,374 +184,350 @@ class _ProgramScreenState extends State<ProgramScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Hero(
-          tag: 'app_logo',
-          child: Padding(
-            padding: EdgeInsets.only(top: 10.h),
-            child: Image.asset(
-              'assets/images/e_masjid.png',
-              height: 60.h,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Container(
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.white,
-              size: 18.sp,
-            ),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-      ),
-      floatingActionButton: _isPetugas
-          ? FloatingActionButton.extended(
-              heroTag: 'add_program_hero_calendar',
-              onPressed: () async {
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AddProgramScreen()));
-                if (result == true) {
-                  _fetchProgramsData();
-                }
-              },
-              label: const Text("Tambah Program",
-                  style: TextStyle(fontWeight: FontWeight.w600)),
-              icon: const Icon(Icons.add),
-              backgroundColor: Colors.white,
-              foregroundColor: kPrimaryColor,
-              elevation: 6.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r)),
-            )
-          : null,
-      body: Stack(
-        children: [
-          const GradientBackground(child: SizedBox.expand()),
-          const GradientBackground(
-            showDecorativeCircles: true,
-            child: const SizedBox.expand(),
-          ),
-          SafeArea(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Jadual',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.85),
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w300,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              SizedBox(height: 2.h),
-                              Text(
-                                'Program Masjid',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26.sp,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.5,
-                                  height: 1.1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.2),
-                              width: 1,
-                            ),
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(16.r),
-                              onTap: _fetchProgramsData,
-                              child: Padding(
-                                padding: EdgeInsets.all(12.w),
-                                child: Icon(
-                                  Icons.refresh_rounded,
-                                  color: Colors.white,
-                                  size: 24.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  // View Toggle Chips
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: _viewOptions.map((String view) {
-                        bool isSelected = _currentView == view;
-                        return Padding(
-                          padding: EdgeInsets.only(right: 12.w),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(25.r),
-                              onTap: () => _onViewChanged(view),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-                                decoration: BoxDecoration(
-                                  color: isSelected 
-                                      ? Colors.white 
-                                      : Colors.white.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(25.r),
-                                  border: Border.all(
-                                    color: isSelected 
-                                        ? Colors.white 
-                                        : Colors.white.withOpacity(0.3),
-                                    width: 1.5,
-                                  ),
-                                  boxShadow: isSelected ? [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ] : null,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      view == 'Semua' ? Icons.list_rounded : Icons.calendar_month_rounded,
-                                      size: 18.sp,
-                                      color: isSelected 
-                                          ? kPrimaryColor 
-                                          : Colors.white,
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Text(
-                                      view,
-                                      style: TextStyle(
-                                        color: isSelected 
-                                            ? kPrimaryColorDark 
-                                            : Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14.sp,
-                                        letterSpacing: 0.2,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  // Conditional Calendar View
-                  if (_showCalendarView && !_isLoading)
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20.w),
-                      padding: EdgeInsets.all(16.w),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.95),
-                        borderRadius: BorderRadius.circular(16.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
-                      ),
-                      child: TableCalendar<Map<String, dynamic>>(
-                        locale: 'ms_MY',
-                        firstDay: DateTime.utc(DateTime.now().year - 2, 1, 1),
-                        lastDay: DateTime.utc(DateTime.now().year + 2, 12, 31),
-                        focusedDay: _focusedDay,
-                        calendarFormat: _calendarFormat,
-                        selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                        onDaySelected: _onDaySelected,
-                        eventLoader: _getEventsForDay,
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        calendarStyle: CalendarStyle(
-                          outsideDaysVisible: false,
-                          selectedDecoration: BoxDecoration(
-                            color: kPrimaryColor,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: kPrimaryColor.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          todayDecoration: BoxDecoration(
-                            color: kPrimaryColor.withOpacity(0.4),
-                            shape: BoxShape.circle,
-                          ),
-                          markerDecoration: BoxDecoration(
-                            color: kPrimaryColorDark.withOpacity(0.8),
-                            shape: BoxShape.circle,
-                          ),
-                          weekendTextStyle: TextStyle(color: Colors.red[600]),
-                          defaultTextStyle: TextStyle(
-                            color: kPrimaryColorDark,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          selectedTextStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          todayTextStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        headerStyle: HeaderStyle(
-                          formatButtonVisible: true,
-                          titleCentered: true,
-                          formatButtonShowsNext: false,
-                          titleTextStyle: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                            color: kPrimaryColorDark,
-                          ),
-                          formatButtonTextStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          formatButtonDecoration: BoxDecoration(
-                            color: kPrimaryColor,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          leftChevronIcon: Icon(
-                            Icons.chevron_left,
-                            color: kPrimaryColor,
-                            size: 24.sp,
-                          ),
-                          rightChevronIcon: Icon(
-                            Icons.chevron_right,
-                            color: kPrimaryColor,
-                            size: 24.sp,
-                          ),
-                        ),
-                        onFormatChanged: (format) {
-                          if (_calendarFormat != format) {
-                            setState(() => _calendarFormat = format);
-                          }
-                        },
-                        onPageChanged: (focusedDay) {
-                          _focusedDay = focusedDay;
-                        },
-                      ),
-                    ),
-                  if(_showCalendarView) SizedBox(height: 16.h),
+    return Consumer<UserRoleProvider>(
+      builder: (context, roleProvider, child) {
+        if (roleProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-                  // List of Programs
-                  Expanded(
-                    child: _isLoading
-                        ? const LoadingShimmer()
-                        : _displayedPrograms.isEmpty
-                            ? Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(32.w),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(24.w),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.1),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons.search_off_rounded,
-                                          size: 64.sp,
-                                          color: Colors.white.withOpacity(0.7),
-                                        ),
-                                      ),
-                                      SizedBox(height: 24.h),
-                                      Text(
-                                        _showCalendarView
-                                            ? 'Tiada program pada tarikh ini.'
-                                            : 'Tiada program dijumpai.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white.withOpacity(0.9),
-                                          letterSpacing: 0.2,
-                                        ),
-                                      ),
-                                    ],
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: CustomAppBar(title: 'Jadwal Program'),
+          floatingActionButton: _canEditProgram()
+              ? FloatingActionButton.extended(
+                  heroTag: 'add_program_hero_calendar',
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddProgramScreen()));
+                    if (result == true) {
+                      _fetchProgramsData();
+                    }
+                  },
+                  label: const Text("Tambah Program",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  icon: const Icon(Icons.add),
+                  backgroundColor: Colors.white,
+                  foregroundColor: kPrimaryColor,
+                  elevation: 6.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.r)),
+                )
+              : null,
+          body: Stack(
+            children: [
+              const GradientBackground(child: SizedBox.expand()),
+              const GradientBackground(
+                showDecorativeCircles: true,
+                child: const SizedBox.expand(),
+              ),
+              SafeArea(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Jadwal',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.85),
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.w300,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  Text(
+                                    'Program Masjid',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 26.sp,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: -0.5,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(6.r),
+                                  onTap: _fetchProgramsData,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(12.w),
+                                    child: Icon(
+                                      Icons.refresh_rounded,
+                                      color: Colors.white,
+                                      size: 24.sp,
+                                    ),
                                   ),
                                 ),
-                              )
-                            : AnimationLimiter(
-                                child: ListView.builder(
-                                  key: ValueKey(_currentView + _focusedDay.toString()),
-                                  physics: const BouncingScrollPhysics(),
-                                  padding: EdgeInsets.only(bottom: 80.h, top: _showCalendarView ? 0 : 5.h),
-                                  itemCount: _displayedPrograms.length,
-                                  itemBuilder: ((context, index) {
-                                    return AnimationConfiguration.staggeredList(
-                                      position: index,
-                                      duration: const Duration(milliseconds: 400),
-                                      child: SlideAnimation(
-                                        verticalOffset: 60.0,
-                                        child: FadeInAnimation(
-                                          child: _ProgramCard(
-                                            program: _displayedPrograms[index],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      // View Toggle Chips
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: _viewOptions.map((String view) {
+                            bool isSelected = _currentView == view;
+                            return Padding(
+                              padding: EdgeInsets.only(right: 12.w),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(25.r),
+                                  onTap: () => _onViewChanged(view),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                                    decoration: BoxDecoration(
+                                      color: isSelected 
+                                          ? Colors.white 
+                                          : Colors.white.withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(25.r),
+                                      border: Border.all(
+                                        color: isSelected 
+                                            ? Colors.white 
+                                            : Colors.white.withOpacity(0.3),
+                                        width: 1.5,
+                                      ),
+                                      boxShadow: isSelected ? [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ] : null,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          view == 'Semua' ? Icons.list_rounded : Icons.calendar_month_rounded,
+                                          size: 18.sp,
+                                          color: isSelected 
+                                              ? kPrimaryColor 
+                                              : Colors.white,
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        Text(
+                                          view,
+                                          style: TextStyle(
+                                            color: isSelected 
+                                                ? kPrimaryColorDark 
+                                                : Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14.sp,
+                                            letterSpacing: 0.2,
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  }),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                      // Conditional Calendar View
+                      if (_showCalendarView && !_isLoading)
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20.w),
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.95),
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              )
+                            ],
+                          ),
+                          child: TableCalendar<Map<String, dynamic>>(
+                            locale: 'ms_MY',
+                            firstDay: DateTime.utc(DateTime.now().year - 2, 1, 1),
+                            lastDay: DateTime.utc(DateTime.now().year + 2, 12, 31),
+                            focusedDay: _focusedDay,
+                            calendarFormat: _calendarFormat,
+                            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                            onDaySelected: _onDaySelected,
+                            eventLoader: _getEventsForDay,
+                            startingDayOfWeek: StartingDayOfWeek.monday,
+                            calendarStyle: CalendarStyle(
+                              outsideDaysVisible: false,
+                              selectedDecoration: BoxDecoration(
+                                color: kPrimaryColor,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: kPrimaryColor.withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              todayDecoration: BoxDecoration(
+                                color: kPrimaryColor.withOpacity(0.4),
+                                shape: BoxShape.circle,
+                              ),
+                              markerDecoration: BoxDecoration(
+                                color: kPrimaryColorDark.withOpacity(0.8),
+                                shape: BoxShape.circle,
+                              ),
+                              weekendTextStyle: TextStyle(color: Colors.red[600]),
+                              defaultTextStyle: TextStyle(
+                                color: kPrimaryColorDark,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              selectedTextStyle: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              todayTextStyle: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            headerStyle: HeaderStyle(
+                              formatButtonVisible: true,
+                              titleCentered: true,
+                              formatButtonShowsNext: false,
+                              titleTextStyle: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: kPrimaryColorDark,
+                              ),
+                              formatButtonTextStyle: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              formatButtonDecoration: BoxDecoration(
+                                color: kPrimaryColor,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              leftChevronIcon: Icon(
+                                Icons.chevron_left,
+                                color: kPrimaryColor,
+                                size: 24.sp,
+                              ),
+                              rightChevronIcon: Icon(
+                                Icons.chevron_right,
+                                color: kPrimaryColor,
+                                size: 24.sp,
+                              ),
+                            ),
+                            onFormatChanged: (format) {
+                              if (_calendarFormat != format) {
+                                setState(() => _calendarFormat = format);
+                              }
+                            },
+                            onPageChanged: (focusedDay) {
+                              _focusedDay = focusedDay;
+                            },
+                          ),
+                        ),
+                      if(_showCalendarView) SizedBox(height: 16.h),
+
+                      // List of Programs
+                      Expanded(
+                        child: _isLoading
+                            ? const LoadingShimmer()
+                            : _displayedPrograms.isEmpty
+                                ? Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(32.w),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(24.w),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(0.1),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.search_off_rounded,
+                                              size: 64.sp,
+                                              color: Colors.white.withOpacity(0.7),
+                                            ),
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          Text(
+                                            _showCalendarView
+                                                ? 'Tiada program pada tarikh ini.'
+                                                : 'Tiada program dijumpai.',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 20.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white.withOpacity(0.9),
+                                              letterSpacing: 0.2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : AnimationLimiter(
+                                    child: ListView.builder(
+                                      key: ValueKey(_currentView + _focusedDay.toString()),
+                                      physics: const BouncingScrollPhysics(),
+                                      padding: EdgeInsets.only(bottom: 80.h, top: _showCalendarView ? 0 : 5.h),
+                                      itemCount: _displayedPrograms.length,
+                                      itemBuilder: ((context, index) {
+                                        return AnimationConfiguration.staggeredList(
+                                          position: index,
+                                          duration: const Duration(milliseconds: 400),
+                                          child: SlideAnimation(
+                                            verticalOffset: 60.0,
+                                            child: FadeInAnimation(
+                                              child: _ProgramCard(
+                                                program: _displayedPrograms[index],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-      //bottomNavigationBar: _isPetugas ? null : const CustomNavBar(),
+        );
+      },
     );
   }
 }

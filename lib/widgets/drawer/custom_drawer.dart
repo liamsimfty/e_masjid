@@ -19,37 +19,6 @@ class _MyDrawerState extends State<MyDrawer> {
       title: 'Log Keluar',
       route: '/',
     ),
-
-    // DrawerListItem(
-    // iconData: Icons.format_list_bulleted,
-    // title: 'Quran',
-    // route: '/quran',
-    // ),
-    // DrawerListItem(
-    //   iconData: Icons.format_list_numbered,
-    //   title: 'Surah Index',
-    //   route: '/surahIndex',
-    // ),
-    // DrawerListItem(
-    //   iconData: Icons.format_align_left,
-    //   title: 'Sajda Index',
-    //   route: '/sajda',
-    // ),
-    // DrawerListItem(
-    //   iconData: Icons.info,
-    //   title: 'Help Guide',
-    //   route: '/help',
-    // ),
-    // DrawerListItem(
-    //   iconData: Icons.book,
-    //   title: 'Introduction',
-    //   route: '/introduction',
-    // ),
-    // DrawerListItem(
-    //   iconData: Icons.share,
-    //   title: 'Share App',
-    //   route: '/shareApp',
-    // ),
   ];
 
   @override

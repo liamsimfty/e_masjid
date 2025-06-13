@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e_masjid/screens/screens.dart';
-
-import '../screens/petugas/program_detail_screen.dart';
+import 'package:e_masjid/screens/petugas/program_detail_screen.dart';
 
 class AppRouter {
   static Route onGenerateRoute(RouteSettings settings) {
@@ -31,6 +30,10 @@ class AppRouter {
         return DoaScreen.route();
       case SurahIndex.routeName:
         return SurahIndex.route();
+      case ProgramScreen.routeName:
+        return ProgramScreen.route();
+      case ProgramDetail.routeName:
+        return ProgramDetail.route(data: settings.arguments as Map<String, dynamic>);
       default:
         return _errorRoute();
     }
