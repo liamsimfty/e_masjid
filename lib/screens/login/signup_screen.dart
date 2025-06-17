@@ -37,12 +37,12 @@ class SignUpFormWidget extends StatelessWidget {
           keyboardType: TextInputType.name,
           style: const TextStyle(color: kInputTextColor),
           decoration: CustomInputDecoration.getDecoration(
-            hintText: 'Nama Penuh',
+            hintText: 'Full Name',
             icon: Icons.person_outline,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Sila masukkan nama anda';
+              return 'Enter your full name';
             }
             return null;
           },
@@ -59,10 +59,10 @@ class SignUpFormWidget extends StatelessWidget {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Masukkan Email anda';
+              return 'Enter your email';
             }
             if (!value.contains('@') || !value.contains('.')) {
-              return 'Format Email salah';
+              return 'Invalid email format';
             }
             return null;
           },
@@ -74,15 +74,15 @@ class SignUpFormWidget extends StatelessWidget {
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
           decoration: CustomInputDecoration.getDecoration(
-            hintText: 'Sandi',
+            hintText: 'Password',
             icon: Icons.lock_outline,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Sila masukkan Sandi';
+              return 'Enter your password';
             }
             if (value.length < 6) {
-              return 'Sandi mesti sekurang-kurangnya 6 aksara';
+              return 'Password must be at least 6 characters';
             }
             return null;
           },
@@ -94,15 +94,15 @@ class SignUpFormWidget extends StatelessWidget {
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
           decoration: CustomInputDecoration.getDecoration(
-            hintText: 'Sahkan Sandi',
+            hintText: 'Confirm Password',
             icon: Icons.lock_outline,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Sila sahkan Sandi';
+              return 'Confirm your password';
             }
             if (value != passwordController.text) {
-              return 'Sandi tidak sepadan';
+              return 'Passwords do not match';
             }
             return null;
           },
@@ -170,7 +170,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
 
   Future<void> _handleSignUp() async {
     if (!_formKey.currentState!.validate()) {
-      EasyLoading.showInfo("Sila perbetulkan ralat pada borang.");
+      EasyLoading.showInfo("Please correct the errors in the form.");
       return;
     }
 
@@ -220,7 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
       }
 
       // Show success message
-      EasyLoading.showSuccess('Pengguna berjaya dicipta!');
+      EasyLoading.showSuccess('User created successfully!');
 
       // Navigate to login screen
       if (mounted) {
@@ -232,19 +232,16 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
       String message;
       switch (e.code) {
         case 'email-already-in-use':
-          message = "Email telah digunakan. Sila guna Email lain.";
-          break;
-        case 'invalid-email':
-          message = "Format Email tidak sah.";
+          message = "Email already in use. Please use a different email.";
           break;
         case 'weak-password':
-          message = "Sandi terlalu lemah.";
+          message = "Password is too weak.";
           break;
         case 'operation-not-allowed':
-          message = "Operasi tidak dibenarkan.";
+          message = "Operation not allowed.";
           break;
         default:
-          message = "Ralat Pendaftaran: ${e.message ?? e.code}";
+          message = "Registration error: ${e.message ?? e.code}";
       }
       
       // Clean up if needed
@@ -273,7 +270,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
 
       if (mounted) {
         Navigator.pop(context); // Dismiss loading dialog
-        EasyLoading.showError("Ralat tidak dijangka: ${e.toString()}");
+        EasyLoading.showError("Unexpected error: ${e.toString()}");
       }
     } finally {
       if (mounted) {
@@ -291,7 +288,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
 
     return Scaffold(
       extendBodyBehindAppBar: true, // Allows gradient to go behind app bar
-      appBar: CustomAppBar(showLogo: false, title: 'Daftar Akaun'),
+      appBar: CustomAppBar(showLogo: false, title: 'Register'),
       body: Stack(
         children: [
           const GradientBackground(
@@ -309,7 +306,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                     children: [
                       SizedBox(height: screenHeight * 0.03),
                       Text(
-                        'Buat Akun Baru',
+                        'Create New Account',
                         textAlign: TextAlign.center,
                         style: titleText.copyWith( // Use styles from constants
                             color: Colors.white,
@@ -373,7 +370,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                                   valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
                                 )
                               : Text(
-                                  'Daftar Akaun',
+                                  'Register',
                                   style: textButton.copyWith(
                                       color: kPrimaryColor,
                                       fontWeight: FontWeight.bold,
@@ -390,14 +387,14 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Sudah mempunyai akun? ',
+                              'Already have an account? ',
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.8),
                                 fontSize: 15,
                               ),
                             ),
                             Text(
-                              'Log In',
+                              'Login',
                               style: textButton.copyWith(
                                 color: Colors.white,
                                 fontSize: 15,

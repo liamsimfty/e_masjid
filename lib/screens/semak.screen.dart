@@ -34,12 +34,12 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
     with TickerProviderStateMixin {
   bool _isLoading = true;
   bool _isPetugas = false;
-  String _selectedFilter = "Tanya Imam";
+  String _selectedFilter = "Ask Imam";
   
   final List<FilterOption> _filters = [
-    FilterOption("Tanya Imam", Icons.help_outline_rounded, Colors.blue),
-    FilterOption("Sewa Aula", Icons.meeting_room_outlined, Colors.purple),
-    FilterOption("Sumbangan", Icons.volunteer_activism_outlined, Colors.green),
+    FilterOption("Ask Imam", Icons.help_outline_rounded, Colors.blue),
+    FilterOption("Rent Aula", Icons.meeting_room_outlined, Colors.purple),
+    FilterOption("Donate", Icons.volunteer_activism_outlined, Colors.green),
   ];
 
   List<Map<String, dynamic>> _displayedItems = [];
@@ -128,11 +128,11 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
 
   String _getCollectionNameForFilter() {
     switch (_selectedFilter) {
-      case "Tanya Imam":
+      case "Ask Imam":
         return "tanya";
-      case "Sewa Aula":
+      case "Rent Aula":
         return "sewa_aula";
-      case "Sumbangan":
+      case "Donate":
         return "sumbangan";
       default:
         return "tanya";

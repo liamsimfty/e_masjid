@@ -22,7 +22,7 @@ class LogInForm extends StatefulWidget {
 class _LogInFormState extends State<LogInForm> {
   String _selectedProvider = '@gmail.com';
   final List<String> _emailProviders = [
-    '@gmail.com', '@yahoo.com', '@hotmail.com', '@outlook.com', '@icloud.com'
+    '@gmail.com', '@yahoo.com', '@hotmail.com', '@outlook.com', '@icloud.com', ''
   ];
 
   @override
@@ -59,8 +59,15 @@ class _LogInFormState extends State<LogInForm> {
                       child: Text(provider, style: const TextStyle(color: kInputTextColor)),
                     ),
                   )).toList(),
-                  onChanged: (newValue) =>
-                      setState(() => _selectedProvider = newValue ?? _selectedProvider),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedProvider = newValue ?? _selectedProvider;
+                      if (_selectedProvider == '') {
+                        // Clear the email suffix if custom is selected
+                        widget.emailController.text = widget.emailController.text.split('@')[0];
+                      }
+                    });
+                  },
                   icon: Icon(Icons.arrow_drop_down, color: kPrimaryColor.withOpacity(0.7)),
                   dropdownColor: Colors.white,
                   borderRadius: BorderRadius.circular(12.0),
@@ -75,10 +82,10 @@ class _LogInFormState extends State<LogInForm> {
           obscureText: true,
           style: const TextStyle(color: kInputTextColor),
           decoration: CustomInputDecoration.getDecoration(
-            hintText: 'Sandi',
+            hintText: 'Password',
             icon: Icons.lock_outline,
           ),
-          validator: (value) => (value == null || value.isEmpty) ? 'Masukkan sandi anda' : null,
+          validator: (value) => (value == null || value.isEmpty) ? 'Enter your password' : null,
         ),
       ],
     );
@@ -136,8 +143,18 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     try {
       final form = _formKey.currentContext?.findAncestorStateOfType<_LogInFormState>();
       String email = emailController.text.trim();
-      if (!email.contains('@')) {
-        email = '$email${form?.selectedProvider ?? '@gmail.com'}';
+        
+      // Handle email based on selected provider
+      if (form?.selectedProvider == 'Custom') {
+        // If custom is selected, use the email as is
+        if (!email.contains('@')) {
+          throw Exception("Please enter a complete email address");
+        }
+      } else {
+        // For predefined providers, append the domain if not present
+        if (!email.contains('@')) {
+          email = '$email${form?.selectedProvider ?? '@gmail.com'}';
+        }
       }
 
       await AppUser.instance.signIn(
@@ -161,8 +178,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     } catch (e) {
       if (!mounted) return;
       String msg = e.toString().contains('user-not-found') || e.toString().contains('wrong-password')
-          ? "Email atau sandi salah."
-          : e.toString().replaceFirst("Exception: ", "Log masuk gagal. ");
+          ? "Email or password is incorrect."
+          : e.toString().replaceFirst("Exception: ", "Login failed. ");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(msg),
         backgroundColor: Colors.redAccent,
@@ -195,10 +212,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     SizedBox(height: height * 0.08),
                     Image.asset('assets/images/e_masjid2.png', height: height * 0.15),
                     SizedBox(height: height * 0.02),
-                    Text('Selamat Datang',
+                    Text('Welcome',
                         style: subTitle.copyWith(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
                     SizedBox(height: height * 0.01),
-                    Text('Log masuk untuk teruskan',
+                    Text('Login to continue',
                         style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 16)),
                     SizedBox(height: height * 0.05),
                     Container(
@@ -227,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPassword())),
-                                child: Text('Lupa Sandi?',
+                                child: Text('Forgot Password?',
                                     style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
                               ),
                             ),
@@ -269,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             ? const CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
                               )
-                            : Text('Log Masuk',
+                            : Text('Login',
                                 style: textButton.copyWith(
                                   color: kPrimaryColor,
                                   fontWeight: FontWeight.bold,
@@ -283,9 +300,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Tidak ada akun? ',
+                          Text('No account? ',
                               style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 15)),
-                          Text('Daftar di sini!',
+                          Text('Register here!',
                               style: textButton.copyWith(
                                 color: Colors.white,
                                 fontSize: 15,

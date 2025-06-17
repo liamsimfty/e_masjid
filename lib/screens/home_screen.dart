@@ -142,49 +142,49 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
 const List<Choice> choices = [
   Choice(
-    title: 'Tanya Imam',
+    title: 'Ask Imam',
     icon: Icons.man_outlined,
     route: '/tanya-imam',
     color: Colors.blue,
   ),
   Choice(
-    title: 'Sewa Aula',
+    title: 'Rent Aula',
     icon: Icons.meeting_room_outlined,
     route: '/sewa-aula',
     color: Colors.green,
   ),
   Choice(
-    title: 'Jadwal Program',
+    title: 'Program',
     icon: Icons.calendar_month_outlined,
     route: '/program',
     color: Colors.orange,
   ),
   Choice(
-    title: 'Sumbangan',
+    title: 'Donate',
     icon: Icons.payments_outlined,
     route: '/derma',
     color: Colors.red,
   ),
   Choice(
-    title: 'Lihat Status',
+    title: 'Check Status',
     icon: Icons.check_circle_outline_outlined,
     route: '/semak',
     color: Colors.purple,
   ),
   Choice(
-    title: 'Al-Quran',
+    title: 'Quran',
     icon: Icons.menu_book_outlined,
     route: '/quran',
     color: Colors.teal,
   ),
   Choice(
-    title: 'Hadis 40',
+    title: 'Hadith',
     icon: Icons.note_outlined,
     route: '/hadis',
     color: Colors.indigo,
   ),
   Choice(
-    title: 'Doa Harian',
+    title: 'Daily Prayer',
     icon: Icons.favorite_outlined,
     route: '/doa',
     color: Colors.pink,
@@ -199,7 +199,7 @@ const List<Choice> petugasChoices = [
     color: Colors.blueGrey,
   ),
   Choice(
-    title: 'Permohonan',
+    title: 'Application',
     icon: Icons.list_alt_outlined,
     route: '/semak',
     color: Colors.deepOrange,

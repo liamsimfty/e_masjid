@@ -33,13 +33,13 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: CustomAppBar(title: 'Tanya Imam'),
+      appBar: CustomAppBar(title: 'Ask Imam'),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Padding(
           padding: EdgeInsets.only(top: 25.0),
           child: Center(
             child: Text(
-              'Tanya Imam',
+              'Ask Imam',
               style: TextStyle(
                 color: kPrimaryColor,
                 fontWeight: FontWeight.bold ,
@@ -82,7 +82,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                                   width: 7.w,
                                 ),
                                 Text(
-                                  'Kasus',
+                                  'Case',
                                   style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
@@ -102,10 +102,10 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                             validator: (value) {
                               RegExp regex = RegExp(r'^.{5,}$');
                               if (value!.isEmpty) {
-                                return ("Sila isi tajuk pertanyaan");
+                                return ("Please fill in the question title");
                               }
                               if (!regex.hasMatch(value)) {
-                                return ("masukkan minimum 5 aksara");
+                                return ("enter at least 5 characters");
                               }
                               return null;
                             },
@@ -134,7 +134,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                                 width: 7.w,
                               ),
                               Text(
-                                'Pertanyaan',
+                                'Question',
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
@@ -157,10 +157,10 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                             validator: (value) {
                               RegExp regex = RegExp(r'^.{5,}$');
                               if (value!.isEmpty) {
-                                return ("Sila isi huraian pertanyaan");
+                                return ("Please fill in the question description");
                               }
                               if (!regex.hasMatch(value)) {
-                                return ("masukkan minimum 5 huruf");
+                                return ("enter at least 5 characters");
                               }
                               return null;
                             },
@@ -195,7 +195,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Tanya",
+                                        "Ask",
                                         style: TextStyle(color: Colors.white),
                                       )
                                     ],
@@ -216,7 +216,7 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Batal",
+                                        "Cancel",
                                         style: TextStyle(color: Colors.white),
                                       )
                                     ],
@@ -241,22 +241,22 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
 
   void addTanyaImam() async {
     try {
-      EasyLoading.show(status: 'sedang diproses...');
+      EasyLoading.show(status: 'processing...');
       
       // Validate input
       if (titleController.text.isEmpty || descController.text.isEmpty) {
-        EasyLoading.showInfo("Sila isi maklumat pertanyaan");
+        EasyLoading.showInfo("Please fill in the question information");
         return;
       }
 
       // Validate minimum length
       if (titleController.text.length < 5) {
-        EasyLoading.showInfo("Tajuk mesti sekurang-kurangnya 5 aksara");
+        EasyLoading.showInfo("Title must be at least 5 characters");
         return;
       }
 
       if (descController.text.length < 5) {
-        EasyLoading.showInfo("Huraian mesti sekurang-kurangnya 5 aksara");
+        EasyLoading.showInfo("Description must be at least 5 characters");
         return;
       }
 
@@ -267,12 +267,12 @@ class _TanyaImamScreenState extends State<TanyaImamScreen> {
         AppUser().user!.uid
       );
 
-      EasyLoading.showSuccess('Pertanyaan berjaya ditambah');
+      EasyLoading.showSuccess('Question added successfully');
       Navigator.of(context).popAndPushNamed('/semak');
 
     } catch (e) {
       EasyLoading.dismiss();
-      EasyLoading.showError('Ralat: ${e.toString()}');
+      EasyLoading.showError('Error: ${e.toString()}');
       print('Error in addTanyaImam: $e');
     }
   }

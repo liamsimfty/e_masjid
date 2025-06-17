@@ -2,13 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_masjid/config/constants.dart';
 import 'package:e_masjid/screens/petugas/add_program_screen.dart';
 import 'package:e_masjid/screens/petugas/program_detail_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:e_masjid/widgets/widgets.dart';
 import 'package:e_masjid/mixins/role_checker_mixin.dart';
@@ -48,8 +46,8 @@ class _ProgramScreenState extends State<ProgramScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
-  final List<String> _viewOptions = ['Semua', 'Kalendar'];
-  String _currentView = 'Semua';
+  final List<String> _viewOptions = ['All', 'Calendar'];
+  String _currentView = 'All';
 
   @override
   void initState() {
@@ -173,7 +171,7 @@ class _ProgramScreenState extends State<ProgramScreen>
     if (newValue == null) return;
     setState(() {
       _currentView = newValue;
-      _showCalendarView = (newValue == 'Kalendar');
+      _showCalendarView = (newValue == 'Calendar');
       if (_showCalendarView) {
         _selectedDay = DateTime.now(); // Reset to today when switching to calendar
         _focusedDay = DateTime.now();
@@ -238,7 +236,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Jadwal',
+                                    'Schedule',
                                     style: TextStyle(
                                       color: Colors.white.withOpacity(0.85),
                                       fontSize: 23.sp,
@@ -248,7 +246,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                                   ),
                                   SizedBox(height: 2.h),
                                   Text(
-                                    'Program Masjid',
+                                    'Masjid Program',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 31.sp,

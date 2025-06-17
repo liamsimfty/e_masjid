@@ -22,7 +22,7 @@ class _SahPermohonanScreenState extends State<SahPermohonanScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: 'Sah Permohonan'),
+      appBar: CustomAppBar(title: 'Accept Application'),
       //bottomNavigationBar: CustomNavBar(),
     );
   }

@@ -36,7 +36,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
 
   String getMasaMula() {
     if (!pickedTime || time == null) {
-      return 'Pilih Masa Mula';
+      return 'Pick Start Time';
     } else {
       final hours = time!.hour.toString().padLeft(2, '0');
       final minutes = time!.minute.toString().padLeft(2, '0');
@@ -46,7 +46,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
 
   String getMasaTamat() {
     if (!pickedTime2 || time2 == null) {
-      return 'Pilih Masa Tamat';
+      return 'Pick End Time';
     } else {
       final hours2 = time2!.hour.toString().padLeft(2, '0');
       final minutes2 = time2!.minute.toString().padLeft(2, '0');
@@ -60,13 +60,13 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
     final end = dateRange.end;
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Tambah Program'),
+      appBar: CustomAppBar(title: 'Add Program'),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Padding(
           padding: EdgeInsets.only(top: 25.0),
           child: Center(
             child: Text(
-              'Tambah Program',
+              'Add Program',
               style: TextStyle(
                 color: kPrimaryColor,
                 fontWeight: FontWeight.bold,
@@ -126,10 +126,10 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             validator: (value) {
                               RegExp regex = RegExp(r'^.{5,}$');
                               if (value!.isEmpty) {
-                                return ("Sila isi tajuk program");
+                                return ("Please fill in the program title");
                               }
                               if (!regex.hasMatch(value)) {
-                                return ("masukkan minimum 5 aksara");
+                                return ("enter at least 5 characters");
                               }
                               return null;
                             },
@@ -174,10 +174,10 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             validator: (value) {
                               RegExp regex = RegExp(r'^.{5,}$');
                               if (value!.isEmpty) {
-                                return ("Sila isi huraian program");
+                                return ("Please fill in the program description");
                               }
                               if (!regex.hasMatch(value)) {
-                                return ("masukkan minimum 5 huruf");
+                                return ("enter at least 5 characters");
                               }
                               return null;
                             },
@@ -187,7 +187,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                              labelText: 'Cth : Gotong Royong anjuran Masjid..',
+                              labelText: 'Example: Tafsir Al-Quran by Imam Al-Tirmidhi',
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
@@ -203,7 +203,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                               ),
                               SizedBox(width: 10.w),
                               Text(
-                                'Tarikh',
+                                'Date',
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
@@ -269,7 +269,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                   child: ElevatedButton(
                                 onPressed: pickDateRange,
                                 style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
-                                child: const Text('Pilih Tarikh', style: TextStyle(color: Colors.white)),
+                                child: const Text('Pick Date', style: TextStyle(color: Colors.white)),
                               )),
                             ],
                           ),
@@ -284,7 +284,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                               ),
                               SizedBox(width: 10.w),
                               Text(
-                                'Masa Mula',
+                                'Start Time',
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
@@ -325,7 +325,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                               ),
                               SizedBox(width: 10.w),
                               Text(
-                                'Masa Tamat',
+                                'End Time',
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
@@ -371,7 +371,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Tambah",
+                                        "Add",
                                         style: TextStyle(color: Colors.white),
                                       )
                                     ],
@@ -390,7 +390,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Batal",
+                                        "Cancel",
                                         style: TextStyle(color: Colors.white),
                                       )
                                     ],
@@ -415,27 +415,27 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
   void AddProgram() async {
     // Validate required fields first
     if (titleController.text.trim().isEmpty) {
-      EasyLoading.showError('Sila isi tajuk program');
+      EasyLoading.showError('Please fill in the program title');
       return;
     }
 
     if (descController.text.trim().isEmpty) {
-      EasyLoading.showError('Sila isi huraian program');
+      EasyLoading.showError('Please fill in the program description');
       return;
     }
 
     if (!pickedTime || time == null) {
-      EasyLoading.showError('Sila pilih masa mula');
+      EasyLoading.showError('Please pick the start time');
       return;
     }
 
     if (!pickedTime2 || time2 == null) {
-      EasyLoading.showError('Sila pilih masa tamat');
+        EasyLoading.showError('Please pick the end time');
       return;
     }
 
     try {
-      EasyLoading.show(status: 'sedang diproses...');
+      EasyLoading.show(status: 'processing...');
 
       // Get proper time strings
       final masaMula = getMasaMula();
@@ -459,7 +459,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
       );
 
       EasyLoading.dismiss();
-      EasyLoading.showSuccess('Program berjaya ditambah');
+      EasyLoading.showSuccess('Program added successfully');
       
       // Navigate back or to program list
       Navigator.of(context).pop();
@@ -468,7 +468,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
 
     } catch (e) {
       EasyLoading.dismiss();
-      EasyLoading.showError('Ralat: ${e.toString()}');
+      EasyLoading.showError('Error: ${e.toString()}');
       print("Error adding program: $e");
     }
   }

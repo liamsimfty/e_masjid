@@ -50,25 +50,25 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    EasyLoading.show(status: 'Sedang diproses...');
+    EasyLoading.show(status: 'Processing...');
 
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text.trim());
       EasyLoading.dismiss();
-      EasyLoading.showSuccess('Cek Email anda untuk mengganti password.');
+      EasyLoading.showSuccess('Check your email to reset your password.');
     } on FirebaseAuthException catch (e) {
       EasyLoading.dismiss();
       String errorMessage = switch (e.code) {
-        'user-not-found' => 'Tiada pengguna ditemui untuk Email tersebut.',
-        'invalid-email' => 'Format Email salah.',
-        _ => e.message ?? "Ralat tidak diketahui. Sila cuba lagi."
+        'user-not-found' => 'No user found for this email.',
+        'invalid-email' => 'Invalid email format.',
+        _ => e.message ?? "Unknown error. Please try again."
       };
       print("FirebaseAuthException in resetPassword: ${e.code} - $errorMessage");
       EasyLoading.showError(errorMessage, duration: const Duration(seconds: 3));
     } catch (e) {
       EasyLoading.dismiss();
       print("Generic error in resetPassword: $e");
-      EasyLoading.showError('Ralat tidak dijangka. Sila cuba lagi.', duration: const Duration(seconds: 3));
+      EasyLoading.showError('Unexpected error. Please try again.', duration: const Duration(seconds: 3));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -81,7 +81,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(showLogo: false, title: 'Lupa Password'),
+      appBar: CustomAppBar(showLogo: false, title: 'Forgot Password'),
       body: Stack(
         children: [
           const GradientBackground(showDecorativeCircles: true, child: SizedBox.expand()),
@@ -104,7 +104,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
                       ),
                       SizedBox(height: screenHeight * 0.03),
                       Text(
-                        'Masukkan email anda untuk mengganti sandi.',
+                        'Enter your email to reset your password.',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.85)),
                       ),
@@ -127,9 +127,9 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
                           decoration: CustomInputDecoration.getDecoration(hintText: 'Email Anda', icon: Icons.email_outlined),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) {
-                            if (value == null || value.isEmpty) return "Sila masukkan Email";
+                            if (value == null || value.isEmpty) return "Enter your email";
                             if (!RegExp(r"^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*").hasMatch(value)) {
-                              return "Sila masukkan Email yang benar";
+                              return "Enter a valid email";
                             }
                             return null;
                           },
@@ -173,7 +173,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
                                     Icon(Icons.send_outlined, color: kPrimaryColor, size: 20),
                                     const SizedBox(width: 10),
                                     Text(
-                                      'Hantar Pautan',
+                                      'Send Reset Link',
                                       style: textButton.copyWith(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 16),
                                     ),
                                   ],
@@ -189,7 +189,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with SingleTickerProvid
                             Icon(Icons.arrow_back_ios_new, color: Colors.white.withOpacity(0.8), size: 16),
                             const SizedBox(width: 5),
                             Text(
-                              "Kembali ke Log Masuk",
+                              "Back to Login",
                               style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 15, fontWeight: FontWeight.w500),
                             ),
                           ],

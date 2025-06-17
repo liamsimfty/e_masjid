@@ -55,11 +55,11 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
   }
 
   String getStartTime() {
-    return pickedStartTime ? startTimeString : 'Pilih Waktu Mulai';
+    return pickedStartTime ? startTimeString : 'Pick Start Time';
   }
 
   String getEndTime() {
-    return pickedEndTime ? endTimeString : 'Pilih Waktu Tamat';
+    return pickedEndTime ? endTimeString : 'Pick End Time';
   }
 
   double calculatePrice() {
@@ -83,7 +83,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: CustomAppBar(title: 'Sewa Aula'),
+      appBar: CustomAppBar(title: 'Rent Aula'),
       body: Stack(
         children: [
           Column(
@@ -93,7 +93,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
                 padding: EdgeInsets.only(top: 25.0),
                 child: Center(
                   child: Text(
-                    'Sewa Aula',
+                    'Rent Aula',
                     style: TextStyle(
                       color: kPrimaryColor,
                       fontWeight: FontWeight.bold,
@@ -171,7 +171,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            labelText: 'Nama penuh pemohon',
+            labelText: 'Full name of applicant',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
@@ -199,7 +199,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            labelText: 'Jenis Kegiatan',
+            labelText: 'Activity type',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
@@ -224,7 +224,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Jumlah Hari:',
+                'Total Days:',
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
               Text(
@@ -242,7 +242,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Jumlah Bayaran:',
+                'Total Payment:',
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
               Text(
@@ -262,7 +262,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
 
   Widget _buildImageUploadSection() {
     return ImagePickerWidget(
-      label: 'Bukti Pembayaran',
+      label: 'Payment Proof',
       onImageUploaded: (String url) {
         setState(() {
           _imageUrl = url;
@@ -278,7 +278,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF43afce)),
             onPressed: addSewaAula,
-            child: const Text("Mohon", style: TextStyle(color: Colors.white)),
+            child: const Text("Apply", style: TextStyle(color: Colors.white)),
           ),
         ),
         SizedBox(width: 10.w),
@@ -286,7 +286,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF43afce)),
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Batal", style: TextStyle(color: Colors.white)),
+            child: const Text("Cancel", style: TextStyle(color: Colors.white)),
           ),
         ),
       ],
@@ -312,7 +312,7 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
 
   void addSewaAula() async {
     try {
-      EasyLoading.show(status: 'sedang diproses...');
+      EasyLoading.show(status: 'processing...');
       
       if (pemohonController.text.isNotEmpty &&
           jenisKegiatanController.text.isNotEmpty &&
@@ -328,10 +328,10 @@ class _SewaAulaScreenState extends State<SewaAulaScreen> {
           AppUser().user!.uid,
           _imageUrl,
         );
-        EasyLoading.showSuccess('Permohonan berjaya ditambah');
+        EasyLoading.showSuccess('Application added successfully');
         Navigator.of(context).popAndPushNamed('/semak');
       } else {
-        EasyLoading.showInfo("Sila isi semua maklumat sewa aula");
+      EasyLoading.showInfo("Please fill in all the rent aula information");
       }
     } catch (e) {
       EasyLoading.showError(e.toString());

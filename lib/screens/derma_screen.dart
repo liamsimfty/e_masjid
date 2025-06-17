@@ -33,7 +33,7 @@ class _DermaScreenState extends State<DermaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: CustomAppBar(title: 'Derma Masjid'),
+      appBar: CustomAppBar(title: 'Donate to Masjid'),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -41,7 +41,7 @@ class _DermaScreenState extends State<DermaScreen> {
             padding: EdgeInsets.only(top: 25.0),
             child: Center(
               child: Text(
-                'Derma Masjid',
+                'Donate to Masjid',
                 style: TextStyle(
                   color: kPrimaryColor,
                   fontWeight: FontWeight.bold,
@@ -72,7 +72,7 @@ class _DermaScreenState extends State<DermaScreen> {
                           children: [
                             // Image Picker
                             ImagePickerWidget(
-                              label: 'Bukti Donasi',
+                              label: 'Donation Proof',
                               onImageUploaded: (String url) {
                                 setState(() {
                                   _imageUrl = url;
@@ -97,7 +97,7 @@ class _DermaScreenState extends State<DermaScreen> {
                                   ),
                                   SizedBox(width: 7.w),
                                   Text(
-                                    'Jumlah Donasi (RM)',
+                                    'Donation Amount (RM)',
                                     style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
@@ -113,7 +113,7 @@ class _DermaScreenState extends State<DermaScreen> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                labelText: 'Masukkan jumlah donasi',
+                                labelText: 'Enter donation amount',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -130,7 +130,7 @@ class _DermaScreenState extends State<DermaScreen> {
                                 ),
                                 SizedBox(width: 7.w),
                                 Text(
-                                  'Nama',
+                                  'Name',
                                   style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
@@ -144,7 +144,7 @@ class _DermaScreenState extends State<DermaScreen> {
                               controller: nameController,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                labelText: 'Masukkan nama anda',
+                                labelText: 'Enter your name',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -161,7 +161,7 @@ class _DermaScreenState extends State<DermaScreen> {
                                 ),
                                 SizedBox(width: 7.w),
                                 Text(
-                                  'Deskripsi',
+                                  'Description',
                                   style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
@@ -175,7 +175,7 @@ class _DermaScreenState extends State<DermaScreen> {
                               controller: descController,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                labelText: 'Masukkan Deskripsi',
+                                labelText: 'Enter description',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -199,7 +199,7 @@ class _DermaScreenState extends State<DermaScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Derma",
+                                          "Donate",
                                           style: TextStyle(color: Colors.white),
                                         )
                                       ],
@@ -219,7 +219,7 @@ class _DermaScreenState extends State<DermaScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Batal",
+                                          "Cancel",
                                           style: TextStyle(color: Colors.white),
                                         )
                                       ],
@@ -244,13 +244,13 @@ class _DermaScreenState extends State<DermaScreen> {
 
   void processDonation() async {
     try {
-      EasyLoading.show(status: 'sedang diproses...');
+      EasyLoading.show(status: 'processing...');
       
       // Validate input
       if (amountController.text.isEmpty || 
           nameController.text.isEmpty || 
           descController.text.isEmpty) {
-        EasyLoading.showInfo("Sila isi semua maklumat");
+        EasyLoading.showInfo("Please fill in all the information");
         return;
       }
 
@@ -263,12 +263,12 @@ class _DermaScreenState extends State<DermaScreen> {
         _imageUrl,
       );
 
-      EasyLoading.showSuccess('Derma berjaya dihantar');
+      EasyLoading.showSuccess('Donation sent successfully');
       Navigator.of(context).pop();
 
     } catch (e) {
       EasyLoading.dismiss();
-      EasyLoading.showError('Ralat: ${e.toString()}');
+      EasyLoading.showError('Error: ${e.toString()}');
       print('Error in processDonation: $e');
     }
   }
