@@ -241,7 +241,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                                     'Jadwal',
                                     style: TextStyle(
                                       color: Colors.white.withOpacity(0.85),
-                                      fontSize: 18.sp,
+                                      fontSize: 23.sp,
                                       fontWeight: FontWeight.w300,
                                       letterSpacing: 0.5,
                                     ),
@@ -251,7 +251,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                                     'Program Masjid',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 26.sp,
+                                      fontSize: 31.sp,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: -0.5,
                                       height: 1.1,
@@ -342,7 +342,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                                                 ? kPrimaryColorDark 
                                                 : Colors.white,
                                             fontWeight: FontWeight.w600,
-                                            fontSize: 14.sp,
+                                            fontSize: 18.sp,
                                             letterSpacing: 0.2,
                                           ),
                                         ),
@@ -422,7 +422,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                               titleCentered: true,
                               formatButtonShowsNext: false,
                               titleTextStyle: TextStyle(
-                                fontSize: 16.sp,
+                                fontSize: 21.sp,
                                 fontWeight: FontWeight.bold,
                                 color: kPrimaryColorDark,
                               ),
@@ -487,7 +487,7 @@ class _ProgramScreenState extends State<ProgramScreen>
                                                 : 'Tiada program dijumpai.',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              fontSize: 20.sp,
+                                              fontSize: 25.sp,
                                               fontWeight: FontWeight.w600,
                                               color: Colors.white.withOpacity(0.9),
                                               letterSpacing: 0.2,
@@ -617,7 +617,7 @@ class _ProgramCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 21.sp,
                           fontWeight: FontWeight.w700,
                           color: kPrimaryColorDark,
                           height: 1.2,
@@ -629,7 +629,7 @@ class _ProgramCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12.5.sp,
+                          fontSize: 14.sp,
                           color: Colors.grey.shade600,
                           fontWeight: FontWeight.w500,
                         ),
@@ -639,14 +639,14 @@ class _ProgramCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.calendar_today_outlined,
-                            size: 13.sp,
+                            size: 17.sp,
                             color: kPrimaryColor.withOpacity(0.8),
                           ),
                           SizedBox(width: 6.w),
                           Text(
                             dateDisplay,
                             style: TextStyle(
-                              fontSize: 12.sp,
+                              fontSize: 16.sp,
                               color: Colors.grey.shade600,
                               fontWeight: FontWeight.w500,
                             ),
@@ -654,14 +654,14 @@ class _ProgramCard extends StatelessWidget {
                           SizedBox(width: 12.w),
                           Icon(
                             Icons.access_time_outlined,
-                            size: 13.sp,
+                            size: 17.sp,
                             color: kPrimaryColor.withOpacity(0.8),
                           ),
                           SizedBox(width: 6.w),
                           Text(
                             timeRange,
                             style: TextStyle(
-                              fontSize: 12.sp,
+                              fontSize: 16.sp,
                               color: Colors.grey.shade600,
                               fontWeight: FontWeight.w500,
                             ),

@@ -217,7 +217,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
             'Kategori',
             style: TextStyle(
               color: Colors.white.withOpacity(0.9),
-              fontSize: 14.sp,
+              fontSize: 24.sp,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
             ),
@@ -288,7 +288,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
                         ? kPrimaryColorDark 
                         : Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
+                    fontSize: 20.sp,
                     letterSpacing: 0.2,
                   ),
                 ),
@@ -377,7 +377,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
               'Tiada permohonan dijumpai',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 20.sp,
+                fontSize: 30.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.white.withOpacity(0.9),
                 letterSpacing: 0.2,
@@ -388,7 +388,7 @@ class _SemakStatusScreenState extends State<SemakStatusScreen>
               'untuk kategori "$_selectedFilter"',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: 19.sp,
                 color: Colors.white.withOpacity(0.7),
                 letterSpacing: 0.3,
               ),
@@ -579,7 +579,7 @@ class StatusItemCard extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 21.sp,
             fontWeight: FontWeight.w700,
             color: kPrimaryColorDark,
             height: 1.2,
@@ -589,7 +589,7 @@ class StatusItemCard extends StatelessWidget {
         Text(
           itemData['JenisTemuJanji'] ?? 'Permohonan',
           style: TextStyle(
-            fontSize: 12.sp,
+            fontSize: 17.sp,
             color: Colors.grey.shade600,
             fontWeight: FontWeight.w500,
           ),
@@ -606,7 +606,7 @@ class StatusItemCard extends StatelessWidget {
             Text(
               date,
               style: TextStyle(
-                fontSize: 11.sp,
+                fontSize: 17.sp,
                 color: Colors.grey.shade500,
                 fontWeight: FontWeight.w400,
               ),
@@ -640,7 +640,7 @@ class StatusItemCard extends StatelessWidget {
           Text(
             statusInfo.label,
             style: TextStyle(
-              fontSize: 12.sp,
+              fontSize: 19.sp,
               fontWeight: FontWeight.w600,
               color: statusInfo.color.shade800,
             ),

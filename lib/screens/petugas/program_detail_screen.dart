@@ -181,7 +181,7 @@ class _ProgramDetailState extends State<ProgramDetail>
                 Text(
                   "Nama Program / Aktiviti",
                   style: TextStyle(
-                      fontSize: 13.sp, // Sub-header style
+                      fontSize: 18.sp,
                       color: kPrimaryColorDark.withOpacity(0.8),
                       fontWeight: FontWeight.w500),
                 ),
@@ -191,7 +191,7 @@ class _ProgramDetailState extends State<ProgramDetail>
             Text(
               title,
               style: TextStyle(
-                  fontSize: 22.sp,
+                  fontSize: 28.sp,
                   fontWeight: FontWeight.bold,
                   color: kPrimaryColorDark),
             ),
@@ -220,7 +220,7 @@ class _ProgramDetailState extends State<ProgramDetail>
                 Text(
                   "Jadwal & Waktu",
                   style: TextStyle(
-                      fontSize: 17.sp,
+                      fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
                       color: kPrimaryColorDark),
                 ),
@@ -275,7 +275,7 @@ class _ProgramDetailState extends State<ProgramDetail>
             Text(
               description.isEmpty ? "Tiada huraian diberikan." : description,
               style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 18.sp,
                   color: Colors.black87.withOpacity(0.85),
                   height: 1.5,
                   fontStyle: description.isEmpty

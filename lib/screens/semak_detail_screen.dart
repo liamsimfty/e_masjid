@@ -218,7 +218,7 @@ class _SemakDetailState extends State<SemakDetail> with RoleCheckerMixin {
           children: [
             Text(
               title,
-              style: TextStyle(fontSize: 19.sp, fontWeight: FontWeight.bold, color: kPrimaryColorDark),
+              style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold, color: kPrimaryColorDark),
             ),
             SizedBox(height: 8.h),
             Chip(
@@ -228,7 +228,7 @@ class _SemakDetailState extends State<SemakDetail> with RoleCheckerMixin {
                 style: TextStyle(
                   color: kPrimaryColor,
                   fontWeight: FontWeight.w600,
-                  fontSize: 12.sp,
+                  fontSize: 15.sp,
                 ),
               ),
               backgroundColor: kPrimaryColor.withOpacity(0.15),
@@ -240,7 +240,7 @@ class _SemakDetailState extends State<SemakDetail> with RoleCheckerMixin {
               Text(
                 description,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 15.sp,
                   color: Colors.black87.withOpacity(0.8),
                   height: 1.45,
                 ),
@@ -333,7 +333,7 @@ class _SemakDetailState extends State<SemakDetail> with RoleCheckerMixin {
                 Text(
                   'Maklumat Lanjut',
                   style: TextStyle(
-                      fontSize: 17.sp,
+                      fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
                       color: kPrimaryColorDark),
                 ),
@@ -365,7 +365,7 @@ class _SemakDetailState extends State<SemakDetail> with RoleCheckerMixin {
                 SizedBox(width: 10.w),
                 Text(
                   'Balasan Petugas',
-                  style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.bold, color: kPrimaryColorDark),
+                  style: TextStyle(fontSize: 23.sp, fontWeight: FontWeight.bold, color: kPrimaryColorDark),
                 ),
               ],
             ),
@@ -373,7 +373,7 @@ class _SemakDetailState extends State<SemakDetail> with RoleCheckerMixin {
             Text(
               reply,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: 18.sp,
                 color: Colors.black87.withOpacity(0.8),
                 height: 1.45,
               ),

@@ -134,14 +134,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
             ],
           ),
-          floatingActionButton: isPetugas(context)
-              ? FloatingActionButton(
-                  onPressed: () {
-                    // Your action here
-                  },
-                  child: const Icon(Icons.add),
-                )
-              : null,
         );
       },
     );

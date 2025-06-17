@@ -2,7 +2,8 @@ import 'package:e_masjid/models/quran/ayat/ayat.dart';
 import 'package:e_masjid/providers/user.provider.dart';
 import 'package:e_masjid/screens/landing-page.screen.dart';
 import 'package:e_masjid/screens/splash_screen.dart';
-
+import 'package:e_masjid/screens/login/login_screen.dart';
+import 'package:e_masjid/screens/login/signup_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -100,8 +101,8 @@ class MyApp extends StatelessWidget {
             routes: {
               '/': (context) => const SplashScreen(),
               '/home': (context) => LandingScreen(),
-              // '/': (context) => PetugasHomeScreen(maxSlide: MediaQuery.of(context).size.width * 0.835),
-
+              LoginScreen.routeName: (context) => const LoginScreen(),
+              SignUpScreen.routeName: (context) => const SignUpScreen(),
             },
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

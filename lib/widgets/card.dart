@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:e_masjid/config/constants.dart';
+import 'package:e_masjid/providers/user_role_provider.dart';
+import 'package:e_masjid/mixins/role_checker_mixin.dart';
+import 'package:provider/provider.dart';
 
 // Choice class definition - should be in a separate file or at the top
 class Choice {
@@ -115,13 +118,17 @@ class ServiceGridWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  "Layanan",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D3748),
-                  ),
+                Consumer<UserRoleProvider>(
+                  builder: (context, roleProvider, child) {
+                    return Text(
+                      roleProvider.isPetugas ? "Kuasa Admin" : "Layanan",
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2D3748),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -144,6 +151,33 @@ class ServiceGridWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ServiceCard extends StatelessWidget with RoleCheckerMixin {
+  // ... existing code ...
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserRoleProvider>(
+      builder: (context, roleProvider, child) {
+        return Container(
+          // ... existing container code ...
+          child: Column(
+            children: [
+              // ... other widgets ...
+              Text(
+                isPetugas(context) ? "Kuasa Admin" : "Layanan",
+                style: TextStyle(
+                  // ... existing style ...
+                ),
+              ),
+              // ... other widgets ...
+            ],
+          ),
+        );
+      },
     );
   }
 }
