@@ -152,19 +152,9 @@ CLOUDINARY_API_SECRET=your_api_secret
 - Monitor donations
 - Manage facility bookings
 
-### 👨‍💻 Administrator
-- User management
-- System configuration
-- Analytics and reports
-- Content management
-- Security settings
-
 ## 🎨 UI/UX Features
 
 - **Responsive Design**: Works seamlessly across all device sizes
-- **Dark/Light Theme**: Automatic theme switching
-- **Localization**: Malaysian (Bahasa Melayu) support
-- **Accessibility**: Screen reader support and high contrast modes
 - **Smooth Animations**: Flutter Staggered Animations for enhanced UX
 - **Loading States**: Shimmer effects and loading indicators
 
