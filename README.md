@@ -1,39 +1,30 @@
 # 🕌 E-Masjid - Digital Mosque Management System
 
-A comprehensive Flutter application designed to modernize mosque management and enhance community engagement through digital services.
+A Muslim Community Application build with Flutter.
 
 ![E-Masjid Logo](assets/images/e_masjid_web.png)
 
 ## 📱 App Showcase
 
-| ![Home](![1](https://github.com/user-attachments/assets/8036700d-58bb-49a2-85c0-740fa07fedf5)
-) | ![Ask Imam](![2](https://github.com/user-attachments/assets/b853b7d5-d4d1-44c2-aa1d-5858bf99d52f)
-) | ![Rent Aula](![3](https://github.com/user-attachments/assets/d2cb53b9-d8c2-49d2-8b77-3cc3c8af48c7)
-) |
+| ![Home](https://github.com/user-attachments/assets/8036700d-58bb-49a2-85c0-740fa07fedf5) | ![Ask Imam](https://github.com/user-attachments/assets/b853b7d5-d4d1-44c2-aa1d-5858bf99d52f) | ![Rent Aula](https://github.com/user-attachments/assets/d2cb53b9-d8c2-49d2-8b77-3cc3c8af48c7) |
 |:--:|:--:|:--:|
-| **Home Screen**<br>Prayer times, announcements, quick access to services | **Ask Imam**<br>Direct questions to religious scholars | **Rent Aula**<br>Book mosque facilities for events |
+| **Home Screen**<br>Prayer times and quick access to services | **Ask Imam**<br>Direct questions to religious scholars | **Rent Aula**<br>Book Masjid facilities for events |
 
-| ![Programs](![4](https://github.com/user-attachments/assets/7b9b2153-fcf4-4027-9bed-2fdf16423182)
-) | ![Donations](![5](https://github.com/user-attachments/assets/9c69c2d2-bba1-4fa7-aa40-75b96aac69ec)
-) | ![Status](![6](https://github.com/user-attachments/assets/2bf865d1-de8c-4b1b-a90e-dc5a6a9360fe)
-) |
+| ![Programs](https://github.com/user-attachments/assets/7b9b2153-fcf4-4027-9bed-2fdf16423182) | ![Donations](https://github.com/user-attachments/assets/9c69c2d2-bba1-4fa7-aa40-75b96aac69ec) | ![Status](https://github.com/user-attachments/assets/2bf865d1-de8c-4b1b-a90e-dc5a6a9360fe) |
 |:--:|:--:|:--:|
-| **Programs**<br>Register and view mosque events | **Donations**<br>Digital donations for projects | **Check Status**<br>Track service requests and applications |
+| **Programs**<br>Masjid Program | **Donations**<br>Donations for Masjid | **Check Status**<br>Track donation, Ask Imam, rent place status |
 
-| ![Quran](![7](https://github.com/user-attachments/assets/20b1ad19-ac51-47da-8ede-8de1fb3adaa1)
-) | ![Hadith](![8](https://github.com/user-attachments/assets/6f1c6566-d4d0-489d-bbe1-8a64ffff6ea7)
-) | ![Prayer Times](![9](https://github.com/user-attachments/assets/63dff0d1-b73b-4f79-a2f5-6b8d4fb6cc4c)
-) |
+| ![Quran](https://github.com/user-attachments/assets/20b1ad19-ac51-47da-8ede-8de1fb3adaa1) | ![Hadith](https://github.com/user-attachments/assets/6f1c6566-d4d0-489d-bbe1-8a64ffff6ea7) | ![Prayer](https://github.com/user-attachments/assets/63dff0d1-b73b-4f79-a2f5-6b8d4fb6cc4c) |
 |:--:|:--:|:--:|
-| **Quran**<br>Read, search, and bookmark Quran | **Hadith**<br>Explore authentic hadith collection | **Prayer Times**<br>Accurate times with qibla direction |
+| **Quran**<br>Read Al Quran | **Hadith**<br>Explore hadith arbain | **Prayer Times**<br>Collection of Doa |
+
 
 
 ## ✨ Features
 
 ### 🔐 Authentication & User Management
-- Secure login/signup system
-- Role-based access (Admin, Staff, Community Member)
-- Profile management
+- Secure login with google auth
+- Role-based access (Staff, Jamaah)
 - Password recovery
 
 ### 🕌 Core Mosque Services
@@ -41,28 +32,25 @@ A comprehensive Flutter application designed to modernize mosque management and 
 - **Quran Digital**: Complete Quran with search and bookmark features
 - **Hadith Collection**: Authentic hadith with search functionality
 - **Ask Imam**: Direct communication with religious scholars
-- **Program Management**: Event registration and management
-- **Facility Booking**: Rent mosque facilities and event spaces
+- **Program Management**: Program management
+- **Facility Booking**: Rent Place In Masjid facilities
 - **Donation System**: Secure digital donations
-- **Status Tracking**: Monitor application and request status
 
 ### 👥 Community Features
-- Event announcements
-- Community bulletin board
-- Service request tracking
-- Feedback system
+- Program announcements
+- Ask Imam
+- Donation
 
 ### 🛠️ Administrative Tools
 - Program creation and management
-- User role management
-- Application approval system
-- Analytics and reporting
+- Approval System
+
 
 ## 🛠️ Technology Stack
 
 - **Framework**: Flutter 3.x
 - **Language**: Dart
-- **Backend**: Firebase (Firestore, Authentication)
+- **Backend**: Firebase (Firestore, Cloudify)
 - **State Management**: Provider
 - **Local Storage**: Hive, SharedPreferences
 - **UI Components**: Material Design 3
@@ -108,10 +96,6 @@ A comprehensive Flutter application designed to modernize mosque management and 
 
 - ✅ Android (API 21+)
 - ✅ iOS (12.0+)
-- ✅ Web
-- ✅ Windows
-- ✅ macOS
-- ✅ Linux
 
 ## 🏗️ Project Structure
 
@@ -191,7 +175,6 @@ CLOUDINARY_API_SECRET=your_api_secret
 - Secure API communication
 - Data encryption
 - Input validation
-- XSS protection
 
 ## 📈 Performance Optimizations
 
@@ -212,31 +195,3 @@ CLOUDINARY_API_SECRET=your_api_secret
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Flutter team for the amazing framework
-- Firebase for backend services
-- Cloudinary for image management
-- The Muslim community for inspiration and feedback
-
-## 📞 Support
-
-For support and questions:
-- 📧 Email: support@emasjid.com
-- 📱 WhatsApp: +60-XX-XXXX-XXXX
-- 🌐 Website: https://emasjid.com
-
-## 🔄 Version History
-
-- **v1.0.0** - Initial release with core features
-- **v1.1.0** - Added Quran and Hadith modules
-- **v1.2.0** - Enhanced UI and performance improvements
-- **v1.3.0** - Added multi-language support
-
----
-
-<div align="center">
-  <p>Made with ❤️ for the Muslim community</p>
-  <p>🕌 E-Masjid - Connecting Communities Digitally</p>
-</div>
